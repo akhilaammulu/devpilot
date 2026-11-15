@@ -29,6 +29,35 @@ export const GET_REPOSITORIES = gql`
         securityScore
         accessibilityScore
         startedAt
+        completedAt
+        engineReports {
+          engine
+          status
+          findingsCount
+          executionTimeMs
+          message
+        }
+        issues {
+          id
+          category
+          severity
+          ruleId
+          filePath
+          lineStart
+          lineEnd
+          startLine
+          endLine
+          startColumn
+          endColumn
+          message
+          snippet
+          aiExplanation
+          aiFixSuggestion
+          engine
+          status
+          language
+          createdAt
+        }
       }
     }
   }
@@ -59,6 +88,13 @@ export const START_SCAN = gql`
       accessibilityScore
       startedAt
       completedAt
+      engineReports {
+        engine
+        status
+        findingsCount
+        executionTimeMs
+        message
+      }
       issues {
         id
         category
@@ -67,6 +103,10 @@ export const START_SCAN = gql`
         filePath
         lineStart
         lineEnd
+        startLine
+        endLine
+        startColumn
+        endColumn
         message
         snippet
         aiExplanation
@@ -90,6 +130,10 @@ export const GET_SCAN_ISSUES = gql`
       filePath
       lineStart
       lineEnd
+      startLine
+      endLine
+      startColumn
+      endColumn
       message
       snippet
       aiExplanation

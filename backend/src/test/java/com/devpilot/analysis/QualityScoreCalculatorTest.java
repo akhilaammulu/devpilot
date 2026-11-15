@@ -61,7 +61,7 @@ class QualityScoreCalculatorTest {
         assertEquals(2, metrics.getHighCount());
         assertEquals(3, metrics.getMediumCount());
         assertEquals(2, metrics.getLowCount());
-        assertEquals(58, metrics.getQualityScore());
+        assertEquals(59, metrics.getQualityScore());
         assertEquals("F", metrics.getGrade());
     }
 

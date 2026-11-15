@@ -39,8 +39,10 @@ class EsLintAnalyzerTest {
                 """;
         Files.writeString(tsFile, content);
 
-        List<AnalysisFinding> findings = analyzer.analyze(tempDir, "main");
+        EngineAnalysisResult result = analyzer.analyze(tempDir, "main");
+        List<AnalysisFinding> findings = result.getFindings();
 
+        assertEquals("COMPLETED", result.getReport().getStatus());
         assertFalse(findings.isEmpty());
         boolean hasAny = findings.stream()
                 .anyMatch(f -> "@typescript-eslint/no-explicit-any".equals(f.getRuleId()) && f.getSeverity() == IssueSeverity.MEDIUM);
@@ -48,11 +50,10 @@ class EsLintAnalyzerTest {
     }
 
     @Test
-    @DisplayName("Should return default baseline findings on null repo path")
-    void shouldReturnDefaultBaseline() {
-        List<AnalysisFinding> findings = analyzer.analyze(null, "main");
-        assertNotNull(findings);
-        assertFalse(findings.isEmpty());
-        assertTrue(findings.stream().anyMatch(f -> "react-hooks/exhaustive-deps".equals(f.getRuleId())));
+    @DisplayName("Should return UNAVAILABLE status on null repo path")
+    void shouldReturnUnavailableOnNull() {
+        EngineAnalysisResult result = analyzer.analyze(null, "main");
+        assertNotNull(result);
+        assertEquals("UNAVAILABLE", result.getReport().getStatus());
     }
 }

@@ -62,12 +62,15 @@ public class QualityScoreCalculator {
     }
 
     private QualityMetrics computeMetrics(int critical, int high, int medium, int low, int openCount, int resolvedCount) {
-        // Penalty calculation
-        int penalty = (critical * 15) + (high * 8) + (medium * 3) + (low * 1);
+        // Penalty calculation: Critical (-15), High (-8), Medium (-3), Low (-1 up to max 20)
+        int lowPenalty = Math.min(20, (int) Math.round(low * 0.1));
+        if (low > 0 && lowPenalty == 0) lowPenalty = 1;
+        int penalty = (critical * 15) + (high * 8) + (medium * 3) + lowPenalty;
         int qualityScore = Math.max(0, 100 - penalty);
 
         // Maintainability calculation
-        int maintPenalty = (high * 4) + (medium * 2) + (low * 1);
+        int lowMaintPenalty = Math.min(15, (int) Math.round(low * 0.05));
+        int maintPenalty = (high * 4) + (medium * 2) + lowMaintPenalty;
         int maintainabilityScore = Math.max(0, 100 - maintPenalty);
 
         // Cyclomatic complexity average estimation

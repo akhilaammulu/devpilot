@@ -1,11 +1,15 @@
 package com.devpilot.analysis;
 
+import com.devpilot.model.EngineExecutionReport;
 import com.devpilot.model.IssueSeverity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +23,6 @@ public class EsLintAnalyzer implements StaticAnalyzer {
     private static final Logger log = LoggerFactory.getLogger(EsLintAnalyzer.class);
 
     private static final Pattern EXPLICIT_ANY_PATTERN = Pattern.compile(":\\s*any\\b|as\\s+any\\b");
-    private static final Pattern USE_EFFECT_MISSING_DEPS = Pattern.compile("useEffect\\s*\\(\\s*\\(\\s*\\)\\s*=>\\s*\\{[^}]*\\},\\s*\\[\\s*\\]\\s*\\)");
 
     @Override
     public AnalysisEngine getEngine() {
@@ -27,17 +30,78 @@ public class EsLintAnalyzer implements StaticAnalyzer {
     }
 
     @Override
-    public List<AnalysisFinding> analyze(Path repositoryPath, String branch) {
+    public EngineAnalysisResult analyze(Path repositoryPath, String branch) {
+        long startTime = System.currentTimeMillis();
         List<AnalysisFinding> findings = new ArrayList<>();
 
-        if (repositoryPath != null && Files.exists(repositoryPath)) {
-            // Check for ESLint JSON report
-            Path jsonReport = repositoryPath.resolve("eslint-report.json");
-            if (Files.exists(jsonReport)) {
-                parseEsLintJson(jsonReport, findings);
-            }
+        if (repositoryPath == null || !Files.exists(repositoryPath)) {
+            EngineExecutionReport report = new EngineExecutionReport(
+                    getEngine().getDisplayName(),
+                    "UNAVAILABLE",
+                    0,
+                    System.currentTimeMillis() - startTime,
+                    "Repository path is null or directory does not exist on disk."
+            );
+            return new EngineAnalysisResult(getEngine(), findings, report);
+        }
 
-            // Direct scan of TypeScript/TSX/JavaScript files
+        // Check if repository contains TS/JS files
+        boolean hasJsOrTs = false;
+        try (Stream<Path> s = Files.walk(repositoryPath)) {
+            hasJsOrTs = s.anyMatch(p -> (p.toString().endsWith(".ts") || p.toString().endsWith(".tsx") || p.toString().endsWith(".js"))
+                                      && !p.toString().contains("/node_modules/")
+                                      && !p.toString().contains("/.next/"));
+        } catch (IOException e) {
+            log.warn("Error checking for JS/TS files: {}", e.getMessage());
+        }
+
+        if (!hasJsOrTs) {
+            EngineExecutionReport report = new EngineExecutionReport(
+                    getEngine().getDisplayName(),
+                    "SKIPPED",
+                    0,
+                    System.currentTimeMillis() - startTime,
+                    "No TypeScript or JavaScript source files detected in repository."
+            );
+            return new EngineAnalysisResult(getEngine(), findings, report);
+        }
+
+        // Locate frontend root
+        Path frontendDir = repositoryPath.resolve("frontend");
+        if (!Files.exists(frontendDir)) {
+            frontendDir = repositoryPath;
+        }
+
+        // Attempt running real ESLint via npx
+        boolean eslintRanSuccessfully = false;
+        try {
+            log.info("Executing real ESLint in {}", frontendDir);
+            ProcessBuilder pb = new ProcessBuilder("npx", "eslint", "--format", "json", "src");
+            pb.directory(frontendDir.toFile());
+            pb.redirectErrorStream(false);
+            Process process = pb.start();
+
+            StringBuilder output = new StringBuilder();
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    output.append(line);
+                }
+            }
+            int exitCode = process.waitFor();
+            log.info("ESLint process finished with exitCode {}", exitCode);
+
+            String jsonOutput = output.toString().trim();
+            if (jsonOutput.startsWith("[") && jsonOutput.endsWith("]")) {
+                parseEsLintJsonString(jsonOutput, repositoryPath, findings);
+                eslintRanSuccessfully = true;
+            }
+        } catch (Exception e) {
+            log.warn("ESLint CLI execution handled: {}", e.getMessage());
+        }
+
+        // Fallback pattern scanning if ESLint CLI wasn't available
+        if (!eslintRanSuccessfully && findings.isEmpty()) {
             try (Stream<Path> paths = Files.walk(repositoryPath)) {
                 paths.filter(p -> (p.toString().endsWith(".ts") || p.toString().endsWith(".tsx") || p.toString().endsWith(".js"))
                                 && !p.toString().contains("/node_modules/")
@@ -48,11 +112,63 @@ public class EsLintAnalyzer implements StaticAnalyzer {
             }
         }
 
-        if (findings.isEmpty()) {
-            findings.addAll(getDefaultBaselineFindings());
-        }
+        long duration = System.currentTimeMillis() - startTime;
+        EngineExecutionReport report = new EngineExecutionReport(
+                getEngine().getDisplayName(),
+                "COMPLETED",
+                findings.size(),
+                duration,
+                "ESLint analyzed TypeScript/JavaScript codebase and identified " + findings.size() + " findings."
+        );
 
-        return findings;
+        return new EngineAnalysisResult(getEngine(), findings, report);
+    }
+
+    private void parseEsLintJsonString(String json, Path repoRoot, List<AnalysisFinding> findings) {
+        try {
+            Pattern fileBlockPattern = Pattern.compile("\\{\"filePath\":\"([^\"]+)\",\"messages\":\\[(.*?)\\],\"suppressedMessages\"", Pattern.DOTALL);
+            Pattern messagePattern = Pattern.compile("\\{\"ruleId\":\"([^\"]+)\",\"severity\":(\\d+),\"message\":\"([^\"]+)\",\"line\":(\\d+),\"column\":(\\d+)(?:,\"nodeType\":\"[^\"]*\")?(?:,\"endLine\":(\\d+))?(?:,\"endColumn\":(\\d+))?");
+
+            Matcher fileMatcher = fileBlockPattern.matcher(json);
+            while (fileMatcher.find()) {
+                String fullPath = fileMatcher.group(1);
+                String messagesBlock = fileMatcher.group(2);
+                String relativePath = fullPath.replace(repoRoot.toString() + File.separator, "");
+
+                Matcher msgMatcher = messagePattern.matcher(messagesBlock);
+                while (msgMatcher.find()) {
+                    String ruleId = msgMatcher.group(1);
+                    int severityNum = Integer.parseInt(msgMatcher.group(2));
+                    String message = msgMatcher.group(3).replace("\\\"", "\"").replace("\\\\", "\\");
+                    int line = Integer.parseInt(msgMatcher.group(4));
+                    int col = Integer.parseInt(msgMatcher.group(5));
+                    int endLine = msgMatcher.group(6) != null ? Integer.parseInt(msgMatcher.group(6)) : line;
+                    int endCol = msgMatcher.group(7) != null ? Integer.parseInt(msgMatcher.group(7)) : col + 10;
+
+                    IssueSeverity severity = severityNum == 2 ? IssueSeverity.HIGH : IssueSeverity.MEDIUM;
+                    String snippet = extractSnippet(fullPath, line, endLine);
+
+                    AnalysisFinding finding = new AnalysisFinding(
+                            AnalysisEngine.ESLINT,
+                            "TypeScript",
+                            severity,
+                            ruleId,
+                            relativePath,
+                            line,
+                            endLine,
+                            message,
+                            snippet,
+                            "ESLint rule violation: " + ruleId + ". Resolving linter diagnostics prevents runtime desynchronization and maintains clean type safety.",
+                            "Update source at " + relativePath + " (line " + line + ") to satisfy rule: " + ruleId
+                    );
+                    finding.setStartColumn(col);
+                    finding.setEndColumn(endCol);
+                    findings.add(finding);
+                }
+            }
+        } catch (Exception e) {
+            log.warn("Failed to parse ESLint JSON output: {}", e.getMessage());
+        }
     }
 
     private void scanTypeScriptFile(Path filePath, Path repoRoot, List<AnalysisFinding> findings) {
@@ -64,9 +180,8 @@ public class EsLintAnalyzer implements StaticAnalyzer {
                 String line = lines.get(i);
                 int lineNum = i + 1;
 
-                // Check for @typescript-eslint/no-explicit-any
                 if (EXPLICIT_ANY_PATTERN.matcher(line).find() && !line.contains("// eslint-disable")) {
-                    findings.add(new AnalysisFinding(
+                    AnalysisFinding finding = new AnalysisFinding(
                             AnalysisEngine.ESLINT,
                             "TypeScript",
                             IssueSeverity.MEDIUM,
@@ -78,7 +193,10 @@ public class EsLintAnalyzer implements StaticAnalyzer {
                             lineNum + ": " + line.trim(),
                             "Using `any` disables TypeScript's static type checker, defeating type safety and masking runtime regressions.",
                             "Replace `any` with `unknown`, a generic type parameter `<T>`, or a strongly-typed interface."
-                    ));
+                    );
+                    finding.setStartColumn(1);
+                    finding.setEndColumn(line.length());
+                    findings.add(finding);
                 }
             }
         } catch (IOException e) {
@@ -86,67 +204,19 @@ public class EsLintAnalyzer implements StaticAnalyzer {
         }
     }
 
-    private void parseEsLintJson(Path jsonPath, List<AnalysisFinding> findings) {
+    private String extractSnippet(String filePath, int startLine, int endLine) {
         try {
-            String content = Files.readString(jsonPath);
-            // Basic JSON scanner for ruleId and messages
-            Pattern messagePattern = Pattern.compile("\"ruleId\"\\s*:\\s*\"([^\"]+)\".*?\"severity\"\\s*:\\s*(\\d+).*?\"message\"\\s*:\\s*\"([^\"]+)\".*?\"line\"\\s*:\\s*(\\d+)", Pattern.DOTALL);
-            Matcher m = messagePattern.matcher(content);
-            while (m.find()) {
-                String rule = m.group(1);
-                int severityNum = Integer.parseInt(m.group(2));
-                String message = m.group(3);
-                int line = Integer.parseInt(m.group(4));
-
-                IssueSeverity severity = severityNum == 2 ? IssueSeverity.HIGH : IssueSeverity.MEDIUM;
-
-                findings.add(new AnalysisFinding(
-                        AnalysisEngine.ESLINT,
-                        "TypeScript",
-                        severity,
-                        rule,
-                        "frontend/src",
-                        line,
-                        line,
-                        message,
-                        line + ": " + message,
-                        "ESLint rule violation: " + rule,
-                        "Fix TypeScript/ESLint style or hook dependency constraint."
-                ));
+            Path p = Paths.get(filePath);
+            if (!Files.exists(p)) return startLine + ": Code location";
+            List<String> lines = Files.readAllLines(p);
+            int start = Math.max(0, startLine - 1);
+            int end = Math.min(lines.size(), Math.max(endLine, startLine + 1));
+            StringBuilder sb = new StringBuilder();
+            for (int i = start; i < end; i++) {
+                sb.append(i + 1).append(": ").append(lines.get(i)).append("\n");
             }
-        } catch (Exception e) {
-            log.warn("Failed to parse ESLint JSON: {}", e.getMessage());
-        }
-    }
-
-    private List<AnalysisFinding> getDefaultBaselineFindings() {
-        return List.of(
-                new AnalysisFinding(
-                        AnalysisEngine.ESLINT,
-                        "TypeScript",
-                        IssueSeverity.HIGH,
-                        "react-hooks/exhaustive-deps",
-                        "src/hooks/useRepositoryScans.ts",
-                        18,
-                        24,
-                        "React Hook useEffect has a missing dependency: 'fetchScans'. Either include it or remove the dependency array.",
-                        "18:  useEffect(() => {\n19:      if (repoId) {\n20:          fetchScans(repoId);\n21:      }\n22:  }, [repoId]);",
-                        "If `fetchScans` changes or closes over updated props/state, this effect invokes a stale closure, causing race conditions or stale data in UI.",
-                        "const fetchScans = useCallback(async (id: string) => {\n    const data = await client.query({ query: GET_SCANS, variables: { id } });\n    setScans(data);\n}, [client]);\n\nuseEffect(() => {\n    if (repoId) { fetchScans(repoId); }\n}, [repoId, fetchScans]);"
-                ),
-                new AnalysisFinding(
-                        AnalysisEngine.ESLINT,
-                        "TypeScript",
-                        IssueSeverity.MEDIUM,
-                        "@typescript-eslint/no-explicit-any",
-                        "src/lib/api-client.ts",
-                        31,
-                        33,
-                        "Unexpected any. Specify a different type or use 'unknown' with type guards.",
-                        "31:  export async function postPayload(endpoint: string, payload: any): Promise<any> {\n32:      return fetch(endpoint, { method: 'POST', body: JSON.stringify(payload) });\n33:  }",
-                        "Using `any` turns off TypeScript's type checker for payload and response. This masks breaking API schema changes and prevents compile-time contract safety.",
-                        "export async function postPayload<TBody, TResponse>(\n    endpoint: string, \n    payload: TBody\n): Promise<TResponse> {\n    const res = await fetch(endpoint, { method: 'POST', body: JSON.stringify(payload) });\n    return res.json() as Promise<TResponse>;\n}"
-                )
-        );
+            return sb.toString().trim();
+        } catch (Exception ignored) {}
+        return startLine + ": Source line";
     }
 }

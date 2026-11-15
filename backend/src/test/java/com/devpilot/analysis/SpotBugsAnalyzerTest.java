@@ -45,8 +45,10 @@ class SpotBugsAnalyzerTest {
                 """;
         Files.writeString(javaFile, content);
 
-        List<AnalysisFinding> findings = analyzer.analyze(tempDir, "main");
+        EngineAnalysisResult result = analyzer.analyze(tempDir, "main");
+        List<AnalysisFinding> findings = result.getFindings();
 
+        assertEquals("COMPLETED", result.getReport().getStatus());
         assertFalse(findings.isEmpty());
         boolean hasNpe = findings.stream()
                 .anyMatch(f -> "NP_NULL_ON_SOME_PATH".equals(f.getRuleId()) && f.getSeverity() == IssueSeverity.CRITICAL);
@@ -54,11 +56,10 @@ class SpotBugsAnalyzerTest {
     }
 
     @Test
-    @DisplayName("Should return default baseline findings on null repo path")
-    void shouldReturnDefaultBaseline() {
-        List<AnalysisFinding> findings = analyzer.analyze(null, "main");
-        assertNotNull(findings);
-        assertFalse(findings.isEmpty());
-        assertTrue(findings.stream().anyMatch(f -> "NP_NULL_ON_SOME_PATH".equals(f.getRuleId())));
+    @DisplayName("Should return UNAVAILABLE status on null repo path")
+    void shouldReturnUnavailableOnNull() {
+        EngineAnalysisResult result = analyzer.analyze(null, "main");
+        assertNotNull(result);
+        assertEquals("UNAVAILABLE", result.getReport().getStatus());
     }
 }

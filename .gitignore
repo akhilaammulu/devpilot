@@ -21,3 +21,5 @@ target/
 *.env.local
 *.env.*.local
 proxy-3001.js
+*.mv.db
+*.trace.db

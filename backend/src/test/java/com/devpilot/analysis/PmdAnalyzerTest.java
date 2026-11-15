@@ -1,6 +1,5 @@
 package com.devpilot.analysis;
 
-import com.devpilot.model.IssueSeverity;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -42,19 +41,20 @@ class PmdAnalyzerTest {
                 """;
         Files.writeString(javaFile, content);
 
-        List<AnalysisFinding> findings = analyzer.analyze(tempDir, "main");
+        EngineAnalysisResult result = analyzer.analyze(tempDir, "main");
+        List<AnalysisFinding> findings = result.getFindings();
 
+        assertEquals("COMPLETED", result.getReport().getStatus());
         assertFalse(findings.isEmpty());
         boolean hasPrintln = findings.stream().anyMatch(f -> "SystemPrintln".equals(f.getRuleId()));
         assertTrue(hasPrintln, "SystemPrintln code smell should be flagged");
     }
 
     @Test
-    @DisplayName("Should return default baseline findings on null repo path")
-    void shouldReturnDefaultBaseline() {
-        List<AnalysisFinding> findings = analyzer.analyze(null, "main");
-        assertNotNull(findings);
-        assertFalse(findings.isEmpty());
-        assertTrue(findings.stream().anyMatch(f -> "CloseResource".equals(f.getRuleId())));
+    @DisplayName("Should return UNAVAILABLE status on null repo path")
+    void shouldReturnUnavailableOnNull() {
+        EngineAnalysisResult result = analyzer.analyze(null, "main");
+        assertNotNull(result);
+        assertEquals("UNAVAILABLE", result.getReport().getStatus());
     }
 }

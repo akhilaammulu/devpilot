@@ -1,10 +1,12 @@
 package com.devpilot.analysis;
 
+import com.devpilot.model.EngineExecutionReport;
 import com.devpilot.model.IssueSeverity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.ArrayList;
@@ -27,17 +29,75 @@ public class CheckstyleAnalyzer implements StaticAnalyzer {
     }
 
     @Override
-    public List<AnalysisFinding> analyze(Path repositoryPath, String branch) {
+    public EngineAnalysisResult analyze(Path repositoryPath, String branch) {
+        long startTime = System.currentTimeMillis();
         List<AnalysisFinding> findings = new ArrayList<>();
 
-        if (repositoryPath != null && Files.exists(repositoryPath)) {
-            // Check for existing Checkstyle XML report
-            Path xmlReport = repositoryPath.resolve("target/checkstyle-result.xml");
-            if (Files.exists(xmlReport)) {
-                parseCheckstyleXml(xmlReport, findings);
-            }
+        if (repositoryPath == null || !Files.exists(repositoryPath)) {
+            EngineExecutionReport report = new EngineExecutionReport(
+                    getEngine().getDisplayName(),
+                    "UNAVAILABLE",
+                    0,
+                    System.currentTimeMillis() - startTime,
+                    "Repository path is null or directory does not exist on disk."
+            );
+            return new EngineAnalysisResult(getEngine(), findings, report);
+        }
 
-            // Direct Java file inspection for Checkstyle violations
+        // Check if repository contains any Java files
+        boolean hasJava = false;
+        try (Stream<Path> s = Files.walk(repositoryPath)) {
+            hasJava = s.anyMatch(p -> p.toString().endsWith(".java") && !p.toString().contains("/target/"));
+        } catch (IOException e) {
+            log.warn("Error checking for Java files: {}", e.getMessage());
+        }
+
+        if (!hasJava) {
+            EngineExecutionReport report = new EngineExecutionReport(
+                    getEngine().getDisplayName(),
+                    "SKIPPED",
+                    0,
+                    System.currentTimeMillis() - startTime,
+                    "No Java source files detected in repository."
+            );
+            return new EngineAnalysisResult(getEngine(), findings, report);
+        }
+
+        // Check if a pre-generated or Maven checkstyle-result.xml exists
+        Path xmlReport = repositoryPath.resolve("backend/target/checkstyle-result.xml");
+        if (!Files.exists(xmlReport)) {
+            xmlReport = repositoryPath.resolve("target/checkstyle-result.xml");
+        }
+
+        // If not found, attempt invoking maven checkstyle plugin
+        if (!Files.exists(xmlReport)) {
+            Path pomPath = repositoryPath.resolve("backend/pom.xml");
+            if (!Files.exists(pomPath)) {
+                pomPath = repositoryPath.resolve("pom.xml");
+            }
+            if (Files.exists(pomPath)) {
+                try {
+                    log.info("Executing Maven Checkstyle on {}", pomPath);
+                    ProcessBuilder pb = new ProcessBuilder("mvn", "-f", pomPath.toString(), "checkstyle:checkstyle", "-DskipTests");
+                    pb.redirectOutput(ProcessBuilder.Redirect.DISCARD);
+                    pb.redirectError(ProcessBuilder.Redirect.DISCARD);
+                    Process process = pb.start();
+                    boolean completed = process.waitFor(15, java.util.concurrent.TimeUnit.SECONDS);
+                    if (!completed) {
+                        process.destroyForcibly();
+                    }
+                } catch (Exception e) {
+                    log.warn("Direct mvn checkstyle invocation encountered issue: {}", e.getMessage());
+                }
+            }
+        }
+
+        if (Files.exists(xmlReport)) {
+            parseCheckstyleXml(xmlReport, repositoryPath, findings);
+        }
+
+        // Direct source inspection fallback if XML parsing yielded no issues or XML was absent
+        if (findings.isEmpty()) {
             try (Stream<Path> paths = Files.walk(repositoryPath)) {
                 paths.filter(p -> p.toString().endsWith(".java") && !p.toString().contains("/target/"))
                      .forEach(p -> scanJavaFile(p, repositoryPath, findings));
@@ -46,12 +106,70 @@ public class CheckstyleAnalyzer implements StaticAnalyzer {
             }
         }
 
-        // If no findings were discovered (e.g. clean repository or remote virtual scan), provide reference standards
-        if (findings.isEmpty()) {
-            findings.addAll(getDefaultBaselineFindings());
-        }
+        long duration = System.currentTimeMillis() - startTime;
+        EngineExecutionReport report = new EngineExecutionReport(
+                getEngine().getDisplayName(),
+                "COMPLETED",
+                findings.size(),
+                duration,
+                "Checkstyle analyzed Java sources and identified " + findings.size() + " findings."
+        );
 
-        return findings;
+        return new EngineAnalysisResult(getEngine(), findings, report);
+    }
+
+    private void parseCheckstyleXml(Path xmlPath, Path repoRoot, List<AnalysisFinding> findings) {
+        try {
+            String content = Files.readString(xmlPath);
+            Pattern fileBlockPattern = Pattern.compile("<file\\s+name=\"([^\"]+)\">(.*?)</file>", Pattern.DOTALL);
+            Pattern errorPattern = Pattern.compile("<error\\s+line=\"(\\d+)\"\\s+(?:column=\"(\\d+)\"\\s+)?severity=\"([^\"]+)\"\\s+message=\"([^\"]+)\"\\s+source=\"([^\"]+)\"");
+
+            Matcher fileMatcher = fileBlockPattern.matcher(content);
+            while (fileMatcher.find()) {
+                String fullPath = fileMatcher.group(1);
+                String errorsBlock = fileMatcher.group(2);
+                String relativePath = fullPath.replace(repoRoot.toString() + File.separator, "");
+
+                Matcher errMatcher = errorPattern.matcher(errorsBlock);
+                while (errMatcher.find()) {
+                    int line = Integer.parseInt(errMatcher.group(1));
+                    int col = errMatcher.group(2) != null ? Integer.parseInt(errMatcher.group(2)) : 1;
+                    String sev = errMatcher.group(3).toLowerCase();
+                    String msg = errMatcher.group(4).replace("&apos;", "'").replace("&quot;", "\"").replace("&lt;", "<").replace("&gt;", ">");
+                    String source = errMatcher.group(5);
+                    String ruleName = source.substring(source.lastIndexOf('.') + 1).replace("Check", "");
+
+                    IssueSeverity severity = IssueSeverity.LOW;
+                    if ("error".equals(sev)) {
+                        severity = IssueSeverity.HIGH;
+                    } else if ("warning".equals(sev)) {
+                        // Style rule warnings (indentation, javadoc, imports) are LOW severity
+                        severity = IssueSeverity.LOW;
+                    }
+
+                    String snippet = extractSnippet(fullPath, line);
+
+                    AnalysisFinding finding = new AnalysisFinding(
+                            AnalysisEngine.CHECKSTYLE,
+                            "Java",
+                            severity,
+                            ruleName,
+                            relativePath,
+                            line,
+                            line,
+                            msg,
+                            snippet,
+                            "Checkstyle rule violation: " + ruleName + ". Adherence to coding conventions ensures consistent code aesthetics and reduces cognitive load.",
+                            "Update source formatting around line " + line + " to conform with style guidelines."
+                    );
+                    finding.setStartColumn(col);
+                    finding.setEndColumn(col + 10);
+                    findings.add(finding);
+                }
+            }
+        } catch (Exception e) {
+            log.warn("Failed to parse checkstyle xml: {}", e.getMessage());
+        }
     }
 
     private void scanJavaFile(Path filePath, Path repoRoot, List<AnalysisFinding> findings) {
@@ -63,9 +181,8 @@ public class CheckstyleAnalyzer implements StaticAnalyzer {
                 String line = lines.get(i);
                 int lineNum = i + 1;
 
-                // 1. AvoidStarImport check
                 if (STAR_IMPORT_PATTERN.matcher(line).find()) {
-                    findings.add(new AnalysisFinding(
+                    AnalysisFinding finding = new AnalysisFinding(
                             AnalysisEngine.CHECKSTYLE,
                             "Java",
                             IssueSeverity.LOW,
@@ -77,15 +194,17 @@ public class CheckstyleAnalyzer implements StaticAnalyzer {
                             lineNum + ": " + line.trim(),
                             "Wildcard imports pollute the package namespace and make class origin ambiguous, causing potential symbol collisions.",
                             "Replace wildcard import with explicit individual class imports."
-                    ));
+                    );
+                    finding.setStartColumn(1);
+                    finding.setEndColumn(line.length());
+                    findings.add(finding);
                 }
 
-                // 2. ConstantName check
                 Matcher constMatcher = CONSTANT_PATTERN.matcher(line);
                 if (constMatcher.find()) {
                     String constName = constMatcher.group(1);
                     if (!constName.matches("^[A-Z][A-Z0-9_]*$")) {
-                        findings.add(new AnalysisFinding(
+                        AnalysisFinding finding = new AnalysisFinding(
                                 AnalysisEngine.CHECKSTYLE,
                                 "Java",
                                 IssueSeverity.LOW,
@@ -97,7 +216,10 @@ public class CheckstyleAnalyzer implements StaticAnalyzer {
                                 lineNum + ": " + line.trim(),
                                 "Constants in Java should be defined in uppercase snake_case to follow standard naming conventions.",
                                 "Rename constant to " + constName.toUpperCase() + "."
-                        ));
+                        );
+                        finding.setStartColumn(constMatcher.start(1) + 1);
+                        finding.setEndColumn(constMatcher.end(1) + 1);
+                        findings.add(finding);
                     }
                 }
             }
@@ -106,70 +228,21 @@ public class CheckstyleAnalyzer implements StaticAnalyzer {
         }
     }
 
-    private void parseCheckstyleXml(Path xmlPath, List<AnalysisFinding> findings) {
+    private String extractSnippet(String filePath, int lineNum) {
         try {
-            String content = Files.readString(xmlPath);
-            // Quick regex extraction of errors
-            Pattern errorPattern = Pattern.compile("<error\\s+line=\"(\\d+)\"\\s+(?:column=\"\\d+\"\\s+)?severity=\"([^\"]+)\"\\s+message=\"([^\"]+)\"\\s+source=\"([^\"]+)\"");
-            Matcher m = errorPattern.matcher(content);
-            while (m.find()) {
-                int line = Integer.parseInt(m.group(1));
-                String sev = m.group(2).toLowerCase();
-                String msg = m.group(3);
-                String source = m.group(4);
-                String ruleName = source.substring(source.lastIndexOf('.') + 1).replace("Check", "");
-
-                IssueSeverity severity = IssueSeverity.LOW;
-                if ("error".equals(sev)) severity = IssueSeverity.HIGH;
-                else if ("warning".equals(sev)) severity = IssueSeverity.MEDIUM;
-
-                findings.add(new AnalysisFinding(
-                        AnalysisEngine.CHECKSTYLE,
-                        "Java",
-                        severity,
-                        ruleName,
-                        "src/main/java",
-                        line,
-                        line,
-                        msg,
-                        msg,
-                        "Checkstyle rule violation detected by compiler check.",
-                        "Align code formatting with project style guide."
-                ));
+            Path p = Paths.get(filePath);
+            if (!Files.exists(p)) return lineNum + ": Code location";
+            List<String> lines = Files.readAllLines(p);
+            if (lineNum > 0 && lineNum <= lines.size()) {
+                int start = Math.max(0, lineNum - 2);
+                int end = Math.min(lines.size(), lineNum + 2);
+                StringBuilder sb = new StringBuilder();
+                for (int i = start; i < end; i++) {
+                    sb.append(i + 1).append(": ").append(lines.get(i)).append("\n");
+                }
+                return sb.toString().trim();
             }
-        } catch (Exception e) {
-            log.warn("Failed to parse checkstyle xml: {}", e.getMessage());
-        }
-    }
-
-    private List<AnalysisFinding> getDefaultBaselineFindings() {
-        return List.of(
-                new AnalysisFinding(
-                        AnalysisEngine.CHECKSTYLE,
-                        "Java",
-                        IssueSeverity.MEDIUM,
-                        "MethodLength",
-                        "src/main/java/com/devpilot/controller/GraphQLScanController.java",
-                        50,
-                        118,
-                        "Method 'handleScanExecution' length is 68 lines (max allowed is 50).",
-                        "50:  public RepositoryScan startScan(Map<String, Object> input) {\n51:      // 68 lines of business logic, database queries...\n118: }",
-                        "Long methods reduce readability, increase cognitive complexity, and violate the Single Responsibility Principle. Decomposing into helper methods improves unit testability.",
-                        "// Extract scan setup, validation, and event dispatch into distinct private methods:\nvalidateScanInput(input);\nRepositoryScan scan = scanService.initiateScanRecord(input);\neventPublisher.dispatchScanRequested(scan);\nreturn scan;"
-                ),
-                new AnalysisFinding(
-                        AnalysisEngine.CHECKSTYLE,
-                        "Java",
-                        IssueSeverity.LOW,
-                        "AvoidStarImport",
-                        "src/main/java/com/devpilot/model/User.java",
-                        3,
-                        3,
-                        "Using the '.*' form of import should be avoided - java.util.*.",
-                        "3:  import java.util.*;",
-                        "Star imports pollute the namespace and can introduce ambiguity when two packages define classes with identical names.",
-                        "import java.util.ArrayList;\nimport java.util.List;\nimport java.util.UUID;"
-                )
-        );
+        } catch (Exception ignored) {}
+        return lineNum + ": Source line";
     }
 }

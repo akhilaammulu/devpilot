@@ -73,6 +73,7 @@ public class ScanService {
         savedScan.setStatus(ScanStatus.COMPLETED);
         savedScan.setCompletedAt(Instant.now());
         savedScan.setQualityScore(result.getMetrics().getQualityScore());
+        savedScan.setEngineReports(result.getEngineReports());
 
         return scanRepository.save(savedScan);
     }

@@ -11,6 +11,8 @@ public class AnalysisFinding {
     private String filePath;
     private Integer lineStart;
     private Integer lineEnd;
+    private Integer startColumn = 1;
+    private Integer endColumn = 1;
     private String message;
     private String snippet;
     private String aiExplanation;
@@ -89,6 +91,22 @@ public class AnalysisFinding {
 
     public void setLineEnd(Integer lineEnd) {
         this.lineEnd = lineEnd;
+    }
+
+    public Integer getStartColumn() {
+        return startColumn;
+    }
+
+    public void setStartColumn(Integer startColumn) {
+        this.startColumn = startColumn;
+    }
+
+    public Integer getEndColumn() {
+        return endColumn;
+    }
+
+    public void setEndColumn(Integer endColumn) {
+        this.endColumn = endColumn;
     }
 
     public String getMessage() {

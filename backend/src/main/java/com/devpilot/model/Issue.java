@@ -36,6 +36,12 @@ public class Issue {
     @Column(name = "line_end")
     private Integer lineEnd;
 
+    @Column(name = "start_column")
+    private Integer startColumn = 1;
+
+    @Column(name = "end_column")
+    private Integer endColumn = 1;
+
     @Column(nullable = false, length = 1000)
     private String message;
 
@@ -131,12 +137,52 @@ public class Issue {
         this.lineStart = lineStart;
     }
 
+    public Integer getStartLine() {
+        return lineStart;
+    }
+
+    public void setStartLine(Integer startLine) {
+        this.lineStart = startLine;
+    }
+
     public Integer getLineEnd() {
         return lineEnd;
     }
 
     public void setLineEnd(Integer lineEnd) {
         this.lineEnd = lineEnd;
+    }
+
+    public Integer getEndLine() {
+        return lineEnd;
+    }
+
+    public void setEndLine(Integer endLine) {
+        this.lineEnd = endLine;
+    }
+
+    public Integer getStartColumn() {
+        return startColumn;
+    }
+
+    public void setStartColumn(Integer startColumn) {
+        this.startColumn = startColumn;
+    }
+
+    public Integer getEndColumn() {
+        return endColumn;
+    }
+
+    public void setEndColumn(Integer endColumn) {
+        this.endColumn = endColumn;
+    }
+
+    public UUID getRepositoryId() {
+        return scan != null && scan.getRepository() != null ? scan.getRepository().getId() : null;
+    }
+
+    public UUID getScanId() {
+        return scan != null ? scan.getId() : null;
     }
 
     public String getMessage() {

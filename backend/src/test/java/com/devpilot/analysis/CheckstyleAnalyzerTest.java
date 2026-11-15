@@ -42,8 +42,10 @@ class CheckstyleAnalyzerTest {
                 """;
         Files.writeString(javaFile, content);
 
-        List<AnalysisFinding> findings = analyzer.analyze(tempDir, "main");
+        EngineAnalysisResult result = analyzer.analyze(tempDir, "main");
+        List<AnalysisFinding> findings = result.getFindings();
 
+        assertEquals("COMPLETED", result.getReport().getStatus());
         assertFalse(findings.isEmpty());
         boolean hasStarImport = findings.stream()
                 .anyMatch(f -> "AvoidStarImport".equals(f.getRuleId()) && f.getSeverity() == IssueSeverity.LOW);
@@ -51,13 +53,11 @@ class CheckstyleAnalyzerTest {
     }
 
     @Test
-    @DisplayName("Should return default baseline findings when directory is null or empty")
-    void shouldReturnDefaultBaselineOnEmptyDir() {
-        List<AnalysisFinding> findings = analyzer.analyze(null, "main");
+    @DisplayName("Should return UNAVAILABLE status when directory is null")
+    void shouldReturnUnavailableOnNullDir() {
+        EngineAnalysisResult result = analyzer.analyze(null, "main");
 
-        assertNotNull(findings);
-        assertFalse(findings.isEmpty());
-        assertTrue(findings.stream().anyMatch(f -> "AvoidStarImport".equals(f.getRuleId())));
-        assertTrue(findings.stream().anyMatch(f -> "MethodLength".equals(f.getRuleId())));
+        assertNotNull(result);
+        assertEquals("UNAVAILABLE", result.getReport().getStatus());
     }
 }

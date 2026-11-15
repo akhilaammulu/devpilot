@@ -1,7 +1,6 @@
 package com.devpilot.analysis;
 
 import java.nio.file.Path;
-import java.util.List;
 
 public interface StaticAnalyzer {
 
@@ -13,9 +12,9 @@ public interface StaticAnalyzer {
     /**
      * Executes static analysis on the target repository or path.
      *
-     * @param repositoryPath Root directory of the repository (may be null if scanning virtual repository).
+     * @param repositoryPath Root directory of the repository.
      * @param branch Target branch name.
-     * @return List of normalized static analysis findings.
+     * @return EngineAnalysisResult containing normalized findings and execution telemetry.
      */
-    List<AnalysisFinding> analyze(Path repositoryPath, String branch);
+    EngineAnalysisResult analyze(Path repositoryPath, String branch);
 }

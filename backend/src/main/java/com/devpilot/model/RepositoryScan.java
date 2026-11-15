@@ -46,6 +46,9 @@ public class RepositoryScan {
     @OneToMany(mappedBy = "scan", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Issue> issues = new ArrayList<>();
 
+    @Transient
+    private List<EngineExecutionReport> engineReports = new ArrayList<>();
+
     public RepositoryScan() {
     }
 
@@ -143,5 +146,13 @@ public class RepositoryScan {
 
     public void setIssues(List<Issue> issues) {
         this.issues = issues;
+    }
+
+    public List<EngineExecutionReport> getEngineReports() {
+        return engineReports;
+    }
+
+    public void setEngineReports(List<EngineExecutionReport> engineReports) {
+        this.engineReports = engineReports;
     }
 }

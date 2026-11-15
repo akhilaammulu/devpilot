@@ -66,6 +66,7 @@ type RepositoryScan {
     accessibilityScore: Int
     startedAt: String!
     completedAt: String
+    engineReports: [EngineExecutionReport!]
     issues: [Issue!]!
 }
 
@@ -84,12 +85,18 @@ enum IssueSeverity {
 
 type Issue {
     id: ID!
+    repositoryId: ID
+    scanId: ID
     category: IssueCategory!
     severity: IssueSeverity!
     ruleId: String!
     filePath: String!
     lineStart: Int
     lineEnd: Int
+    startLine: Int
+    endLine: Int
+    startColumn: Int
+    endColumn: Int
     message: String!
     snippet: String
     aiExplanation: String
@@ -98,6 +105,14 @@ type Issue {
     status: String
     language: String
     createdAt: String!
+}
+
+type EngineExecutionReport {
+    engine: String!
+    status: String!
+    findingsCount: Int!
+    executionTimeMs: Int!
+    message: String
 }
 
 type QualityMetrics {
