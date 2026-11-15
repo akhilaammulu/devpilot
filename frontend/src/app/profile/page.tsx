@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { Header } from "@/components/Header";
 import { Sidebar } from "@/components/Sidebar";
 import { useTheme } from "@/context/ThemeContext";
+import { useAuth } from "@/context/AuthContext";
 import {
   User as UserIcon,
   Github,
@@ -23,17 +24,40 @@ import {
 
 export default function ProfilePage() {
   const { theme, setTheme } = useTheme();
-  const [name, setName] = useState("Akhila Gadipally");
-  const [username, setUsername] = useState("akhilaammulu");
-  const [email, setEmail] = useState("akhila@example.com");
-  const [bio, setBio] = useState("Full Stack Developer building DevPilot with Java 21, Spring Boot, GraphQL, and Next.js.");
+  const { user, updateProfile } = useAuth();
+
+  const [name, setName] = useState("");
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [bio, setBio] = useState("");
   const [isSaved, setIsSaved] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      setName(user.name || "");
+      setUsername(user.username || "");
+      setEmail(user.email || "");
+      setBio(user.bio || "");
+    }
+  }, [user]);
 
   const handleSave = (e: React.FormEvent) => {
     e.preventDefault();
+    updateProfile({
+      name,
+      username,
+      email,
+      bio,
+    });
     setIsSaved(true);
     setTimeout(() => setIsSaved(false), 2500);
   };
+
+  const initial = name
+    ? name.charAt(0).toUpperCase()
+    : username
+    ? username.charAt(0).toUpperCase()
+    : "D";
 
   return (
     <div className="min-h-screen flex flex-col transition-colors bg-slate-50 dark:bg-[#080b14] text-slate-900 dark:text-slate-100">
@@ -59,18 +83,26 @@ export default function ProfilePage() {
             <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
               <div className="flex items-center gap-4">
                 <div className="w-16 h-16 rounded-3xl bg-gradient-to-tr from-purple-600 via-indigo-600 to-pink-500 p-1 shadow-lg shadow-purple-500/20 flex items-center justify-center">
-                  <div className="w-full h-full bg-[#0e1322] rounded-[20px] flex items-center justify-center text-white text-2xl font-black">
-                    A
-                  </div>
+                  {user?.avatarUrl ? (
+                    <img
+                      src={user.avatarUrl}
+                      alt={username}
+                      className="w-full h-full rounded-[20px] object-cover"
+                    />
+                  ) : (
+                    <div className="w-full h-full bg-[#0e1322] rounded-[20px] flex items-center justify-center text-white text-2xl font-black">
+                      {initial}
+                    </div>
+                  )}
                 </div>
 
                 <div>
                   <div className="flex items-center gap-2">
                     <h1 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white">
-                      {name}
+                      {name || "Developer"}
                     </h1>
                     <span className="px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20">
-                      Pro Tier
+                      {user?.plan || "Pro"} Tier
                     </span>
                   </div>
                   <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
@@ -81,16 +113,26 @@ export default function ProfilePage() {
 
               {/* GitHub Connected Pill */}
               <div className="flex items-center gap-3">
-                <a
-                  href={`https://github.com/${username}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-semibold border transition-all bg-slate-50 dark:bg-[#121829] border-slate-200 dark:border-slate-700/80 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200"
-                >
-                  <Github className="w-4 h-4" />
-                  <span>GitHub Connected</span>
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                </a>
+                {user?.githubConnected ? (
+                  <a
+                    href={`https://github.com/${username}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-semibold border transition-all bg-slate-50 dark:bg-[#121829] border-slate-200 dark:border-slate-700/80 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200"
+                  >
+                    <Github className="w-4 h-4" />
+                    <span>GitHub Connected</span>
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                  </a>
+                ) : (
+                  <Link
+                    href="/login"
+                    className="flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-semibold text-white bg-slate-800 hover:bg-slate-700"
+                  >
+                    <Github className="w-4 h-4" />
+                    <span>Connect GitHub</span>
+                  </Link>
+                )}
               </div>
             </div>
           </div>
@@ -124,6 +166,7 @@ export default function ProfilePage() {
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
+                      placeholder="Your full name"
                       className="w-full px-3.5 py-2 rounded-xl text-xs bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white outline-none focus:border-purple-500"
                     />
                   </div>
@@ -136,6 +179,7 @@ export default function ProfilePage() {
                       type="text"
                       value={username}
                       onChange={(e) => setUsername(e.target.value)}
+                      placeholder="username"
                       className="w-full px-3.5 py-2 rounded-xl text-xs bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white outline-none focus:border-purple-500"
                     />
                   </div>
@@ -149,6 +193,7 @@ export default function ProfilePage() {
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    placeholder="email@example.com"
                     className="w-full px-3.5 py-2 rounded-xl text-xs bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white outline-none focus:border-purple-500"
                   />
                 </div>
@@ -161,6 +206,7 @@ export default function ProfilePage() {
                     rows={3}
                     value={bio}
                     onChange={(e) => setBio(e.target.value)}
+                    placeholder="Tell us about what you are building..."
                     className="w-full px-3.5 py-2 rounded-xl text-xs bg-slate-50 dark:bg-slate-900/80 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white outline-none focus:border-purple-500 resize-none"
                   ></textarea>
                 </div>

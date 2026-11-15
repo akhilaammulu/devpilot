@@ -8,23 +8,24 @@ import {
   Sun,
   Moon,
   ChevronDown,
-  Terminal,
   LogOut,
   User as UserIcon,
-  Settings,
-  CheckCircle2,
   Sparkles,
 } from "lucide-react";
 import { useTheme } from "@/context/ThemeContext";
+import { useAuth } from "@/context/AuthContext";
 
 interface HeaderProps {
   currentPhase?: string;
+  onSearchChange?: (query: string) => void;
 }
 
-export function Header({ currentPhase = "Phase 1 - Foundation" }: HeaderProps) {
+export function Header({ currentPhase = "Phase 1 - Foundation", onSearchChange }: HeaderProps) {
   const { theme, toggleTheme } = useTheme();
+  const { user, logout } = useAuth();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [showPhaseMenu, setShowPhaseMenu] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
 
   const phases = [
     { num: 1, name: "Foundation", status: "In Progress" },
@@ -37,6 +38,20 @@ export function Header({ currentPhase = "Phase 1 - Foundation" }: HeaderProps) {
     { num: 8, name: "Event-Driven Architecture", status: "Upcoming" },
     { num: 9, name: "Production & Cloud", status: "Upcoming" },
   ];
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    setSearchQuery(val);
+    if (onSearchChange) onSearchChange(val);
+  };
+
+  const displayName = user?.name || "Developer";
+  const displayUsername = user?.username || "guest";
+  const initial = user?.name
+    ? user.name.charAt(0).toUpperCase()
+    : user?.username
+    ? user.username.charAt(0).toUpperCase()
+    : "D";
 
   return (
     <header className="h-16 px-6 border-b flex items-center justify-between sticky top-0 z-40 transition-colors backdrop-blur-md bg-white/80 dark:bg-[#0e1322]/80 border-slate-200 dark:border-slate-800/80">
@@ -116,6 +131,8 @@ export function Header({ currentPhase = "Phase 1 - Foundation" }: HeaderProps) {
           <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
+            value={searchQuery}
+            onChange={handleSearch}
             placeholder="Search repositories, scans, or issues..."
             className="w-full pl-9 pr-14 py-2 rounded-full text-xs transition-all border outline-none bg-slate-100/80 dark:bg-[#121829]/90 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-200 placeholder-slate-400 focus:border-purple-500 dark:focus:border-purple-500 focus:ring-1 focus:ring-purple-500/30"
           />
@@ -154,11 +171,19 @@ export function Header({ currentPhase = "Phase 1 - Foundation" }: HeaderProps) {
             onClick={() => setShowProfileMenu(!showProfileMenu)}
             className="flex items-center gap-2.5 pl-1.5 pr-3 py-1 rounded-full border transition-all bg-slate-100/80 dark:bg-[#121829] border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700"
           >
-            <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center text-white text-xs font-bold shadow-sm">
-              A
-            </div>
-            <span className="text-xs font-semibold text-slate-800 dark:text-slate-200">
-              akhilaammulu
+            {user?.avatarUrl ? (
+              <img
+                src={user.avatarUrl}
+                alt={displayUsername}
+                className="w-7 h-7 rounded-full object-cover border border-purple-500/30"
+              />
+            ) : (
+              <div className="w-7 h-7 rounded-full bg-gradient-to-tr from-purple-600 to-indigo-500 flex items-center justify-center text-white text-xs font-bold shadow-sm">
+                {initial}
+              </div>
+            )}
+            <span className="text-xs font-semibold text-slate-800 dark:text-slate-200 max-w-[120px] truncate">
+              {displayUsername}
             </span>
             <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
           </button>
@@ -166,11 +191,11 @@ export function Header({ currentPhase = "Phase 1 - Foundation" }: HeaderProps) {
           {showProfileMenu && (
             <div className="absolute right-0 mt-2 w-56 rounded-2xl p-2 shadow-2xl border transition-all z-50 bg-white dark:bg-[#121829] border-slate-200 dark:border-slate-800">
               <div className="px-3 py-2.5 border-b border-slate-100 dark:border-slate-800/80">
-                <p className="text-xs font-semibold text-slate-900 dark:text-white">
-                  Akhila Gadipally
+                <p className="text-xs font-semibold text-slate-900 dark:text-white truncate">
+                  {displayName}
                 </p>
                 <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate">
-                  @akhilaammulu
+                  @{displayUsername}
                 </p>
               </div>
 
@@ -194,14 +219,16 @@ export function Header({ currentPhase = "Phase 1 - Foundation" }: HeaderProps) {
               </div>
 
               <div className="pt-1 border-t border-slate-100 dark:border-slate-800/80">
-                <Link
-                  href="/login"
-                  onClick={() => setShowProfileMenu(false)}
-                  className="flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-rose-500 hover:bg-rose-500/10"
+                <button
+                  onClick={() => {
+                    logout();
+                    setShowProfileMenu(false);
+                  }}
+                  className="w-full text-left flex items-center gap-2 px-3 py-2 rounded-xl text-xs text-rose-500 hover:bg-rose-500/10"
                 >
                   <LogOut className="w-4 h-4" />
                   Sign Out
-                </Link>
+                </button>
               </div>
             </div>
           )}

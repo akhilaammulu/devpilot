@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { Plus, Github, Shield, CheckCircle2, Eye, FlaskConical, Sparkles } from "lucide-react";
+import { Plus, Github, Shield, CheckCircle2, Eye, FlaskConical } from "lucide-react";
+import { useAuth } from "@/context/AuthContext";
 
 interface HeroSectionProps {
   onConnectClick: () => void;
@@ -9,6 +10,9 @@ interface HeroSectionProps {
 }
 
 export function HeroSection({ onConnectClick, onImportClick }: HeroSectionProps) {
+  const { user } = useAuth();
+  const firstName = user?.name ? user.name.split(" ")[0] : (user?.username || "Developer");
+
   return (
     <div className="relative overflow-hidden rounded-3xl p-6 sm:p-8 border transition-all bg-white/70 dark:bg-[#0e1322]/70 backdrop-blur-xl border-slate-200/80 dark:border-slate-800/80 shadow-sm dark:shadow-2xl">
       {/* Background radial glows */}
@@ -19,7 +23,7 @@ export function HeroSection({ onConnectClick, onImportClick }: HeroSectionProps)
         {/* Left Column: Greeting, Headlines & Actions */}
         <div className="lg:col-span-7 space-y-4">
           <p className="text-xs font-semibold text-slate-500 dark:text-slate-400 flex items-center gap-1.5">
-            Welcome back, <span className="text-slate-800 dark:text-slate-200 font-bold">Akhila</span> 👋
+            Welcome back, <span className="text-slate-800 dark:text-slate-200 font-bold">{firstName}</span> 👋
           </p>
 
           <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-tight">

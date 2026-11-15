@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { Sidebar } from "@/components/Sidebar";
 import { HeroSection } from "@/components/HeroSection";
@@ -8,34 +8,59 @@ import { ScoreCards } from "@/components/ScoreCards";
 import { ConnectedRepositories, RepoItem } from "@/components/ConnectedRepositories";
 import { ActiveRepoScanSection, ScanRecord } from "@/components/ActiveRepoScanSection";
 import { ConnectRepoModal } from "@/components/ConnectRepoModal";
-
-const initialRepositories: RepoItem[] = [
-  {
-    id: "repo-1",
-    githubRepoId: "devpilot-001",
-    fullName: "akhilaammulu/devpilot",
-    defaultBranch: "main",
-    isPrivate: false,
-    htmlUrl: "https://github.com/akhilaammulu/devpilot",
-    updatedAt: "Updated 2 hours ago",
-    isActive: true,
-  },
-];
+import { useAuth } from "@/context/AuthContext";
 
 export default function DashboardPage() {
-  const [repositories, setRepositories] = useState<RepoItem[]>(initialRepositories);
-  const [selectedRepo, setSelectedRepo] = useState<RepoItem>(initialRepositories[0]);
+  const { user } = useAuth();
+  const [repositories, setRepositories] = useState<RepoItem[]>([]);
+  const [selectedRepo, setSelectedRepo] = useState<RepoItem | null>(null);
   const [scansByRepo, setScansByRepo] = useState<Record<string, ScanRecord[]>>({});
   const [isScanning, setIsScanning] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [searchFilter, setSearchFilter] = useState("");
 
-  // Scores
-  const [scores, setScores] = useState({
-    quality: 87,
-    security: 92,
-    accessibility: 81,
-    tests: 76,
-  });
+  // Load repositories from localStorage or initialize with user's repo
+  useEffect(() => {
+    const savedRepos = localStorage.getItem("devpilot-repos");
+    if (savedRepos) {
+      try {
+        const parsed = JSON.parse(savedRepos);
+        setRepositories(parsed);
+        if (parsed.length > 0) setSelectedRepo(parsed[0]);
+        return;
+      } catch (e) {
+        console.error("Failed to parse saved repos", e);
+      }
+    }
+
+    // Default repository dynamic based on logged in user
+    const defaultRepoName = user?.username ? `${user.username}/devpilot` : "akhilaammulu/devpilot";
+    const initialRepo: RepoItem = {
+      id: "repo-default",
+      githubRepoId: "gh-default",
+      fullName: defaultRepoName,
+      defaultBranch: "main",
+      isPrivate: false,
+      htmlUrl: `https://github.com/${defaultRepoName}`,
+      updatedAt: "Updated 2 hours ago",
+      isActive: true,
+    };
+    setRepositories([initialRepo]);
+    setSelectedRepo(initialRepo);
+    localStorage.setItem("devpilot-repos", JSON.stringify([initialRepo]));
+  }, [user?.username]);
+
+  // Load scans from localStorage
+  useEffect(() => {
+    const savedScans = localStorage.getItem("devpilot-scans");
+    if (savedScans) {
+      try {
+        setScansByRepo(JSON.parse(savedScans));
+      } catch (e) {
+        console.error("Failed to parse saved scans", e);
+      }
+    }
+  }, []);
 
   const handleConnectNewRepo = (newRepoData: {
     fullName: string;
@@ -52,8 +77,11 @@ export default function DashboardPage() {
       updatedAt: "Just now",
       isActive: true,
     };
-    setRepositories((prev) => [newRepo, ...prev]);
+
+    const updated = [newRepo, ...repositories];
+    setRepositories(updated);
     setSelectedRepo(newRepo);
+    localStorage.setItem("devpilot-repos", JSON.stringify(updated));
   };
 
   const handleStartScan = () => {
@@ -74,12 +102,12 @@ export default function DashboardPage() {
         testsScore: 89,
         findings: [
           {
-            id: "fnd-1",
+            id: `fnd-${Date.now()}`,
             category: "CODE_QUALITY",
             severity: "LOW",
             ruleId: "DEV-PHASE1-INIT",
             filePath: "README.md",
-            message: "Initial baseline scan executed successfully for DevPilot repository.",
+            message: `Initial baseline scan executed successfully for ${selectedRepo.fullName}.`,
             aiExplanation:
               "DevPilot Phase 1 Foundation verification confirmed. Spring Boot GraphQL backend, PostgreSQL models, and Next.js reactive dashboard are verified.",
             aiFixSuggestion:
@@ -88,29 +116,34 @@ export default function DashboardPage() {
         ],
       };
 
-      setScansByRepo((prev) => ({
-        ...prev,
-        [selectedRepo.id]: [completedScan, ...(prev[selectedRepo.id] || [])],
-      }));
-
-      // Bump scores slightly on scan completion
-      setScores({
-        quality: 94,
-        security: 98,
-        accessibility: 91,
-        tests: 89,
+      setScansByRepo((prev) => {
+        const next = {
+          ...prev,
+          [selectedRepo.id]: [completedScan, ...(prev[selectedRepo.id] || [])],
+        };
+        localStorage.setItem("devpilot-scans", JSON.stringify(next));
+        return next;
       });
 
       setIsScanning(false);
     }, 1800);
   };
 
-  const activeScans = scansByRepo[selectedRepo.id] || [];
+  const activeScans = selectedRepo ? scansByRepo[selectedRepo.id] || [] : [];
+  const latestScan = activeScans[0] || null;
+
+  // Filter repositories if search query is entered
+  const filteredRepositories = repositories.filter((r) =>
+    r.fullName.toLowerCase().includes(searchFilter.toLowerCase())
+  );
 
   return (
     <div className="min-h-screen flex flex-col transition-colors bg-slate-50 dark:bg-[#080b14] text-slate-900 dark:text-slate-100">
-      {/* Top Navigation */}
-      <Header currentPhase="Phase 1 - Foundation" />
+      {/* Top Navigation with Search handler */}
+      <Header
+        currentPhase="Phase 1 - Foundation"
+        onSearchChange={(q) => setSearchFilter(q)}
+      />
 
       {/* Main Layout: Sidebar + Dashboard Content */}
       <div className="flex-1 flex">
@@ -123,19 +156,21 @@ export default function DashboardPage() {
             onImportClick={() => setIsModalOpen(true)}
           />
 
-          {/* 4 Score Cards */}
+          {/* 4 Score Cards (Dynamic from scan state) */}
           <ScoreCards
-            qualityScore={scores.quality}
-            securityScore={scores.security}
-            accessibilityScore={scores.accessibility}
-            testsScore={scores.tests}
+            qualityScore={latestScan ? latestScan.qualityScore : 87}
+            securityScore={latestScan ? latestScan.securityScore : 92}
+            accessibilityScore={latestScan ? latestScan.accessibilityScore : 81}
+            testsScore={latestScan ? latestScan.testsScore : 76}
+            hasScanned={!!latestScan}
           />
 
           {/* Connected Repositories */}
           <ConnectedRepositories
-            repositories={repositories}
+            repositories={filteredRepositories}
             selectedRepo={selectedRepo}
             onSelectRepo={(repo) => setSelectedRepo(repo)}
+            onConnectClick={() => setIsModalOpen(true)}
           />
 
           {/* Active Repository & Scan Panel */}
