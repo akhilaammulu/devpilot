@@ -15,12 +15,12 @@ import {
   Shield,
   Eye,
   FlaskConical,
-  Bot,
   ArrowRight,
 } from "lucide-react";
 
 export function Sidebar() {
   const pathname = usePathname();
+  const isScansRoute = pathname.startsWith("/scans");
   const [scansOpen, setScansOpen] = useState(true);
 
   return (
@@ -41,7 +41,11 @@ export function Sidebar() {
 
         <Link
           href="/repositories"
-          className="flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/5 transition-all"
+          className={`flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition-all ${
+            pathname === "/repositories"
+              ? "bg-white/15 text-white shadow-sm border border-white/10"
+              : "text-slate-300 hover:text-white hover:bg-white/5"
+          }`}
         >
           <FolderGit2 className="w-4 h-4 text-purple-400" />
           <span>Repositories</span>
@@ -49,7 +53,11 @@ export function Sidebar() {
 
         <Link
           href="/pull-requests"
-          className="flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/5 transition-all"
+          className={`flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition-all ${
+            pathname === "/pull-requests"
+              ? "bg-white/15 text-white shadow-sm border border-white/10"
+              : "text-slate-300 hover:text-white hover:bg-white/5"
+          }`}
         >
           <GitPullRequest className="w-4 h-4 text-purple-400" />
           <span>Pull Requests</span>
@@ -59,7 +67,11 @@ export function Sidebar() {
         <div className="space-y-1">
           <button
             onClick={() => setScansOpen(!scansOpen)}
-            className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/5 transition-all"
+            className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition-all ${
+              isScansRoute
+                ? "text-white"
+                : "text-slate-300 hover:text-white hover:bg-white/5"
+            }`}
           >
             <div className="flex items-center gap-3">
               <BarChart3 className="w-4 h-4 text-purple-400" />
@@ -77,7 +89,7 @@ export function Sidebar() {
               <Link
                 href="/scans"
                 className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold transition-all ${
-                  pathname === "/scans" || pathname === "/"
+                  pathname === "/scans"
                     ? "bg-gradient-to-r from-purple-500/25 to-pink-500/15 text-white border border-purple-400/30 shadow-sm"
                     : "text-slate-300 hover:text-white hover:bg-white/5"
                 }`}
@@ -115,7 +127,11 @@ export function Sidebar() {
 
         <Link
           href="/ai-insights"
-          className="flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/5 transition-all"
+          className={`flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition-all ${
+            pathname === "/ai-insights"
+              ? "bg-white/15 text-white shadow-sm border border-white/10"
+              : "text-slate-300 hover:text-white hover:bg-white/5"
+          }`}
         >
           <Sparkles className="w-4 h-4 text-purple-400" />
           <span>AI Insights</span>
@@ -123,7 +139,11 @@ export function Sidebar() {
 
         <Link
           href="/profile"
-          className="flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/5 transition-all"
+          className={`flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition-all ${
+            pathname === "/profile"
+              ? "bg-white/15 text-white shadow-sm border border-white/10"
+              : "text-slate-300 hover:text-white hover:bg-white/5"
+          }`}
         >
           <Settings className="w-4 h-4 text-purple-400" />
           <span>Settings</span>
@@ -144,13 +164,13 @@ export function Sidebar() {
             </p>
           </div>
 
-          <button
-            onClick={() => alert("AI Fix Assistant activated")}
+          <Link
+            href="/ai-insights"
             className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-xs font-bold text-white bg-white/10 hover:bg-white/15 border border-white/20 transition-all hover:scale-[1.02] active:scale-95"
           >
             <span>Try Now</span>
             <ArrowRight className="w-3 h-3" />
-          </button>
+          </Link>
         </div>
       </div>
     </aside>
