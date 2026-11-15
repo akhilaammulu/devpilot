@@ -36,7 +36,7 @@ export const GET_REPOSITORIES = gql`
 
 export const CONNECT_REPOSITORY = gql`
   mutation ConnectRepository($input: ConnectRepositoryInput!) {
-    connectRepository(input: input) {
+    connectRepository(input: $input) {
       id
       githubRepoId
       fullName
@@ -49,7 +49,7 @@ export const CONNECT_REPOSITORY = gql`
 
 export const START_SCAN = gql`
   mutation StartScan($input: StartScanInput!) {
-    startScan(input: input) {
+    startScan(input: $input) {
       id
       commitSha
       branchName
@@ -68,9 +68,62 @@ export const START_SCAN = gql`
         lineStart
         lineEnd
         message
+        snippet
         aiExplanation
         aiFixSuggestion
+        engine
+        status
+        language
+        createdAt
       }
+    }
+  }
+`;
+
+export const GET_SCAN_ISSUES = gql`
+  query GetScanIssues($scanId: ID!, $severity: IssueSeverity, $engine: String, $status: String) {
+    issues(scanId: $scanId, severity: $severity, engine: $engine, status: $status) {
+      id
+      category
+      severity
+      ruleId
+      filePath
+      lineStart
+      lineEnd
+      message
+      snippet
+      aiExplanation
+      aiFixSuggestion
+      engine
+      status
+      language
+      createdAt
+    }
+  }
+`;
+
+export const GET_QUALITY_METRICS = gql`
+  query GetQualityMetrics($scanId: ID!) {
+    qualityMetrics(scanId: $scanId) {
+      qualityScore
+      grade
+      maintainabilityScore
+      cyclomaticComplexity
+      openIssuesCount
+      resolvedIssuesCount
+      criticalCount
+      highCount
+      mediumCount
+      lowCount
+    }
+  }
+`;
+
+export const UPDATE_ISSUE_STATUS = gql`
+  mutation UpdateIssueStatus($id: ID!, $status: String!) {
+    updateIssueStatus(id: $id, status: $status) {
+      id
+      status
     }
   }
 `;
