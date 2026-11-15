@@ -20,17 +20,24 @@ import {
 
 export function Sidebar() {
   const pathname = usePathname();
-  const isScansRoute = pathname.startsWith("/scans");
   const [scansOpen, setScansOpen] = useState(true);
 
+  // In this static analysis explorer view, "Code Quality" is the primary active route
+  const isCodeQualityActive =
+    pathname === "/" ||
+    pathname === "/scans" ||
+    pathname === "/quality" ||
+    pathname === "/code-quality" ||
+    pathname === "/dashboard";
+
   return (
-    <aside className="w-64 shrink-0 flex flex-col justify-between p-4 transition-colors min-h-[calc(100vh-4rem)] bg-gradient-to-b from-[#180e29] via-[#1f1438] to-[#120a22] text-white border-r border-purple-950/40">
+    <aside className="w-64 shrink-0 flex flex-col justify-between p-4 transition-colors min-h-[calc(100vh-4rem)] bg-gradient-to-b from-[#160d2e] via-[#1d123d] to-[#120a24] text-white border-r border-purple-950/40 select-none">
       {/* Navigation Links */}
       <nav className="space-y-1.5">
         <Link
           href="/"
           className={`flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition-all ${
-            pathname === "/"
+            pathname === "/overview"
               ? "bg-white/15 text-white shadow-sm border border-white/10"
               : "text-slate-300 hover:text-white hover:bg-white/5"
           }`}
@@ -64,14 +71,10 @@ export function Sidebar() {
         </Link>
 
         {/* Scans & Reports Expandable Menu */}
-        <div className="space-y-1">
+        <div className="space-y-1 pt-1">
           <button
             onClick={() => setScansOpen(!scansOpen)}
-            className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition-all ${
-              isScansRoute
-                ? "text-white"
-                : "text-slate-300 hover:text-white hover:bg-white/5"
-            }`}
+            className="w-full flex items-center justify-between px-3.5 py-2.5 rounded-2xl text-xs font-semibold text-slate-300 hover:text-white hover:bg-white/5 transition-all"
           >
             <div className="flex items-center gap-3">
               <BarChart3 className="w-4 h-4 text-purple-400" />
@@ -85,40 +88,41 @@ export function Sidebar() {
           </button>
 
           {scansOpen && (
-            <div className="pl-4 space-y-1">
+            <div className="pl-3 space-y-1">
+              {/* Active Code Quality Pill with purple gradient and glow matching screenshot */}
               <Link
-                href="/scans"
-                className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-bold transition-all ${
-                  pathname === "/scans"
-                    ? "bg-gradient-to-r from-purple-500/25 to-pink-500/15 text-white border border-purple-400/30 shadow-sm"
+                href="/"
+                className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                  isCodeQualityActive
+                    ? "bg-gradient-to-r from-purple-600 via-indigo-600 to-pink-600/80 text-white border border-purple-400/40 shadow-lg shadow-purple-600/30"
                     : "text-slate-300 hover:text-white hover:bg-white/5"
                 }`}
               >
-                <span className="font-mono text-purple-400 font-bold">&lt;/&gt;</span>
+                <span className="font-mono text-purple-300 font-extrabold text-sm">&lt;/&gt;</span>
                 <span>Code Quality</span>
               </Link>
 
               <Link
                 href="/scans"
-                className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all"
+                className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all"
               >
-                <Shield className="w-3.5 h-3.5 text-rose-400" />
+                <Shield className="w-4 h-4 text-rose-400" />
                 <span>Security</span>
               </Link>
 
               <Link
                 href="/scans"
-                className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all"
+                className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all"
               >
-                <Eye className="w-3.5 h-3.5 text-emerald-400" />
+                <Eye className="w-4 h-4 text-emerald-400" />
                 <span>Accessibility</span>
               </Link>
 
               <Link
                 href="/scans"
-                className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all"
+                className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all"
               >
-                <FlaskConical className="w-3.5 h-3.5 text-amber-400" />
+                <FlaskConical className="w-4 h-4 text-amber-400" />
                 <span>Tests</span>
               </Link>
             </div>
@@ -150,26 +154,29 @@ export function Sidebar() {
         </Link>
       </nav>
 
-      {/* Bottom AI Fix Assistant Banner */}
-      <div className="relative overflow-hidden rounded-3xl p-4 border transition-all bg-gradient-to-b from-[#251745] to-[#190f33] border-purple-500/30 shadow-xl shadow-purple-950/40">
+      {/* Bottom AI Fix Assistant Banner matching screenshot */}
+      <div className="relative overflow-hidden rounded-3xl p-4 border transition-all bg-gradient-to-b from-[#2a174d] to-[#180d33] border-purple-500/30 shadow-xl shadow-purple-950/50 mt-4">
         <div className="relative z-10 space-y-2.5">
-          <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-cyan-400 via-indigo-500 to-purple-600 flex items-center justify-center text-white shadow-md shadow-purple-500/30 text-lg">
-            🤖
+          {/* 3D Robot Avatar icon */}
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-cyan-400 via-indigo-500 to-purple-600 p-0.5 shadow-lg shadow-purple-500/30 flex items-center justify-center">
+            <div className="w-full h-full bg-[#160d2e] rounded-[14px] flex items-center justify-center text-xl">
+              🤖
+            </div>
           </div>
 
           <div>
-            <h4 className="text-xs font-bold text-white">AI Fix Assistant</h4>
-            <p className="text-[10px] text-purple-200/70 mt-0.5 leading-relaxed">
+            <h4 className="text-xs font-bold text-white tracking-tight">AI Fix Assistant</h4>
+            <p className="text-[10px] text-purple-200/70 mt-0.5 leading-relaxed font-normal">
               Get AI-powered fixes, explanations and best practices for your code issues.
             </p>
           </div>
 
           <Link
             href="/ai-insights"
-            className="w-full flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl text-xs font-bold text-white bg-white/10 hover:bg-white/15 border border-white/20 transition-all hover:scale-[1.02] active:scale-95"
+            className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-full text-xs font-bold text-white bg-white/10 hover:bg-white/20 border border-white/20 transition-all hover:scale-[1.02] active:scale-95 shadow-sm"
           >
             <span>Try Now</span>
-            <ArrowRight className="w-3 h-3" />
+            <ArrowRight className="w-3.5 h-3.5" />
           </Link>
         </div>
       </div>
