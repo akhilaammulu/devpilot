@@ -1,0 +1,108 @@
+type Query {
+    currentUser: User
+    repositories: [Repository!]!
+    repository(id: ID!): Repository
+    scans(repositoryId: ID!): [RepositoryScan!]!
+    scan(id: ID!): RepositoryScan
+}
+
+type Mutation {
+    connectRepository(input: ConnectRepositoryInput!): Repository!
+    startScan(input: StartScanInput!): RepositoryScan!
+}
+
+input ConnectRepositoryInput {
+    githubRepoId: String!
+    fullName: String!
+    defaultBranch: String!
+    isPrivate: Boolean!
+    htmlUrl: String!
+}
+
+input StartScanInput {
+    repositoryId: ID!
+    branchName: String!
+    commitSha: String!
+}
+
+type User {
+    id: ID!
+    githubUserId: String!
+    username: String!
+    email: String
+    avatarUrl: String
+    createdAt: String!
+}
+
+type Repository {
+    id: ID!
+    githubRepoId: String!
+    fullName: String!
+    defaultBranch: String!
+    isPrivate: Boolean!
+    htmlUrl: String!
+    connectedAt: String!
+    scans: [RepositoryScan!]!
+}
+
+enum ScanStatus {
+    PENDING
+    RUNNING
+    COMPLETED
+    FAILED
+}
+
+type RepositoryScan {
+    id: ID!
+    repository: Repository!
+    commitSha: String!
+    branchName: String!
+    status: ScanStatus!
+    qualityScore: Int
+    securityScore: Int
+    accessibilityScore: Int
+    startedAt: String!
+    completedAt: String
+    issues: [Issue!]!
+}
+
+enum IssueCategory {
+    CODE_QUALITY
+    SECURITY
+    ACCESSIBILITY
+}
+
+enum IssueSeverity {
+    CRITICAL
+    HIGH
+    MEDIUM
+    LOW
+}
+
+type Issue {
+    id: ID!
+    category: IssueCategory!
+    severity: IssueSeverity!
+    ruleId: String!
+    filePath: String!
+    lineStart: Int
+    lineEnd: Int
+    message: String!
+    snippet: String
+    aiExplanation: String
+    aiFixSuggestion: String
+    createdAt: String!
+}
+
+type PullRequest {
+    id: ID!
+    repository: Repository!
+    githubPrNumber: Int!
+    title: String!
+    sourceBranch: String!
+    targetBranch: String!
+    headSha: String!
+    state: String!
+    openedAt: String!
+    updatedAt: String!
+}
