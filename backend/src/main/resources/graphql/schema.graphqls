@@ -4,11 +4,14 @@ type Query {
     repository(id: ID!): Repository
     scans(repositoryId: ID!): [RepositoryScan!]!
     scan(id: ID!): RepositoryScan
+    issues(scanId: ID!, severity: IssueSeverity, engine: String, status: String): [Issue!]!
+    qualityMetrics(scanId: ID!): QualityMetrics!
 }
 
 type Mutation {
     connectRepository(input: ConnectRepositoryInput!): Repository!
     startScan(input: StartScanInput!): RepositoryScan!
+    updateIssueStatus(id: ID!, status: String!): Issue!
 }
 
 input ConnectRepositoryInput {
@@ -91,7 +94,23 @@ type Issue {
     snippet: String
     aiExplanation: String
     aiFixSuggestion: String
+    engine: String
+    status: String
+    language: String
     createdAt: String!
+}
+
+type QualityMetrics {
+    qualityScore: Int!
+    grade: String!
+    maintainabilityScore: Int!
+    cyclomaticComplexity: Float!
+    openIssuesCount: Int!
+    resolvedIssuesCount: Int!
+    criticalCount: Int!
+    highCount: Int!
+    mediumCount: Int!
+    lowCount: Int!
 }
 
 type PullRequest {

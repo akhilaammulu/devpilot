@@ -1,6 +1,8 @@
 package com.devpilot.controller;
 
 import com.devpilot.model.Issue;
+import com.devpilot.model.IssueSeverity;
+import com.devpilot.model.QualityMetrics;
 import com.devpilot.model.RepositoryScan;
 import com.devpilot.repository.IssueRepository;
 import com.devpilot.service.ScanService;
@@ -35,9 +37,22 @@ public class GraphQLScanController {
         return scanService.getScanById(id).orElse(null);
     }
 
+    @QueryMapping
+    public List<Issue> issues(@Argument UUID scanId,
+                              @Argument IssueSeverity severity,
+                              @Argument String engine,
+                              @Argument String status) {
+        return scanService.getIssues(scanId, severity, engine, status);
+    }
+
+    @QueryMapping
+    public QualityMetrics qualityMetrics(@Argument UUID scanId) {
+        return scanService.getQualityMetrics(scanId);
+    }
+
     @SchemaMapping(typeName = "RepositoryScan", field = "issues")
     public List<Issue> getIssuesForScan(RepositoryScan scan) {
-        return issueRepository.findByScanId(scan.getId());
+        return issueRepository.findByScanIdOrderByCreatedAtDesc(scan.getId());
     }
 
     @MutationMapping
@@ -47,5 +62,10 @@ public class GraphQLScanController {
         String commitSha = (String) input.getOrDefault("commitSha", "HEAD");
 
         return scanService.startScan(repositoryId, branchName, commitSha);
+    }
+
+    @MutationMapping
+    public Issue updateIssueStatus(@Argument UUID id, @Argument String status) {
+        return scanService.updateIssueStatus(id, status);
     }
 }

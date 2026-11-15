@@ -51,6 +51,15 @@ public class Issue {
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt = Instant.now();
 
+    @Column(length = 50)
+    private String engine;
+
+    @Column(length = 50)
+    private String status = "OPEN";
+
+    @Column(length = 50)
+    private String language;
+
     public Issue() {
     }
 
@@ -168,5 +177,29 @@ public class Issue {
 
     public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getEngine() {
+        return engine;
+    }
+
+    public void setEngine(String engine) {
+        this.engine = engine;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
     }
 }

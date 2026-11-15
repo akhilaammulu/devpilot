@@ -20,3 +20,4 @@ target/
 .DS_Store
 *.env.local
 *.env.*.local
+proxy-3001.js
