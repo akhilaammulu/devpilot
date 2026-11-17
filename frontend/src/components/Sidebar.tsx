@@ -103,8 +103,12 @@ export function Sidebar() {
               </Link>
 
               <Link
-                href="/scans"
-                className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all"
+                href="/security"
+                className={`flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
+                  pathname === "/security"
+                    ? "bg-gradient-to-r from-rose-600 via-pink-600 to-purple-600 text-white border border-rose-400/40 shadow-lg shadow-rose-600/30"
+                    : "text-slate-300 hover:text-white hover:bg-white/5 font-medium"
+                }`}
               >
                 <Shield className="w-4 h-4 text-rose-400" />
                 <span>Security</span>

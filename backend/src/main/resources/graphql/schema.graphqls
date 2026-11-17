@@ -4,13 +4,15 @@ type Query {
     repository(id: ID!): Repository
     scans(repositoryId: ID!): [RepositoryScan!]!
     scan(id: ID!): RepositoryScan
-    issues(scanId: ID!, severity: IssueSeverity, engine: String, status: String): [Issue!]!
+    issues(scanId: ID!, category: IssueCategory, severity: IssueSeverity, engine: String, status: String): [Issue!]!
     qualityMetrics(scanId: ID!): QualityMetrics!
+    securityMetrics(scanId: ID!): SecurityMetrics!
 }
 
 type Mutation {
     connectRepository(input: ConnectRepositoryInput!): Repository!
     startScan(input: StartScanInput!): RepositoryScan!
+    startSecurityScan(input: StartScanInput!): RepositoryScan!
     updateIssueStatus(id: ID!, status: String!): Issue!
 }
 
@@ -126,6 +128,20 @@ type QualityMetrics {
     highCount: Int!
     mediumCount: Int!
     lowCount: Int!
+}
+
+type SecurityMetrics {
+    securityScore: Int!
+    grade: String!
+    openVulnerabilitiesCount: Int!
+    resolvedVulnerabilitiesCount: Int!
+    criticalCount: Int!
+    highCount: Int!
+    mediumCount: Int!
+    lowCount: Int!
+    dependencyIssuesCount: Int!
+    secretLeaksCount: Int!
+    configurationIssuesCount: Int!
 }
 
 type PullRequest {

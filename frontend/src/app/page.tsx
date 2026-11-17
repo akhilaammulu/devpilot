@@ -8,8 +8,8 @@ import { CodeQualityExplorerView } from "@/components/issues/CodeQualityExplorer
 export default function HomePage() {
   return (
     <div className="min-h-screen flex flex-col transition-colors bg-[#f4f6fb] dark:bg-[#080b14] text-slate-900 dark:text-slate-100">
-      {/* Top Header Bar matching Screenshot */}
-      <Header currentPhase="Phase 2 - Prototype (Static Analysis)" />
+      {/* Top Header Bar */}
+      <Header currentPhase="Phase 3 - Security Analysis" />
 
       {/* Main Layout: Gradient Sidebar + Main Content */}
       <div className="flex-1 flex">
