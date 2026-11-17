@@ -115,8 +115,12 @@ export function Sidebar() {
               </Link>
 
               <Link
-                href="/scans"
-                className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all"
+                href="/accessibility"
+                className={`flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
+                  pathname === "/accessibility"
+                    ? "bg-gradient-to-r from-emerald-600 via-teal-600 to-indigo-600 text-white border border-emerald-400/40 shadow-lg shadow-emerald-600/30"
+                    : "text-slate-300 hover:text-white hover:bg-white/5 font-medium"
+                }`}
               >
                 <Eye className="w-4 h-4 text-emerald-400" />
                 <span>Accessibility</span>

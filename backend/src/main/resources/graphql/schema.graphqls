@@ -7,12 +7,14 @@ type Query {
     issues(scanId: ID!, category: IssueCategory, severity: IssueSeverity, engine: String, status: String): [Issue!]!
     qualityMetrics(scanId: ID!): QualityMetrics!
     securityMetrics(scanId: ID!): SecurityMetrics!
+    accessibilityMetrics(scanId: ID!): AccessibilityMetrics!
 }
 
 type Mutation {
     connectRepository(input: ConnectRepositoryInput!): Repository!
     startScan(input: StartScanInput!): RepositoryScan!
     startSecurityScan(input: StartScanInput!): RepositoryScan!
+    startAccessibilityScan(input: StartScanInput!): RepositoryScan!
     updateIssueStatus(id: ID!, status: String!): Issue!
 }
 
@@ -142,6 +144,22 @@ type SecurityMetrics {
     dependencyIssuesCount: Int!
     secretLeaksCount: Int!
     configurationIssuesCount: Int!
+}
+
+type AccessibilityMetrics {
+    accessibilityScore: Int!
+    grade: String!
+    wcagLevel: String!
+    openViolationsCount: Int!
+    resolvedViolationsCount: Int!
+    criticalCount: Int!
+    highCount: Int!
+    mediumCount: Int!
+    lowCount: Int!
+    perceivableCount: Int!
+    operableCount: Int!
+    understandableCount: Int!
+    robustCount: Int!
 }
 
 type PullRequest {
