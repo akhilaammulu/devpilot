@@ -20,7 +20,7 @@ interface HeaderProps {
   onSearchChange?: (query: string) => void;
 }
 
-export function Header({ currentPhase = "Phase 3 - Security Analysis", onSearchChange }: HeaderProps) {
+export function Header({ currentPhase = "Phase 4 - Accessibility Analysis", onSearchChange }: HeaderProps) {
   const { theme, toggleTheme } = useTheme();
   const { user, logout } = useAuth();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -30,8 +30,8 @@ export function Header({ currentPhase = "Phase 3 - Security Analysis", onSearchC
   const phases = [
     { num: 1, name: "Foundation", status: "Completed" },
     { num: 2, name: "Prototype (Static Analysis)", status: "Completed" },
-    { num: 3, name: "Security Analysis", status: "Active" },
-    { num: 4, name: "Accessibility Analysis", status: "Upcoming" },
+    { num: 3, name: "Security Analysis", status: "Completed" },
+    { num: 4, name: "Accessibility Analysis", status: "Active" },
     { num: 5, name: "AI Analysis", status: "Upcoming" },
     { num: 6, name: "Repository-Aware RAG", status: "Upcoming" },
     { num: 7, name: "GitHub Pull Request Analysis", status: "Upcoming" },
@@ -95,8 +95,8 @@ export function Header({ currentPhase = "Phase 3 - Security Analysis", onSearchC
                   <div
                     key={p.num}
                     className={`flex items-center justify-between px-3 py-2 rounded-xl text-xs ${
-                      p.num === 3
-                        ? "bg-purple-500/10 text-purple-600 dark:text-purple-300 font-bold"
+                      p.num === 4
+                        ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-300 font-bold"
                         : "text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800/50"
                     }`}
                   >

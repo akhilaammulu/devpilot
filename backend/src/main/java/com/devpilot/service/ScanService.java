@@ -1,5 +1,8 @@
 package com.devpilot.service;
 
+import com.devpilot.accessibility.AccessibilityMetrics;
+import com.devpilot.accessibility.AccessibilityScanOrchestrator;
+import com.devpilot.accessibility.AccessibilityScoreCalculator;
 import com.devpilot.analysis.CodeQualityOrchestrator;
 import com.devpilot.analysis.QualityScoreCalculator;
 import com.devpilot.model.*;
@@ -32,6 +35,8 @@ public class ScanService {
     private final QualityScoreCalculator qualityScoreCalculator;
     private final SecurityScanOrchestrator securityOrchestrator;
     private final SecurityScoreCalculator securityScoreCalculator;
+    private final AccessibilityScanOrchestrator accessibilityOrchestrator;
+    private final AccessibilityScoreCalculator accessibilityScoreCalculator;
 
     @Value("${devpilot.workspace.root:/Users/akhilagadipally/Desktop/devpilot}")
     private String defaultWorkspaceRoot;
@@ -42,7 +47,9 @@ public class ScanService {
                        CodeQualityOrchestrator qualityOrchestrator,
                        QualityScoreCalculator qualityScoreCalculator,
                        SecurityScanOrchestrator securityOrchestrator,
-                       SecurityScoreCalculator securityScoreCalculator) {
+                       SecurityScoreCalculator securityScoreCalculator,
+                       AccessibilityScanOrchestrator accessibilityOrchestrator,
+                       AccessibilityScoreCalculator accessibilityScoreCalculator) {
         this.scanRepository = scanRepository;
         this.repositoryRepository = repositoryRepository;
         this.issueRepository = issueRepository;
@@ -50,6 +57,8 @@ public class ScanService {
         this.qualityScoreCalculator = qualityScoreCalculator;
         this.securityOrchestrator = securityOrchestrator;
         this.securityScoreCalculator = securityScoreCalculator;
+        this.accessibilityOrchestrator = accessibilityOrchestrator;
+        this.accessibilityScoreCalculator = accessibilityScoreCalculator;
     }
 
     public List<RepositoryScan> getScansByRepositoryId(UUID repositoryId) {
@@ -89,15 +98,50 @@ public class ScanService {
             issueRepository.save(issue);
         }
 
-        // 3. Combine telemetry reports from all engines
+        // 3. Execute Accessibility Analysis (Phase 4: Playwright + axe-core)
+        AccessibilityScanOrchestrator.AccessibilityScanResult a11yResult =
+                accessibilityOrchestrator.executeAccessibilityScan(savedScan, repoPath, "http://localhost:3001");
+
+        for (Issue issue : a11yResult.getIssues()) {
+            issueRepository.save(issue);
+        }
+
+        // 4. Combine telemetry reports from all engines
         List<EngineExecutionReport> combinedReports = new ArrayList<>(qualityResult.getEngineReports());
         combinedReports.addAll(securityResult.getEngineReports());
+        combinedReports.addAll(a11yResult.getEngineReports());
 
         savedScan.setStatus(ScanStatus.COMPLETED);
         savedScan.setCompletedAt(Instant.now());
         savedScan.setQualityScore(qualityResult.getMetrics().getQualityScore());
         savedScan.setSecurityScore(securityResult.getMetrics().getSecurityScore());
+        savedScan.setAccessibilityScore(a11yResult.getMetrics().getAccessibilityScore());
         savedScan.setEngineReports(combinedReports);
+
+        return scanRepository.save(savedScan);
+    }
+
+    @Transactional
+    public RepositoryScan startAccessibilityScan(UUID repositoryId, String branchName, String commitSha) {
+        Repository repository = repositoryRepository.findById(repositoryId)
+                .orElseThrow(() -> new IllegalArgumentException("Repository not found with id: " + repositoryId));
+
+        RepositoryScan scan = new RepositoryScan(repository, branchName, commitSha);
+        scan.setStatus(ScanStatus.RUNNING);
+        RepositoryScan savedScan = scanRepository.save(scan);
+
+        Path repoPath = Paths.get(defaultWorkspaceRoot);
+        AccessibilityScanOrchestrator.AccessibilityScanResult a11yResult =
+                accessibilityOrchestrator.executeAccessibilityScan(savedScan, repoPath, "http://localhost:3001");
+
+        for (Issue issue : a11yResult.getIssues()) {
+            issueRepository.save(issue);
+        }
+
+        savedScan.setStatus(ScanStatus.COMPLETED);
+        savedScan.setCompletedAt(Instant.now());
+        savedScan.setAccessibilityScore(a11yResult.getMetrics().getAccessibilityScore());
+        savedScan.setEngineReports(a11yResult.getEngineReports());
 
         return scanRepository.save(savedScan);
     }
@@ -123,6 +167,14 @@ public class ScanService {
         return securityScoreCalculator.calculateFromIssues(issues);
     }
 
+    public AccessibilityMetrics getAccessibilityMetrics(UUID scanId) {
+        List<Issue> issues = issueRepository.findByScanId(scanId);
+        List<Issue> a11yIssues = issues.stream()
+                .filter(i -> i.getCategory() == IssueCategory.ACCESSIBILITY)
+                .collect(Collectors.toList());
+        return accessibilityOrchestrator.computeMetricsForScan(a11yIssues);
+    }
+
     @Transactional
     public Issue updateIssueStatus(UUID issueId, String status) {
         Issue issue = issueRepository.findById(issueId)
@@ -131,12 +183,14 @@ public class ScanService {
         issue.setStatus(status.toUpperCase());
         Issue saved = issueRepository.save(issue);
 
-        // Recalculate scan quality and security scores based on active issues
+        // Recalculate scan quality, security, and accessibility scores based on active issues
         if (issue.getScan() != null) {
             QualityMetrics qm = getQualityMetrics(issue.getScan().getId());
             SecurityMetrics sm = getSecurityMetrics(issue.getScan().getId());
+            AccessibilityMetrics am = getAccessibilityMetrics(issue.getScan().getId());
             issue.getScan().setQualityScore(qm.getQualityScore());
             issue.getScan().setSecurityScore(sm.getSecurityScore());
+            issue.getScan().setAccessibilityScore(am.getAccessibilityScore());
             scanRepository.save(issue.getScan());
         }
 

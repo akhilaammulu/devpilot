@@ -10,7 +10,10 @@ public enum AnalysisEngine {
     // Security Analysis Engines (Phase 3)
     DEPENDENCY_CHECK("DependencyCheck", "Polyglot"),
     SECRET_SCANNER("SecretDetection", "Polyglot"),
-    CONFIG_AUDIT("ConfigAudit", "Configuration");
+    CONFIG_AUDIT("ConfigAudit", "Configuration"),
+
+    // Accessibility Analysis Engines (Phase 4)
+    AXE_CORE("AxeCore", "HTML/DOM");
 
     private final String displayName;
     private final String language;

@@ -1,5 +1,6 @@
 package com.devpilot.controller;
 
+import com.devpilot.accessibility.AccessibilityMetrics;
 import com.devpilot.model.Issue;
 import com.devpilot.model.IssueCategory;
 import com.devpilot.model.IssueSeverity;
@@ -58,6 +59,11 @@ public class GraphQLScanController {
         return scanService.getSecurityMetrics(scanId);
     }
 
+    @QueryMapping
+    public AccessibilityMetrics accessibilityMetrics(@Argument UUID scanId) {
+        return scanService.getAccessibilityMetrics(scanId);
+    }
+
     @SchemaMapping(typeName = "RepositoryScan", field = "issues")
     public List<Issue> getIssuesForScan(RepositoryScan scan) {
         return issueRepository.findByScanIdOrderByCreatedAtDesc(scan.getId());
@@ -75,6 +81,15 @@ public class GraphQLScanController {
     @MutationMapping
     public RepositoryScan startSecurityScan(@Argument Map<String, Object> input) {
         return startScan(input);
+    }
+
+    @MutationMapping
+    public RepositoryScan startAccessibilityScan(@Argument Map<String, Object> input) {
+        UUID repositoryId = UUID.fromString((String) input.get("repositoryId"));
+        String branchName = (String) input.getOrDefault("branchName", "main");
+        String commitSha = (String) input.getOrDefault("commitSha", "HEAD");
+
+        return scanService.startAccessibilityScan(repositoryId, branchName, commitSha);
     }
 
     @MutationMapping

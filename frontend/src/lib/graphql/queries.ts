@@ -225,6 +225,70 @@ export const GET_SECURITY_METRICS = gql`
   }
 `;
 
+export const GET_ACCESSIBILITY_METRICS = gql`
+  query GetAccessibilityMetrics($scanId: ID!) {
+    accessibilityMetrics(scanId: $scanId) {
+      accessibilityScore
+      grade
+      wcagLevel
+      openViolationsCount
+      resolvedViolationsCount
+      criticalCount
+      highCount
+      mediumCount
+      lowCount
+      perceivableCount
+      operableCount
+      understandableCount
+      robustCount
+    }
+  }
+`;
+
+export const START_ACCESSIBILITY_SCAN = gql`
+  mutation StartAccessibilityScan($input: StartScanInput!) {
+    startAccessibilityScan(input: $input) {
+      id
+      commitSha
+      branchName
+      status
+      qualityScore
+      securityScore
+      accessibilityScore
+      startedAt
+      completedAt
+      engineReports {
+        engine
+        status
+        findingsCount
+        executionTimeMs
+        message
+      }
+      issues {
+        id
+        category
+        severity
+        ruleId
+        filePath
+        lineStart
+        lineEnd
+        startLine
+        endLine
+        startColumn
+        endColumn
+        message
+        snippet
+        aiExplanation
+        aiFixSuggestion
+        engine
+        status
+        language
+        createdAt
+      }
+    }
+  }
+`;
+
 export const UPDATE_ISSUE_STATUS = gql`
   mutation UpdateIssueStatus($id: ID!, $status: String!) {
     updateIssueStatus(id: $id, status: $status) {
