@@ -2,13 +2,17 @@ package com.devpilot.model;
 
 public class EngineExecutionReport {
 
-    private String engine; // CHECKSTYLE, PMD, SPOTBUGS, ESLINT
+    private String engine; // CHECKSTYLE, PMD, SPOTBUGS, ESLINT, DEPENDENCY_CHECK, SECRET_SCANNER, CONFIG_AUDIT
     private String status; // COMPLETED, SKIPPED, UNAVAILABLE, FAILED
     private int findingsCount;
     private long executionTimeMs;
     private String message;
 
     public EngineExecutionReport() {
+    }
+
+    public EngineExecutionReport(String engine, String status, int findingsCount, long executionTimeMs) {
+        this(engine, status, findingsCount, executionTimeMs, null);
     }
 
     public EngineExecutionReport(String engine, String status, int findingsCount, long executionTimeMs, String message) {

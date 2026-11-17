@@ -1,10 +1,12 @@
 package com.devpilot.controller;
 
 import com.devpilot.model.Issue;
+import com.devpilot.model.IssueCategory;
 import com.devpilot.model.IssueSeverity;
 import com.devpilot.model.QualityMetrics;
 import com.devpilot.model.RepositoryScan;
 import com.devpilot.repository.IssueRepository;
+import com.devpilot.security.SecurityMetrics;
 import com.devpilot.service.ScanService;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
@@ -39,15 +41,21 @@ public class GraphQLScanController {
 
     @QueryMapping
     public List<Issue> issues(@Argument UUID scanId,
+                              @Argument IssueCategory category,
                               @Argument IssueSeverity severity,
                               @Argument String engine,
                               @Argument String status) {
-        return scanService.getIssues(scanId, severity, engine, status);
+        return scanService.getIssues(scanId, category, severity, engine, status);
     }
 
     @QueryMapping
     public QualityMetrics qualityMetrics(@Argument UUID scanId) {
         return scanService.getQualityMetrics(scanId);
+    }
+
+    @QueryMapping
+    public SecurityMetrics securityMetrics(@Argument UUID scanId) {
+        return scanService.getSecurityMetrics(scanId);
     }
 
     @SchemaMapping(typeName = "RepositoryScan", field = "issues")
@@ -62,6 +70,11 @@ public class GraphQLScanController {
         String commitSha = (String) input.getOrDefault("commitSha", "HEAD");
 
         return scanService.startScan(repositoryId, branchName, commitSha);
+    }
+
+    @MutationMapping
+    public RepositoryScan startSecurityScan(@Argument Map<String, Object> input) {
+        return startScan(input);
     }
 
     @MutationMapping
