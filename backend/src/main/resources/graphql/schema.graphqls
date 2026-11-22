@@ -9,6 +9,8 @@ type Query {
     securityMetrics(scanId: ID!): SecurityMetrics!
     accessibilityMetrics(scanId: ID!): AccessibilityMetrics!
     explainIssue(issueId: ID!): AiIssueAnalysis!
+    askRepository(repositoryId: ID!, query: String!): RagAnswer!
+    repositoryIndexStatus(repositoryId: ID!): RepositoryIndexResult
 }
 
 type Mutation {
@@ -18,6 +20,7 @@ type Mutation {
     startAccessibilityScan(input: StartScanInput!): RepositoryScan!
     generateAiAnalysis(issueId: ID!): AiIssueAnalysis!
     generateBulkAiAnalysis(scanId: ID!): [AiIssueAnalysis!]!
+    indexRepository(repositoryId: ID!): RepositoryIndexResult!
     updateIssueStatus(id: ID!, status: String!): Issue!
 }
 
@@ -192,4 +195,29 @@ type AiIssueAnalysis {
     confidenceScore: Float!
     modelUsed: String!
     createdAt: String!
+}
+
+type RagAnswer {
+    query: String!
+    answer: String!
+    confidenceScore: Float!
+    sources: [RagSourceCitation!]!
+    modelUsed: String!
+    createdAt: String!
+}
+
+type RagSourceCitation {
+    filePath: String!
+    startLine: Int!
+    endLine: Int!
+    snippet: String!
+    relevanceScore: Float!
+}
+
+type RepositoryIndexResult {
+    repositoryId: ID!
+    filesIndexed: Int!
+    chunksCreated: Int!
+    status: String!
+    indexedAt: String!
 }

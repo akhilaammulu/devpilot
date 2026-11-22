@@ -47,6 +47,10 @@ public class LlmClient {
                 .build();
     }
 
+    public boolean hasApiKey() {
+        return apiKey != null && !apiKey.isBlank();
+    }
+
     public AiIssueAnalysis analyzeIssue(Issue issue, Path repoRoot) {
         // If an API key and endpoint are provided, attempt live LLM invocation
         if (apiKey != null && !apiKey.isBlank() && endpoint != null && !endpoint.isBlank()) {

@@ -363,3 +363,46 @@ export const GENERATE_BULK_AI_ANALYSIS = gql`
     }
   }
 `;
+
+export const ASK_REPOSITORY = gql`
+  query AskRepository($repositoryId: ID!, $query: String!) {
+    askRepository(repositoryId: $repositoryId, query: $query) {
+      query
+      answer
+      confidenceScore
+      modelUsed
+      createdAt
+      sources {
+        filePath
+        startLine
+        endLine
+        snippet
+        relevanceScore
+      }
+    }
+  }
+`;
+
+export const INDEX_REPOSITORY = gql`
+  mutation IndexRepository($repositoryId: ID!) {
+    indexRepository(repositoryId: $repositoryId) {
+      repositoryId
+      filesIndexed
+      chunksCreated
+      status
+      indexedAt
+    }
+  }
+`;
+
+export const GET_REPOSITORY_INDEX_STATUS = gql`
+  query GetRepositoryIndexStatus($repositoryId: ID!) {
+    repositoryIndexStatus(repositoryId: $repositoryId) {
+      repositoryId
+      filesIndexed
+      chunksCreated
+      status
+      indexedAt
+    }
+  }
+`;
