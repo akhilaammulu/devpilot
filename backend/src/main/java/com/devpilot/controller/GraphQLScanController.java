@@ -8,6 +8,10 @@ import com.devpilot.model.IssueCategory;
 import com.devpilot.model.IssueSeverity;
 import com.devpilot.model.QualityMetrics;
 import com.devpilot.model.RepositoryScan;
+import com.devpilot.rag.RagAnswer;
+import com.devpilot.rag.RagService;
+import com.devpilot.rag.RepositoryIndexResult;
+import com.devpilot.rag.RepositoryIngestionService;
 import com.devpilot.repository.IssueRepository;
 import com.devpilot.security.SecurityMetrics;
 import com.devpilot.service.ScanService;
@@ -27,11 +31,19 @@ public class GraphQLScanController {
     private final ScanService scanService;
     private final IssueRepository issueRepository;
     private final AiAnalysisService aiAnalysisService;
+    private final RagService ragService;
+    private final RepositoryIngestionService repositoryIngestionService;
 
-    public GraphQLScanController(ScanService scanService, IssueRepository issueRepository, AiAnalysisService aiAnalysisService) {
+    public GraphQLScanController(ScanService scanService,
+                                 IssueRepository issueRepository,
+                                 AiAnalysisService aiAnalysisService,
+                                 RagService ragService,
+                                 RepositoryIngestionService repositoryIngestionService) {
         this.scanService = scanService;
         this.issueRepository = issueRepository;
         this.aiAnalysisService = aiAnalysisService;
+        this.ragService = ragService;
+        this.repositoryIngestionService = repositoryIngestionService;
     }
 
     @QueryMapping
@@ -114,5 +126,21 @@ public class GraphQLScanController {
     @MutationMapping
     public Issue updateIssueStatus(@Argument UUID id, @Argument String status) {
         return scanService.updateIssueStatus(id, status);
+    }
+
+    @QueryMapping
+    public RagAnswer askRepository(@Argument UUID repositoryId, @Argument String query) {
+        return ragService.askRepository(repositoryId, query);
+    }
+
+    @QueryMapping
+    public RepositoryIndexResult repositoryIndexStatus(@Argument UUID repositoryId) {
+        int count = repositoryIngestionService.getIndexedChunkCount(repositoryId);
+        return new RepositoryIndexResult(repositoryId, count > 0 ? count / 3 : 0, count, count > 0 ? "INDEXED" : "NOT_INDEXED");
+    }
+
+    @MutationMapping
+    public RepositoryIndexResult indexRepository(@Argument UUID repositoryId) {
+        return repositoryIngestionService.indexRepository(repositoryId);
     }
 }
