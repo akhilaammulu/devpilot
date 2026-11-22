@@ -53,6 +53,9 @@ export const GET_REPOSITORIES = gql`
           snippet
           aiExplanation
           aiFixSuggestion
+          aiWhyItMatters
+          aiSuggestedUnitTest
+          aiModelUsed
           engine
           status
           language
@@ -111,6 +114,9 @@ export const START_SCAN = gql`
         snippet
         aiExplanation
         aiFixSuggestion
+        aiWhyItMatters
+        aiSuggestedUnitTest
+        aiModelUsed
         engine
         status
         language
@@ -155,6 +161,9 @@ export const START_SECURITY_SCAN = gql`
         snippet
         aiExplanation
         aiFixSuggestion
+        aiWhyItMatters
+        aiSuggestedUnitTest
+        aiModelUsed
         engine
         status
         language
@@ -182,6 +191,9 @@ export const GET_SCAN_ISSUES = gql`
       snippet
       aiExplanation
       aiFixSuggestion
+      aiWhyItMatters
+      aiSuggestedUnitTest
+      aiModelUsed
       engine
       status
       language
@@ -280,6 +292,9 @@ export const START_ACCESSIBILITY_SCAN = gql`
         snippet
         aiExplanation
         aiFixSuggestion
+        aiWhyItMatters
+        aiSuggestedUnitTest
+        aiModelUsed
         engine
         status
         language
@@ -294,6 +309,57 @@ export const UPDATE_ISSUE_STATUS = gql`
     updateIssueStatus(id: $id, status: $status) {
       id
       status
+    }
+  }
+`;
+
+export const EXPLAIN_ISSUE = gql`
+  query ExplainIssue($issueId: ID!) {
+    explainIssue(issueId: $issueId) {
+      issueId
+      ruleId
+      title
+      whyItMatters
+      remediationGuidance
+      codeFix
+      suggestedUnitTest
+      confidenceScore
+      modelUsed
+      createdAt
+    }
+  }
+`;
+
+export const GENERATE_AI_ANALYSIS = gql`
+  mutation GenerateAiAnalysis($issueId: ID!) {
+    generateAiAnalysis(issueId: $issueId) {
+      issueId
+      ruleId
+      title
+      whyItMatters
+      remediationGuidance
+      codeFix
+      suggestedUnitTest
+      confidenceScore
+      modelUsed
+      createdAt
+    }
+  }
+`;
+
+export const GENERATE_BULK_AI_ANALYSIS = gql`
+  mutation GenerateBulkAiAnalysis($scanId: ID!) {
+    generateBulkAiAnalysis(scanId: $scanId) {
+      issueId
+      ruleId
+      title
+      whyItMatters
+      remediationGuidance
+      codeFix
+      suggestedUnitTest
+      confidenceScore
+      modelUsed
+      createdAt
     }
   }
 `;

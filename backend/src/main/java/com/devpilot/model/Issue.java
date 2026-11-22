@@ -54,6 +54,15 @@ public class Issue {
     @Column(name = "ai_fix_suggestion", columnDefinition = "TEXT")
     private String aiFixSuggestion;
 
+    @Column(name = "ai_why_it_matters", columnDefinition = "TEXT")
+    private String aiWhyItMatters;
+
+    @Column(name = "ai_suggested_unit_test", columnDefinition = "TEXT")
+    private String aiSuggestedUnitTest;
+
+    @Column(name = "ai_model_used", length = 100)
+    private String aiModelUsed;
+
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt = Instant.now();
 
@@ -215,6 +224,30 @@ public class Issue {
 
     public void setAiFixSuggestion(String aiFixSuggestion) {
         this.aiFixSuggestion = aiFixSuggestion;
+    }
+
+    public String getAiWhyItMatters() {
+        return aiWhyItMatters;
+    }
+
+    public void setAiWhyItMatters(String aiWhyItMatters) {
+        this.aiWhyItMatters = aiWhyItMatters;
+    }
+
+    public String getAiSuggestedUnitTest() {
+        return aiSuggestedUnitTest;
+    }
+
+    public void setAiSuggestedUnitTest(String aiSuggestedUnitTest) {
+        this.aiSuggestedUnitTest = aiSuggestedUnitTest;
+    }
+
+    public String getAiModelUsed() {
+        return aiModelUsed;
+    }
+
+    public void setAiModelUsed(String aiModelUsed) {
+        this.aiModelUsed = aiModelUsed;
     }
 
     public Instant getCreatedAt() {

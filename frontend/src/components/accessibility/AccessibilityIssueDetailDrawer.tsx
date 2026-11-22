@@ -16,9 +16,14 @@ import {
   MousePointerClick,
 } from "lucide-react";
 import { AccessibilityIssue } from "@/data/mockAccessibilityIssues";
+import { AiRemediationModal } from "@/components/ai/AiRemediationModal";
 
 interface AccessibilityIssueDetailDrawerProps {
-  issue: AccessibilityIssue | null;
+  issue: (AccessibilityIssue & {
+    aiWhyItMatters?: string;
+    aiSuggestedUnitTest?: string;
+    aiModelUsed?: string;
+  }) | null;
   onClose: () => void;
   onToggleResolve: (id: string) => void;
 }
@@ -29,6 +34,7 @@ export function AccessibilityIssueDetailDrawer({
   onToggleResolve,
 }: AccessibilityIssueDetailDrawerProps) {
   const [copied, setCopied] = useState(false);
+  const [showAiModal, setShowAiModal] = useState(false);
 
   if (!issue) return null;
 
@@ -133,12 +139,22 @@ export function AccessibilityIssueDetailDrawer({
 
           {/* Assistive Tech Impact Explanation */}
           <div className="p-4 rounded-2xl bg-emerald-50/70 dark:bg-emerald-950/20 border border-emerald-200/80 dark:border-emerald-900/40 space-y-2">
-            <div className="flex items-center gap-2 text-xs font-bold text-emerald-800 dark:text-emerald-300">
-              <Eye className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-              <span>User & Screen Reader Impact</span>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-xs font-bold text-emerald-800 dark:text-emerald-300">
+                <Eye className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                <span>User & Screen Reader Impact</span>
+              </div>
+
+              <button
+                onClick={() => setShowAiModal(true)}
+                className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-purple-600 text-white hover:bg-purple-700 shadow-sm transition-all"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Deep AI Analysis & Test</span>
+              </button>
             </div>
             <p className="text-xs text-emerald-900/80 dark:text-emerald-200/80 leading-relaxed">
-              {issue.aiExplanation}
+              {issue.aiWhyItMatters || issue.aiExplanation}
             </p>
           </div>
 
@@ -211,6 +227,27 @@ export function AccessibilityIssueDetailDrawer({
           </button>
         </div>
       </aside>
+
+      <AiRemediationModal
+        isOpen={showAiModal}
+        onClose={() => setShowAiModal(false)}
+        issue={{
+          id: issue.id,
+          ruleId: issue.ruleId,
+          category: "ACCESSIBILITY",
+          severity: issue.severity,
+          filePath: issue.filePath,
+          lineStart: issue.lineStart,
+          lineEnd: issue.lineEnd,
+          message: issue.message,
+          codeSnippet: issue.snippet,
+          aiWhyItMatters: issue.aiWhyItMatters,
+          aiExplanation: issue.aiExplanation,
+          proposedFix: issue.proposedFix,
+          aiSuggestedUnitTest: issue.aiSuggestedUnitTest,
+          modelUsed: issue.aiModelUsed,
+        }}
+      />
     </div>
   );
 }

@@ -86,6 +86,9 @@ export function CodeQualityExplorerView() {
             codeSnippet: iss.snippet || `${iss.startLine || 1}: // Source code location\n${iss.message}`,
             aiExplanation: iss.aiExplanation || "Automated static analysis finding detected during repository scan.",
             proposedFix: iss.aiFixSuggestion || "// Inspect and conform to code quality guidelines.",
+            aiWhyItMatters: iss.aiWhyItMatters,
+            aiSuggestedUnitTest: iss.aiSuggestedUnitTest,
+            aiModelUsed: iss.aiModelUsed,
             status: (iss.status || "OPEN") as "OPEN" | "RESOLVED",
           }));
           setIssues(mappedIssues);

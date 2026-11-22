@@ -98,6 +98,9 @@ export function SecurityExplorerView() {
               snippet: iss.snippet || `${iss.startLine || 1}: // Security finding\n${iss.message}`,
               aiExplanation: iss.aiExplanation || "Automated security scanner finding detected in repository.",
               proposedFix: iss.aiFixSuggestion || "// Apply security remediation patch.",
+              aiWhyItMatters: iss.aiWhyItMatters,
+              aiSuggestedUnitTest: iss.aiSuggestedUnitTest,
+              aiModelUsed: iss.aiModelUsed,
               status: (iss.status || "OPEN") as "OPEN" | "RESOLVED",
             }));
             setIssues(mappedIssues);
@@ -171,6 +174,9 @@ export function SecurityExplorerView() {
               snippet: iss.snippet || `${iss.startLine || 1}: // Security finding\n${iss.message}`,
               aiExplanation: iss.aiExplanation || "Automated security scanner finding detected in repository.",
               proposedFix: iss.aiFixSuggestion || "// Apply security remediation patch.",
+              aiWhyItMatters: iss.aiWhyItMatters,
+              aiSuggestedUnitTest: iss.aiSuggestedUnitTest,
+              aiModelUsed: iss.aiModelUsed,
               status: (iss.status || "OPEN") as "OPEN" | "RESOLVED",
             }));
             setIssues(mappedIssues);
