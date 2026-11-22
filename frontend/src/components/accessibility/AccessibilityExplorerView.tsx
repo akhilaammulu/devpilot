@@ -116,6 +116,9 @@ export function AccessibilityExplorerView() {
                 snippet: iss.snippet || `<div class="a11y-element">...</div>`,
                 aiExplanation: iss.aiExplanation || "Element violates WCAG 2.1 accessibility criteria.",
                 proposedFix: iss.aiFixSuggestion || `// Add accessible attributes\naria-label="Action description"`,
+                aiWhyItMatters: iss.aiWhyItMatters,
+                aiSuggestedUnitTest: iss.aiSuggestedUnitTest,
+                aiModelUsed: iss.aiModelUsed,
                 helpUrl: "https://dequeuniversity.com/rules/axe/4.14",
                 status: (iss.status || "OPEN") as "OPEN" | "RESOLVED",
               };
@@ -205,6 +208,9 @@ export function AccessibilityExplorerView() {
                 snippet: iss.snippet || `<div class="a11y-element">...</div>`,
                 aiExplanation: iss.aiExplanation || "Element violates WCAG 2.1 accessibility criteria.",
                 proposedFix: iss.aiFixSuggestion || `// Add accessible attributes\naria-label="Action description"`,
+                aiWhyItMatters: iss.aiWhyItMatters,
+                aiSuggestedUnitTest: iss.aiSuggestedUnitTest,
+                aiModelUsed: iss.aiModelUsed,
                 helpUrl: "https://dequeuniversity.com/rules/axe/4.14",
                 status: (iss.status || "OPEN") as "OPEN" | "RESOLVED",
               };

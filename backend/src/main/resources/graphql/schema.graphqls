@@ -8,6 +8,7 @@ type Query {
     qualityMetrics(scanId: ID!): QualityMetrics!
     securityMetrics(scanId: ID!): SecurityMetrics!
     accessibilityMetrics(scanId: ID!): AccessibilityMetrics!
+    explainIssue(issueId: ID!): AiIssueAnalysis!
 }
 
 type Mutation {
@@ -15,6 +16,8 @@ type Mutation {
     startScan(input: StartScanInput!): RepositoryScan!
     startSecurityScan(input: StartScanInput!): RepositoryScan!
     startAccessibilityScan(input: StartScanInput!): RepositoryScan!
+    generateAiAnalysis(issueId: ID!): AiIssueAnalysis!
+    generateBulkAiAnalysis(scanId: ID!): [AiIssueAnalysis!]!
     updateIssueStatus(id: ID!, status: String!): Issue!
 }
 
@@ -105,6 +108,9 @@ type Issue {
     snippet: String
     aiExplanation: String
     aiFixSuggestion: String
+    aiWhyItMatters: String
+    aiSuggestedUnitTest: String
+    aiModelUsed: String
     engine: String
     status: String
     language: String
@@ -173,4 +179,17 @@ type PullRequest {
     state: String!
     openedAt: String!
     updatedAt: String!
+}
+
+type AiIssueAnalysis {
+    issueId: ID!
+    ruleId: String!
+    title: String!
+    whyItMatters: String!
+    remediationGuidance: String!
+    codeFix: String!
+    suggestedUnitTest: String!
+    confidenceScore: Float!
+    modelUsed: String!
+    createdAt: String!
 }

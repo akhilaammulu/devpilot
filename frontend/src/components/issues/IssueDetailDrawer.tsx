@@ -14,9 +14,14 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { CodeIssue } from "@/data/mockIssues";
+import { AiRemediationModal } from "@/components/ai/AiRemediationModal";
 
 interface IssueDetailDrawerProps {
-  issue: CodeIssue | null;
+  issue: (CodeIssue & {
+    aiWhyItMatters?: string;
+    aiSuggestedUnitTest?: string;
+    aiModelUsed?: string;
+  }) | null;
   onClose: () => void;
   onToggleResolve: (id: string) => void;
 }
@@ -27,6 +32,7 @@ export function IssueDetailDrawer({
   onToggleResolve,
 }: IssueDetailDrawerProps) {
   const [copied, setCopied] = useState(false);
+  const [showAiModal, setShowAiModal] = useState(false);
 
   if (!issue) return null;
 
@@ -148,13 +154,23 @@ export function IssueDetailDrawer({
           </div>
 
           {/* AI Explanation Card */}
-          <div className="p-5 rounded-2xl bg-gradient-to-br from-purple-500/10 via-pink-500/5 to-transparent border border-purple-500/20 space-y-2">
-            <div className="flex items-center gap-2 text-purple-600 dark:text-purple-400 font-bold text-xs">
-              <Sparkles className="w-4 h-4" />
-              <span>AI Static Analysis Insight</span>
+          <div className="p-5 rounded-2xl bg-gradient-to-br from-purple-500/10 via-pink-500/5 to-transparent border border-purple-500/20 space-y-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-purple-600 dark:text-purple-400 font-bold text-xs">
+                <Sparkles className="w-4 h-4" />
+                <span>AI Static Analysis Insight</span>
+              </div>
+
+              <button
+                onClick={() => setShowAiModal(true)}
+                className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-purple-600 text-white hover:bg-purple-700 shadow-sm transition-all"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Deep AI Analysis & Test</span>
+              </button>
             </div>
             <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed">
-              {issue.aiExplanation}
+              {issue.aiWhyItMatters || issue.aiExplanation}
             </p>
           </div>
 
@@ -216,6 +232,27 @@ export function IssueDetailDrawer({
           </button>
         </div>
       </div>
+
+      <AiRemediationModal
+        isOpen={showAiModal}
+        onClose={() => setShowAiModal(false)}
+        issue={{
+          id: issue.id,
+          ruleId: issue.ruleId,
+          category: "QUALITY",
+          severity: issue.severity,
+          filePath: issue.filePath,
+          lineStart: issue.lineStart,
+          lineEnd: issue.lineEnd,
+          message: issue.message,
+          codeSnippet: issue.codeSnippet,
+          aiWhyItMatters: issue.aiWhyItMatters,
+          aiExplanation: issue.aiExplanation,
+          proposedFix: issue.proposedFix,
+          aiSuggestedUnitTest: issue.aiSuggestedUnitTest,
+          modelUsed: issue.aiModelUsed,
+        }}
+      />
     </div>
   );
 }

@@ -1,6 +1,8 @@
 package com.devpilot.controller;
 
 import com.devpilot.accessibility.AccessibilityMetrics;
+import com.devpilot.ai.AiAnalysisService;
+import com.devpilot.ai.AiIssueAnalysis;
 import com.devpilot.model.Issue;
 import com.devpilot.model.IssueCategory;
 import com.devpilot.model.IssueSeverity;
@@ -24,10 +26,12 @@ public class GraphQLScanController {
 
     private final ScanService scanService;
     private final IssueRepository issueRepository;
+    private final AiAnalysisService aiAnalysisService;
 
-    public GraphQLScanController(ScanService scanService, IssueRepository issueRepository) {
+    public GraphQLScanController(ScanService scanService, IssueRepository issueRepository, AiAnalysisService aiAnalysisService) {
         this.scanService = scanService;
         this.issueRepository = issueRepository;
+        this.aiAnalysisService = aiAnalysisService;
     }
 
     @QueryMapping
@@ -64,9 +68,24 @@ public class GraphQLScanController {
         return scanService.getAccessibilityMetrics(scanId);
     }
 
+    @QueryMapping
+    public AiIssueAnalysis explainIssue(@Argument UUID issueId) {
+        return aiAnalysisService.explainIssue(issueId);
+    }
+
     @SchemaMapping(typeName = "RepositoryScan", field = "issues")
     public List<Issue> getIssuesForScan(RepositoryScan scan) {
         return issueRepository.findByScanIdOrderByCreatedAtDesc(scan.getId());
+    }
+
+    @MutationMapping
+    public AiIssueAnalysis generateAiAnalysis(@Argument UUID issueId) {
+        return aiAnalysisService.explainIssue(issueId);
+    }
+
+    @MutationMapping
+    public List<AiIssueAnalysis> generateBulkAiAnalysis(@Argument UUID scanId) {
+        return aiAnalysisService.analyzeScanIssues(scanId);
     }
 
     @MutationMapping

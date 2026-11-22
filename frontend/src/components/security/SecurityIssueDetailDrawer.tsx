@@ -18,9 +18,14 @@ import {
   Sliders,
 } from "lucide-react";
 import { SecurityIssue } from "@/data/mockSecurityIssues";
+import { AiRemediationModal } from "@/components/ai/AiRemediationModal";
 
 interface SecurityIssueDetailDrawerProps {
-  issue: SecurityIssue | null;
+  issue: (SecurityIssue & {
+    aiWhyItMatters?: string;
+    aiSuggestedUnitTest?: string;
+    aiModelUsed?: string;
+  }) | null;
   onClose: () => void;
   onToggleResolve: (id: string) => void;
 }
@@ -31,6 +36,7 @@ export function SecurityIssueDetailDrawer({
   onToggleResolve,
 }: SecurityIssueDetailDrawerProps) {
   const [copied, setCopied] = useState(false);
+  const [showAiModal, setShowAiModal] = useState(false);
 
   if (!issue) return null;
 
@@ -152,12 +158,22 @@ export function SecurityIssueDetailDrawer({
 
           {/* AI Security Analysis */}
           <div className="space-y-2 p-4 rounded-3xl bg-purple-50/60 dark:bg-purple-950/20 border border-purple-200/80 dark:border-purple-800/40">
-            <div className="flex items-center gap-2 text-xs font-bold text-purple-700 dark:text-purple-300">
-              <Sparkles className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-              <span>AI Security Impact Assessment</span>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2 text-xs font-bold text-purple-700 dark:text-purple-300">
+                <Sparkles className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                <span>AI Security Impact Assessment</span>
+              </div>
+
+              <button
+                onClick={() => setShowAiModal(true)}
+                className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-purple-600 text-white hover:bg-purple-700 shadow-sm transition-all"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Deep AI Analysis & Test</span>
+              </button>
             </div>
             <p className="text-xs text-slate-700 dark:text-slate-300 leading-relaxed font-normal">
-              {issue.aiExplanation}
+              {issue.aiWhyItMatters || issue.aiExplanation}
             </p>
           </div>
 
@@ -211,6 +227,27 @@ export function SecurityIssueDetailDrawer({
           </button>
         </div>
       </div>
+
+      <AiRemediationModal
+        isOpen={showAiModal}
+        onClose={() => setShowAiModal(false)}
+        issue={{
+          id: issue.id,
+          ruleId: issue.ruleId,
+          category: "SECURITY",
+          severity: issue.severity,
+          filePath: issue.filePath,
+          lineStart: issue.lineStart,
+          lineEnd: issue.lineEnd,
+          message: issue.message,
+          codeSnippet: issue.snippet,
+          aiWhyItMatters: issue.aiWhyItMatters,
+          aiExplanation: issue.aiExplanation,
+          proposedFix: issue.proposedFix,
+          aiSuggestedUnitTest: issue.aiSuggestedUnitTest,
+          modelUsed: issue.aiModelUsed,
+        }}
+      />
     </div>
   );
 }
