@@ -1,19 +1,25 @@
 package com.devpilot.pr;
 
+import com.devpilot.cicd.PipelineConfig;
+import com.devpilot.cicd.PipelineExecutionService;
+import com.devpilot.cicd.PipelineRun;
+import com.devpilot.repository.RepositoryRepository;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 /**
- * GitHub Webhook Receiver Endpoint (Phase 7).
- * Listens for pull_request events (opened, synchronize, reopened, closed),
- * verifies HMAC-SHA256 signatures, and triggers automated PR analysis.
+ * GitHub Webhook Receiver Endpoint (Phase 7 & CI/CD).
+ * Listens for pull_request and push events, verifies HMAC-SHA256 signatures,
+ * and triggers automated PR analysis or CI/CD pipeline runs.
  */
 @RestController
 @RequestMapping("/api/webhooks")
@@ -24,11 +30,18 @@ public class GitHubWebhookController {
 
     private final GitHubWebhookSignatureVerifier signatureVerifier;
     private final PrAnalysisService prAnalysisService;
+    private final PipelineExecutionService pipelineExecutionService;
+    private final RepositoryRepository repositoryRepository;
 
+    @Autowired
     public GitHubWebhookController(GitHubWebhookSignatureVerifier signatureVerifier,
-                                   PrAnalysisService prAnalysisService) {
+                                   PrAnalysisService prAnalysisService,
+                                   @Autowired(required = false) PipelineExecutionService pipelineExecutionService,
+                                   @Autowired(required = false) RepositoryRepository repositoryRepository) {
         this.signatureVerifier = signatureVerifier;
         this.prAnalysisService = prAnalysisService;
+        this.pipelineExecutionService = pipelineExecutionService;
+        this.repositoryRepository = repositoryRepository;
     }
 
     @PostMapping("/github")
@@ -49,6 +62,26 @@ public class GitHubWebhookController {
 
         try {
             Map<String, Object> payload = MAPPER.readValue(rawPayload, new TypeReference<>() {});
+            if ("push".equalsIgnoreCase(eventType) && pipelineExecutionService != null && repositoryRepository != null) {
+                @SuppressWarnings("unchecked")
+                Map<String, Object> repoObj = (Map<String, Object>) payload.get("repository");
+                String fullName = repoObj != null ? String.valueOf(repoObj.getOrDefault("full_name", "")) : "";
+                String ref = String.valueOf(payload.getOrDefault("ref", "refs/heads/main")).replace("refs/heads/", "");
+                String sha = String.valueOf(payload.getOrDefault("after", "HEAD"));
+                var repoOpt = repositoryRepository.findFirstByFullName(fullName);
+                if (repoOpt.isPresent()) {
+                    List<PipelineConfig> pipelines = pipelineExecutionService.getPipelines(repoOpt.get().getId());
+                    int triggered = 0;
+                    for (PipelineConfig pc : pipelines) {
+                        if (pc.getBranch().equalsIgnoreCase(ref)) {
+                            PipelineRun run = pipelineExecutionService.triggerPipelineRun(pc.getId(), "PUSH", sha, true);
+                            log.info("Triggered CI/CD pipeline {} run #{} from push webhook", pc.getName(), run.getRunNumber());
+                            triggered++;
+                        }
+                    }
+                    return ResponseEntity.ok(Map.of("status", "triggered", "event", "push", "pipelinesTriggered", triggered));
+                }
+            }
             Map<String, Object> result = prAnalysisService.handleWebhookEvent(eventType, payload);
             return ResponseEntity.ok(result);
         } catch (IllegalArgumentException e) {

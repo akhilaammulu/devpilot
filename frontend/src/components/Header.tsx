@@ -20,7 +20,7 @@ interface HeaderProps {
   onSearchChange?: (query: string) => void;
 }
 
-export function Header({ currentPhase = "Phase 7 - GitHub Pull Request Analysis", onSearchChange }: HeaderProps) {
+export function Header({ currentPhase = "Phase 9 - Production, Cloud & Observability", onSearchChange }: HeaderProps) {
   const { theme, toggleTheme } = useTheme();
   const { user, logout } = useAuth();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -34,9 +34,9 @@ export function Header({ currentPhase = "Phase 7 - GitHub Pull Request Analysis"
     { num: 4, name: "Accessibility Analysis", status: "Completed" },
     { num: 5, name: "AI Analysis", status: "Completed" },
     { num: 6, name: "Repository-Aware RAG", status: "Completed" },
-    { num: 7, name: "GitHub Pull Request Analysis", status: "Active" },
-    { num: 8, name: "Event-Driven Architecture", status: "Upcoming" },
-    { num: 9, name: "Production & Cloud", status: "Upcoming" },
+    { num: 7, name: "GitHub Pull Request Analysis", status: "Completed" },
+    { num: 8, name: "Event-Driven Architecture", status: "Completed" },
+    { num: 9, name: "Production & Cloud", status: "Active" },
   ];
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {

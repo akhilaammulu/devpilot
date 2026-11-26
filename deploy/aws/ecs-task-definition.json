@@ -1,0 +1,31 @@
+{
+  "family": "devpilot-production",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "1024",
+  "memory": "2048",
+  "containerDefinitions": [
+    {
+      "name": "devpilot-backend",
+      "image": "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/devpilot-backend:latest",
+      "portMappings": [{ "containerPort": 8080, "protocol": "tcp" }],
+      "essential": true,
+      "environment": [
+        { "name": "DEVPILOT_KAFKA_ENABLED", "value": "true" },
+        { "name": "DEVPILOT_REDIS_ENABLED", "value": "true" }
+      ],
+      "healthCheck": {
+        "command": ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health || exit 1"],
+        "interval": 30,
+        "timeout": 5,
+        "retries": 3
+      }
+    },
+    {
+      "name": "devpilot-frontend",
+      "image": "${AWS_ACCOUNT_ID}.dkr.ecr.${AWS_REGION}.amazonaws.com/devpilot-frontend:latest",
+      "portMappings": [{ "containerPort": 3000, "protocol": "tcp" }],
+      "essential": true
+    }
+  ]
+}
