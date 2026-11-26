@@ -28,7 +28,7 @@ export function Sidebar() {
   const isCodeQualityActive = pathname === "/code-quality" || pathname === "/quality";
 
   return (
-    <aside className="w-64 shrink-0 flex flex-col justify-between p-4 transition-colors min-h-[calc(100vh-4rem)] bg-[#0c0f16] text-slate-300 border-r border-[#1e2433] select-none">
+    <aside className="w-64 shrink-0 flex flex-col justify-between p-4 transition-colors sticky top-16 h-[calc(100vh-4rem)] overflow-y-auto bg-[#0c0f16] text-slate-300 border-r border-[#1e2433] select-none">
       {/* Navigation Links */}
       <nav className="space-y-1">
         <Link

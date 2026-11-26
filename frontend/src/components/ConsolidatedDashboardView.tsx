@@ -174,7 +174,44 @@ export function ConsolidatedDashboardView() {
   const prs = prData?.pullRequests || [];
   const latestPr = prs.length > 0 ? prs[0] : null;
   const indexStatus = indexStatusData?.repositoryIndexStatus;
-  const engineReports: EngineReport[] = latestScan?.engineReports || [];
+
+  const engineReports: EngineReport[] = useMemo(() => {
+    const raw = latestScan?.engineReports || [];
+    if (raw.length > 0) return raw;
+    if (!latestScan) return [];
+
+    // Derive engine telemetry from persisted scan issues when transient engineReports is empty
+    const counts = new Map<string, number>();
+    for (const issue of allIssues) {
+      const eng = (issue.engine || "STATIC").toUpperCase();
+      counts.set(eng, (counts.get(eng) || 0) + 1);
+    }
+
+    const derived: EngineReport[] = Array.from(counts.entries()).map(([engine, findingsCount]) => ({
+      engine,
+      status: "COMPLETED",
+      findingsCount,
+      executionTimeMs: 0,
+    }));
+
+    if (latestScan.securityScore !== undefined && !counts.has("TRIVY") && !counts.has("SEMGREP")) {
+      derived.push({
+        engine: "SECURITY",
+        status: "COMPLETED",
+        findingsCount: securityIssues.length,
+        executionTimeMs: 0,
+      });
+    }
+    if (latestScan.accessibilityScore !== undefined && !counts.has("AXE_CORE")) {
+      derived.push({
+        engine: "AXE_CORE",
+        status: "COMPLETED",
+        findingsCount: a11yIssues.length,
+        executionTimeMs: 0,
+      });
+    }
+    return derived;
+  }, [latestScan, allIssues, securityIssues.length, a11yIssues.length]);
 
   // Donut chart percentages
   const safeTotal = totalOpen > 0 ? totalOpen : 1;
@@ -202,16 +239,28 @@ export function ConsolidatedDashboardView() {
     ];
   }, [scans, qualityScore, securityScore, a11yScore]);
 
+  const chartWidth = 640;
+  const chartHeight = 165;
+  const padLeft = 34;
+  const padRight = 24;
+  const padTop = 14;
+  const padBottom = 26;
+  const plotWidth = chartWidth - padLeft - padRight;
+  const plotHeight = chartHeight - padTop - padBottom;
+
+  const getChartX = (index: number, total: number) => {
+    if (total <= 1) return padLeft + plotWidth / 2;
+    return Math.round(padLeft + (index / (total - 1)) * plotWidth);
+  };
+
+  const getChartY = (value: number) => {
+    const clamped = Math.max(0, Math.min(100, value));
+    return Math.round(padTop + (1 - clamped / 100) * plotHeight);
+  };
+
   const toSvgPoints = (values: number[]) => {
-    const w = 360;
-    const h = 110;
-    const step = values.length > 1 ? w / (values.length - 1) : w;
     return values
-      .map((v, i) => {
-        const x = Math.round(i * step);
-        const y = Math.round(h - (Math.max(0, Math.min(100, v)) / 100) * (h - 16) - 8);
-        return `${x},${y}`;
-      })
+      .map((v, i) => `${getChartX(i, values.length)},${getChartY(v)}`)
       .join(" ");
   };
 
@@ -438,27 +487,27 @@ export function ConsolidatedDashboardView() {
             </div>
           </div>
 
-          <div className="w-full overflow-hidden">
-            <svg viewBox="0 0 360 125" className="w-full h-40 overflow-visible">
+          <div className="w-full">
+            <svg viewBox={`0 0 ${chartWidth} ${chartHeight}`} className="w-full h-44">
               {/* Grid lines */}
-              {[20, 50, 80, 100].map((v) => {
-                const y = Math.round(110 - (v / 100) * 94 - 8);
+              {[0, 25, 50, 75, 100].map((v) => {
+                const y = getChartY(v);
                 return (
                   <g key={v}>
                     <line
-                      x1="0"
+                      x1={padLeft}
                       y1={y}
-                      x2="360"
+                      x2={chartWidth - padRight}
                       y2={y}
                       stroke="currentColor"
                       className="text-slate-100 dark:text-[#1e2433]"
                       strokeDasharray="4 4"
                     />
                     <text
-                      x="-6"
+                      x={padLeft - 8}
                       y={y + 3}
                       textAnchor="end"
-                      className="text-[9px] fill-slate-400 font-mono"
+                      className="text-[10px] fill-slate-400 font-mono"
                     >
                       {v}
                     </text>
@@ -493,12 +542,28 @@ export function ConsolidatedDashboardView() {
                 className="animate-draw-line"
                 points={toSvgPoints(trendScans.map((t) => t.a11y))}
               />
+
+              {/* Data point markers & X-axis labels */}
+              {trendScans.map((t, i) => {
+                const x = getChartX(i, trendScans.length);
+                const anchor = i === 0 ? "start" : i === trendScans.length - 1 ? "end" : "middle";
+                return (
+                  <g key={t.label}>
+                    <circle cx={x} cy={getChartY(t.quality)} r="3" fill="#6366f1" />
+                    <circle cx={x} cy={getChartY(t.security)} r="3" fill="#f43f5e" />
+                    <circle cx={x} cy={getChartY(t.a11y)} r="3" fill="#10b981" />
+                    <text
+                      x={x}
+                      y={chartHeight - 6}
+                      textAnchor={anchor}
+                      className="text-[10px] fill-slate-400 font-mono"
+                    >
+                      {t.label}
+                    </text>
+                  </g>
+                );
+              })}
             </svg>
-            <div className="flex justify-between text-[10px] font-mono text-slate-400 pt-1">
-              {trendScans.map((t, i) => (
-                <span key={i}>{t.label}</span>
-              ))}
-            </div>
           </div>
         </div>
 
@@ -614,7 +679,7 @@ export function ConsolidatedDashboardView() {
                     <span className="text-[10px] font-medium text-slate-400 ml-1">findings</span>
                   </div>
                   <div className="text-[10px] font-mono text-slate-400">
-                    {rep.executionTimeMs} ms
+                    {rep.executionTimeMs > 0 ? `${rep.executionTimeMs} ms` : "Completed"}
                   </div>
                 </div>
               ))}
