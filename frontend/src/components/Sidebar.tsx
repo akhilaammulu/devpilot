@@ -123,7 +123,11 @@ export function Sidebar() {
 
               <Link
                 href="/scans"
-                className="flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-medium text-slate-300 hover:text-white hover:bg-white/5 transition-all"
+                className={`flex items-center gap-2.5 px-3.5 py-2 rounded-xl text-xs font-bold transition-all ${
+                  pathname === "/scans"
+                    ? "bg-gradient-to-r from-amber-500 via-orange-500 to-pink-500 text-white border border-amber-400/40 shadow-lg shadow-amber-500/25"
+                    : "text-slate-300 hover:text-white hover:bg-white/5 font-medium"
+                }`}
               >
                 <FlaskConical className="w-4 h-4 text-amber-400" />
                 <span>Tests</span>
