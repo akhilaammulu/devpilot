@@ -407,3 +407,97 @@ export const GET_REPOSITORY_INDEX_STATUS = gql`
     }
   }
 `;
+
+export const GET_PULL_REQUESTS = gql`
+  query GetPullRequests($repositoryId: ID!) {
+    pullRequests(repositoryId: $repositoryId) {
+      id
+      githubPrNumber
+      title
+      author
+      sourceBranch
+      targetBranch
+      headSha
+      state
+      prScore
+      qualityScore
+      securityScore
+      accessibilityScore
+      reviewStatus
+      reviewSummary
+      changedFilesCount
+      changedFiles
+      findingsCount
+      githubCommentPosted
+      githubCommentUrl
+      lastAnalyzedAt
+      openedAt
+      updatedAt
+      history {
+        id
+        commitSha
+        prScore
+        qualityScore
+        securityScore
+        accessibilityScore
+        findingsCount
+        reviewStatus
+        githubCommentPosted
+        createdAt
+      }
+    }
+  }
+`;
+
+export const TRIGGER_PULL_REQUEST_ANALYSIS = gql`
+  mutation TriggerPullRequestAnalysis($input: TriggerPullRequestInput!) {
+    triggerPullRequestAnalysis(input: $input) {
+      id
+      githubPrNumber
+      title
+      author
+      sourceBranch
+      targetBranch
+      headSha
+      state
+      prScore
+      qualityScore
+      securityScore
+      accessibilityScore
+      reviewStatus
+      reviewSummary
+      changedFilesCount
+      changedFiles
+      findingsCount
+      githubCommentPosted
+      githubCommentUrl
+      lastAnalyzedAt
+    }
+  }
+`;
+
+export const ANALYZE_PULL_REQUEST = gql`
+  mutation AnalyzePullRequest($pullRequestId: ID!) {
+    analyzePullRequest(pullRequestId: $pullRequestId) {
+      id
+      prScore
+      qualityScore
+      securityScore
+      accessibilityScore
+      reviewStatus
+      reviewSummary
+      findingsCount
+      lastAnalyzedAt
+    }
+  }
+`;
+
+export const POST_PR_REVIEW_COMMENT = gql`
+  mutation PostPrReviewComment($pullRequestId: ID!) {
+    postPrReviewComment(pullRequestId: $pullRequestId) {
+      id
+      githubCommentPosted
+      githubCommentUrl
+    }
+  }
+`;

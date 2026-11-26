@@ -11,6 +11,8 @@ type Query {
     explainIssue(issueId: ID!): AiIssueAnalysis!
     askRepository(repositoryId: ID!, query: String!): RagAnswer!
     repositoryIndexStatus(repositoryId: ID!): RepositoryIndexResult
+    pullRequests(repositoryId: ID!): [PullRequest!]!
+    pullRequest(id: ID!): PullRequest
 }
 
 type Mutation {
@@ -22,6 +24,9 @@ type Mutation {
     generateBulkAiAnalysis(scanId: ID!): [AiIssueAnalysis!]!
     indexRepository(repositoryId: ID!): RepositoryIndexResult!
     updateIssueStatus(id: ID!, status: String!): Issue!
+    analyzePullRequest(pullRequestId: ID!): PullRequest!
+    triggerPullRequestAnalysis(input: TriggerPullRequestInput!): PullRequest!
+    postPrReviewComment(pullRequestId: ID!): PullRequest!
 }
 
 input ConnectRepositoryInput {
@@ -171,17 +176,58 @@ type AccessibilityMetrics {
     robustCount: Int!
 }
 
+input TriggerPullRequestInput {
+    repositoryId: ID!
+    prNumber: Int!
+    title: String!
+    author: String
+    sourceBranch: String!
+    targetBranch: String!
+    headSha: String!
+    changedFiles: [String!]
+    postComment: Boolean
+}
+
 type PullRequest {
     id: ID!
     repository: Repository!
     githubPrNumber: Int!
     title: String!
+    author: String
     sourceBranch: String!
     targetBranch: String!
     headSha: String!
     state: String!
+    prScore: Int
+    qualityScore: Int
+    securityScore: Int
+    accessibilityScore: Int
+    reviewStatus: String
+    reviewSummary: String
+    changedFilesCount: Int
+    changedFiles: [String!]!
+    findingsCount: Int
+    githubCommentPosted: Boolean
+    githubCommentUrl: String
+    lastAnalyzedAt: String
     openedAt: String!
     updatedAt: String!
+    history: [PullRequestReviewHistory!]!
+}
+
+type PullRequestReviewHistory {
+    id: ID!
+    pullRequestId: ID!
+    commitSha: String!
+    prScore: Int!
+    qualityScore: Int!
+    securityScore: Int!
+    accessibilityScore: Int!
+    findingsCount: Int!
+    reviewStatus: String!
+    reviewSummary: String
+    githubCommentPosted: Boolean!
+    createdAt: String!
 }
 
 type AiIssueAnalysis {

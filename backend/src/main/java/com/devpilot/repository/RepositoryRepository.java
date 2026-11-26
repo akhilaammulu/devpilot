@@ -11,5 +11,6 @@ import java.util.UUID;
 public interface RepositoryRepository extends JpaRepository<Repository, UUID> {
     Optional<Repository> findByGithubRepoId(String githubRepoId);
     Optional<Repository> findByFullName(String fullName);
+    Optional<Repository> findFirstByFullName(String fullName);
     List<Repository> findByUserId(UUID userId);
 }

@@ -20,7 +20,7 @@ interface HeaderProps {
   onSearchChange?: (query: string) => void;
 }
 
-export function Header({ currentPhase = "Phase 6 - Repository-Aware RAG", onSearchChange }: HeaderProps) {
+export function Header({ currentPhase = "Phase 7 - GitHub Pull Request Analysis", onSearchChange }: HeaderProps) {
   const { theme, toggleTheme } = useTheme();
   const { user, logout } = useAuth();
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -33,8 +33,8 @@ export function Header({ currentPhase = "Phase 6 - Repository-Aware RAG", onSear
     { num: 3, name: "Security Analysis", status: "Completed" },
     { num: 4, name: "Accessibility Analysis", status: "Completed" },
     { num: 5, name: "AI Analysis", status: "Completed" },
-    { num: 6, name: "Repository-Aware RAG", status: "Active" },
-    { num: 7, name: "GitHub Pull Request Analysis", status: "Upcoming" },
+    { num: 6, name: "Repository-Aware RAG", status: "Completed" },
+    { num: 7, name: "GitHub Pull Request Analysis", status: "Active" },
     { num: 8, name: "Event-Driven Architecture", status: "Upcoming" },
     { num: 9, name: "Production & Cloud", status: "Upcoming" },
   ];
