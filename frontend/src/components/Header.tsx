@@ -36,25 +36,29 @@ export function Header({ onSearchChange }: HeaderProps) {
   const displayUsername = "akhilaammulu";
 
   return (
-    <header className="h-16 px-6 border-b flex items-center justify-between sticky top-0 z-40 transition-colors backdrop-blur-md bg-white/95 dark:bg-[#0d1017]/95 border-slate-200/80 dark:border-[#1e2433]">
-      {/* Left: Logo & Phase Badge */}
-      <div className="flex items-center gap-5">
+    <header className="h-16 px-6 border-b flex items-center justify-between sticky top-0 z-40 transition-colors backdrop-blur-md bg-white/95 dark:bg-[#080b11]/95 border-slate-200/80 dark:border-[#182030]">
+      {/* Left: Control Center Identity */}
+      <div className="flex items-center gap-4">
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-violet-600 to-indigo-500 p-[1px] shadow-sm group-hover:scale-105 transition-transform flex items-center justify-center">
-            <div className="w-full h-full bg-[#0d1017] rounded-[11px] flex items-center justify-center">
-              <span className="font-mono text-violet-400 font-bold text-sm">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-cyan-500 to-indigo-500 p-[1px] shadow-[0_0_18px_-4px_rgba(34,211,238,0.45)] group-hover:scale-105 transition-transform flex items-center justify-center">
+            <div className="w-full h-full bg-[#080b11] rounded-[11px] flex items-center justify-center">
+              <span className="font-mono text-cyan-400 font-bold text-sm">
                 &lt;/&gt;
               </span>
             </div>
           </div>
           <div>
-            <div className="flex items-center gap-1.5">
+            <div className="flex items-center gap-2">
               <span className="font-extrabold text-lg text-slate-900 dark:text-white tracking-tight">
                 DevPilot
               </span>
+              <span className="hidden sm:inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[10px] font-mono uppercase tracking-wider bg-cyan-500/10 text-cyan-400 border border-cyan-500/25">
+                <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+                Control Center
+              </span>
             </div>
-            <p className="text-[11px] text-slate-400 dark:text-slate-400 -mt-0.5 font-medium">
-              AI-Powered Developer Platform
+            <p className="text-[11px] text-slate-400 -mt-0.5 font-mono">
+              Engineering Lifecycle &amp; Intelligence
             </p>
           </div>
         </Link>

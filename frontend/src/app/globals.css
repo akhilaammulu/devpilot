@@ -32,12 +32,40 @@ body {
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Subtle ambient background lighting for dark mode */
+/* Subtle ambient background lighting + spatial coordinate grid for dark mode */
 .dark body {
+  background-color: #06080d;
   background-image:
-    radial-gradient(ellipse 75% 45% at 15% -5%, rgba(124, 58, 237, 0.06), transparent 65%),
-    radial-gradient(ellipse 60% 40% at 85% 5%, rgba(79, 70, 229, 0.04), transparent 60%);
+    linear-gradient(to right, rgba(148, 163, 184, 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(148, 163, 184, 0.035) 1px, transparent 1px),
+    radial-gradient(ellipse 65% 45% at 20% 0%, rgba(34, 211, 238, 0.055), transparent 60%),
+    radial-gradient(ellipse 55% 40% at 85% 15%, rgba(99, 102, 241, 0.055), transparent 60%);
+  background-size: 40px 40px, 40px 40px, 100% 100%, 100% 100%;
   background-attachment: fixed;
+}
+
+/* Spatial Depth Layers */
+.layer-environment {
+  background: rgba(11, 15, 23, 0.82);
+  border: 1px solid rgba(30, 41, 59, 0.85);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 18px 40px -24px rgba(0, 0, 0, 0.9);
+}
+
+.layer-float {
+  background: linear-gradient(180deg, rgba(17, 23, 36, 0.96) 0%, rgba(11, 15, 24, 0.98) 100%);
+  border: 1px solid rgba(51, 65, 85, 0.55);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 24px 60px -20px rgba(0, 0, 0, 0.92),
+    0 0 0 1px rgba(34, 211, 238, 0.08);
+}
+
+.layer-intelligence {
+  background: linear-gradient(135deg, rgba(18, 22, 36, 0.95) 0%, rgba(13, 17, 27, 0.98) 100%);
+  border: 1px solid rgba(139, 92, 246, 0.28);
+  box-shadow:
+    inset 0 1px 0 rgba(167, 139, 250, 0.12),
+    0 20px 45px -22px rgba(0, 0, 0, 0.9);
 }
 
 /* Subtle 3D Card Depth & Elevation */
@@ -133,11 +161,41 @@ body {
   animation: shimmer 1.6s infinite linear;
 }
 
+@keyframes flowPulse {
+  0% {
+    stroke-dashoffset: 24;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes orbitSlow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.conduit-flow {
+  stroke-dasharray: 6 6;
+  animation: flowPulse 1.4s linear infinite;
+}
+
+.animate-orbit-slow {
+  animation: orbitSlow 32s linear infinite;
+  transform-origin: center;
+}
+
 /* Respect accessibility preference for reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .animate-fade-up,
   .animate-draw-line,
-  .skeleton-dark {
+  .skeleton-dark,
+  .conduit-flow,
+  .animate-orbit-slow {
     animation: none !important;
     opacity: 1 !important;
     transform: none !important;
