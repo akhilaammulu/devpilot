@@ -245,8 +245,8 @@ export default function TestsAndScansPage() {
           </div>
 
           {/* Summary Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="p-5 rounded-3xl bg-white dark:bg-[#11151e] border border-slate-200/80 dark:border-[#1e2433] shadow-sm flex items-center justify-between">
+          <div className="animate-fade-up grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="card-3d card-3d-interactive p-5 rounded-3xl bg-white dark:bg-[#11151e] border border-slate-200/80 dark:border-[#1e2433] flex items-center justify-between">
               <div>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
                   JUnit 5 Test Cases

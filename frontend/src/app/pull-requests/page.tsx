@@ -318,7 +318,7 @@ export default function PullRequestsPage() {
                 <div
                   key={pr.id}
                   onClick={() => setActivePr(pr)}
-                  className="p-5 rounded-3xl bg-white dark:bg-[#11151e] border border-slate-200 dark:border-[#1e2433] shadow-sm hover:border-purple-400/60 transition-all cursor-pointer flex flex-col lg:flex-row lg:items-center justify-between gap-4"
+                  className="card-3d card-3d-interactive animate-fade-up p-5 rounded-3xl bg-white dark:bg-[#11151e] border border-slate-200 dark:border-[#1e2433] hover:border-purple-400/60 cursor-pointer flex flex-col lg:flex-row lg:items-center justify-between gap-4"
                 >
                   <div className="space-y-2 min-w-0">
                     <div className="flex flex-wrap items-center gap-2">

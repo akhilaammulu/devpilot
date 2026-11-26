@@ -10,6 +10,8 @@ import {
   GET_REPOSITORY_INDEX_STATUS,
 } from "@/lib/graphql/queries";
 import { AiRemediationModal, AiIssueData } from "@/components/ai/AiRemediationModal";
+import { AnimatedCounter } from "@/components/ui/AnimatedCounter";
+import { TiltCard } from "@/components/ui/TiltCard";
 import {
   LayoutDashboard,
   Shield,
@@ -240,7 +242,7 @@ export function ConsolidatedDashboardView() {
   return (
     <div className="space-y-6">
       {/* Top Executive Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white dark:bg-[#11151e] p-6 rounded-3xl border border-slate-200/80 dark:border-[#1e2433] shadow-sm">
+      <div className="animate-fade-up card-3d flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white dark:bg-[#11151e] p-6 rounded-3xl border border-slate-200/80 dark:border-[#1e2433]">
         <div className="space-y-1.5">
           <div className="flex items-center gap-2 text-xs text-slate-400 font-semibold">
             <LayoutDashboard className="w-3.5 h-3.5 text-purple-500" />
@@ -299,108 +301,120 @@ export function ConsolidatedDashboardView() {
       </div>
 
       {/* Row 1: 4 Executive Score Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+      <div className="animate-fade-up delay-75 grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         {/* Overall Health */}
-        <div className="p-5 rounded-3xl bg-white dark:bg-[#11151e] border border-slate-200/80 dark:border-[#1e2433] shadow-sm flex items-center justify-between">
-          <div className="space-y-1.5">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
-              Overall Health
-            </span>
-            <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-extrabold text-slate-900 dark:text-white">
-                {overallScore}
+        <TiltCard>
+          <div className="card-3d card-3d-interactive p-5 rounded-3xl bg-white dark:bg-[#11151e] border border-slate-200/80 dark:border-[#1e2433] flex items-center justify-between h-full">
+            <div className="space-y-1.5">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
+                Overall Health
               </span>
-              <span className="text-xs text-slate-400 font-semibold">/ 100</span>
+              <div className="flex items-baseline gap-2">
+                <AnimatedCounter
+                  value={overallScore}
+                  className="text-3xl font-extrabold text-slate-900 dark:text-white tabular-nums"
+                />
+                <span className="text-xs text-slate-400 font-semibold">/ 100</span>
+              </div>
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-purple-500/10 text-purple-600 dark:text-purple-400">
+                Grade {computeGrade(overallScore)} · {totalOpen} open issues
+              </span>
             </div>
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-bold bg-purple-500/10 text-purple-600 dark:text-purple-400">
-              Grade {computeGrade(overallScore)} · {totalOpen} open issues
-            </span>
+            <div className="w-12 h-12 rounded-2xl bg-violet-500/10 border border-violet-500/20 text-violet-400 flex items-center justify-center">
+              <Activity className="w-6 h-6" />
+            </div>
           </div>
-          <div className="w-12 h-12 rounded-2xl bg-violet-500/10 border border-violet-500/20 text-violet-400 flex items-center justify-center">
-            <Activity className="w-6 h-6" />
-          </div>
-        </div>
+        </TiltCard>
 
         {/* Code Quality */}
-        <Link
-          href="/code-quality"
-          className="group p-5 rounded-3xl bg-white dark:bg-[#11151e] border border-slate-200/80 dark:border-[#1e2433] shadow-sm hover:border-indigo-400/60 transition-all flex items-center justify-between"
-        >
-          <div className="space-y-1.5">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
-              <span>Code Quality</span>
-              <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-indigo-500" />
-            </span>
-            <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-extrabold text-indigo-600 dark:text-indigo-400">
-                {qualityScore}
+        <TiltCard>
+          <Link
+            href="/code-quality"
+            className="card-3d card-3d-interactive group p-5 rounded-3xl bg-white dark:bg-[#11151e] border border-slate-200/80 dark:border-[#1e2433] hover:border-indigo-400/60 flex items-center justify-between h-full"
+          >
+            <div className="space-y-1.5">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
+                <span>Code Quality</span>
+                <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-indigo-500" />
               </span>
-              <span className="text-xs text-slate-400 font-semibold">/ 100</span>
+              <div className="flex items-baseline gap-2">
+                <AnimatedCounter
+                  value={qualityScore}
+                  className="text-3xl font-extrabold text-indigo-600 dark:text-indigo-400 tabular-nums"
+                />
+                <span className="text-xs text-slate-400 font-semibold">/ 100</span>
+              </div>
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium block">
+                {qualityIssues.length} open · 4 analyzers
+              </span>
             </div>
-            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium block">
-              {qualityIssues.length} open · 4 analyzers
-            </span>
-          </div>
-          <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
-            <Code2 className="w-6 h-6" />
-          </div>
-        </Link>
+            <div className="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center">
+              <Code2 className="w-6 h-6" />
+            </div>
+          </Link>
+        </TiltCard>
 
         {/* Security */}
-        <Link
-          href="/security"
-          className="group p-5 rounded-3xl bg-white dark:bg-[#11151e] border border-slate-200/80 dark:border-[#1e2433] shadow-sm hover:border-rose-400/60 transition-all flex items-center justify-between"
-        >
-          <div className="space-y-1.5">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
-              <span>Security Posture</span>
-              <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-rose-500" />
-            </span>
-            <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-extrabold text-rose-600 dark:text-rose-400">
-                {securityScore}
+        <TiltCard>
+          <Link
+            href="/security"
+            className="card-3d card-3d-interactive group p-5 rounded-3xl bg-white dark:bg-[#11151e] border border-slate-200/80 dark:border-[#1e2433] hover:border-rose-400/60 flex items-center justify-between h-full"
+          >
+            <div className="space-y-1.5">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
+                <span>Security Posture</span>
+                <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-rose-500" />
               </span>
-              <span className="text-xs text-slate-400 font-semibold">/ 100</span>
+              <div className="flex items-baseline gap-2">
+                <AnimatedCounter
+                  value={securityScore}
+                  className="text-3xl font-extrabold text-rose-600 dark:text-rose-400 tabular-nums"
+                />
+                <span className="text-xs text-slate-400 font-semibold">/ 100</span>
+              </div>
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium block">
+                {securityIssues.length} vulnerabilities · CVE & Secrets
+              </span>
             </div>
-            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium block">
-              {securityIssues.length} vulnerabilities · CVE & Secrets
-            </span>
-          </div>
-          <div className="w-12 h-12 rounded-2xl bg-rose-500/10 text-rose-600 dark:text-rose-400 flex items-center justify-center">
-            <Shield className="w-6 h-6" />
-          </div>
-        </Link>
+            <div className="w-12 h-12 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-600 dark:text-rose-400 flex items-center justify-center">
+              <Shield className="w-6 h-6" />
+            </div>
+          </Link>
+        </TiltCard>
 
         {/* Accessibility */}
-        <Link
-          href="/accessibility"
-          className="group p-5 rounded-3xl bg-white dark:bg-[#11151e] border border-slate-200/80 dark:border-[#1e2433] shadow-sm hover:border-emerald-400/60 transition-all flex items-center justify-between"
-        >
-          <div className="space-y-1.5">
-            <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
-              <span>Accessibility</span>
-              <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-emerald-500" />
-            </span>
-            <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400">
-                {a11yScore}
+        <TiltCard>
+          <Link
+            href="/accessibility"
+            className="card-3d card-3d-interactive group p-5 rounded-3xl bg-white dark:bg-[#11151e] border border-slate-200/80 dark:border-[#1e2433] hover:border-emerald-400/60 flex items-center justify-between h-full"
+          >
+            <div className="space-y-1.5">
+              <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
+                <span>Accessibility</span>
+                <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity text-emerald-500" />
               </span>
-              <span className="text-xs text-slate-400 font-semibold">/ 100</span>
+              <div className="flex items-baseline gap-2">
+                <AnimatedCounter
+                  value={a11yScore}
+                  className="text-3xl font-extrabold text-emerald-600 dark:text-emerald-400 tabular-nums"
+                />
+                <span className="text-xs text-slate-400 font-semibold">/ 100</span>
+              </div>
+              <span className="text-xs text-slate-500 dark:text-slate-400 font-medium block">
+                {a11yIssues.length} WCAG violations · axe-core
+              </span>
             </div>
-            <span className="text-xs text-slate-500 dark:text-slate-400 font-medium block">
-              {a11yIssues.length} WCAG violations · axe-core
-            </span>
-          </div>
-          <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
-            <Eye className="w-6 h-6" />
-          </div>
-        </Link>
+            <div className="w-12 h-12 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
+              <Eye className="w-6 h-6" />
+            </div>
+          </Link>
+        </TiltCard>
       </div>
 
       {/* Row 2: Score Trends Chart & Severity/Category Breakdown */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="animate-fade-up delay-150 grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Multi-Domain Score Trend */}
-        <div className="lg:col-span-2 p-6 rounded-3xl bg-white dark:bg-[#11151e] border border-slate-200/80 dark:border-[#1e2433] shadow-sm space-y-4">
+        <div className="card-3d lg:col-span-2 p-6 rounded-3xl bg-white dark:bg-[#11151e] border border-slate-200/80 dark:border-[#1e2433] space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
               <h2 className="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
@@ -458,6 +472,7 @@ export function ConsolidatedDashboardView() {
                 strokeWidth="2.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
+                className="animate-draw-line"
                 points={toSvgPoints(trendScans.map((t) => t.quality))}
               />
               <polyline
@@ -466,6 +481,7 @@ export function ConsolidatedDashboardView() {
                 strokeWidth="2.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
+                className="animate-draw-line"
                 points={toSvgPoints(trendScans.map((t) => t.security))}
               />
               <polyline
@@ -474,6 +490,7 @@ export function ConsolidatedDashboardView() {
                 strokeWidth="2.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
+                className="animate-draw-line"
                 points={toSvgPoints(trendScans.map((t) => t.a11y))}
               />
             </svg>
@@ -486,7 +503,7 @@ export function ConsolidatedDashboardView() {
         </div>
 
         {/* Consolidated Severity & Category Distribution */}
-        <div className="p-6 rounded-3xl bg-white dark:bg-[#11151e] border border-slate-200/80 dark:border-[#1e2433] shadow-sm space-y-5">
+        <div className="card-3d p-6 rounded-3xl bg-white dark:bg-[#11151e] border border-slate-200/80 dark:border-[#1e2433] space-y-5">
           <div>
             <h2 className="text-sm font-extrabold text-slate-900 dark:text-white">
               Issues by Severity & Domain
@@ -552,9 +569,9 @@ export function ConsolidatedDashboardView() {
       </div>
 
       {/* Row 3: Analyzer Engine Telemetry & Pull Request / RAG Status */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="animate-fade-up delay-225 grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Analyzer Engines */}
-        <div className="lg:col-span-2 p-6 rounded-3xl bg-white dark:bg-[#11151e] border border-slate-200/80 dark:border-[#1e2433] shadow-sm space-y-4">
+        <div className="card-3d lg:col-span-2 p-6 rounded-3xl bg-white dark:bg-[#11151e] border border-slate-200/80 dark:border-[#1e2433] space-y-4">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
@@ -609,7 +626,7 @@ export function ConsolidatedDashboardView() {
         <div className="space-y-4">
           <Link
             href="/pull-requests"
-            className="block p-5 rounded-3xl bg-white dark:bg-[#11151e] border border-slate-200/80 dark:border-[#1e2433] shadow-sm hover:border-purple-400/60 transition-all space-y-2"
+            className="card-3d card-3d-interactive block p-5 rounded-3xl bg-white dark:bg-[#11151e] border border-slate-200/80 dark:border-[#1e2433] hover:border-purple-400/60 space-y-2"
           >
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
@@ -642,7 +659,7 @@ export function ConsolidatedDashboardView() {
 
           <Link
             href="/ai-insights"
-            className="block p-5 rounded-3xl bg-gradient-to-br from-purple-600/10 via-indigo-600/5 to-transparent bg-white dark:bg-[#11151e] border border-purple-500/20 shadow-sm hover:border-purple-500/50 transition-all space-y-2"
+            className="card-3d card-3d-interactive block p-5 rounded-3xl bg-gradient-to-br from-purple-600/10 via-indigo-600/5 to-transparent bg-white dark:bg-[#11151e] border border-purple-500/20 hover:border-purple-500/50 space-y-2"
           >
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-purple-700 dark:text-purple-300 flex items-center gap-2">
@@ -663,7 +680,7 @@ export function ConsolidatedDashboardView() {
       </div>
 
       {/* Row 4: Top Priority Actionable Issues Across All Domains */}
-      <div className="p-6 rounded-3xl bg-white dark:bg-[#11151e] border border-slate-200/80 dark:border-[#1e2433] shadow-sm space-y-4">
+      <div className="animate-fade-up delay-300 card-3d p-6 rounded-3xl bg-white dark:bg-[#11151e] border border-slate-200/80 dark:border-[#1e2433] space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
             <h2 className="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
