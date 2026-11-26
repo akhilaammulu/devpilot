@@ -13,6 +13,12 @@ type Query {
     repositoryIndexStatus(repositoryId: ID!): RepositoryIndexResult
     pullRequests(repositoryId: ID!): [PullRequest!]!
     pullRequest(id: ID!): PullRequest
+    pipelines(repositoryId: ID!): [PipelineConfig!]!
+    pipelineRuns(repositoryId: ID!, pipelineConfigId: ID): [PipelineRun!]!
+    pipelineRun(id: ID!): PipelineRun
+    pipelineDeployments(repositoryId: ID!): [PipelineDeployment!]!
+    pipelineSecrets(repositoryId: ID!): [PipelineSecretMeta!]!
+    pipelineMetrics(repositoryId: ID!): PipelineMetrics!
 }
 
 type Mutation {
@@ -27,6 +33,15 @@ type Mutation {
     analyzePullRequest(pullRequestId: ID!): PullRequest!
     triggerPullRequestAnalysis(input: TriggerPullRequestInput!): PullRequest!
     postPrReviewComment(pullRequestId: ID!): PullRequest!
+    createPipeline(input: CreatePipelineInput!): PipelineConfig!
+    updatePipelineStages(pipelineId: ID!, stages: [StageDefinitionInput!]!): PipelineConfig!
+    runPipeline(pipelineId: ID!, triggerType: String, commitSha: String): PipelineRun!
+    retryPipelineStage(runId: ID!, stageName: String!): PipelineRun!
+    cancelPipelineRun(runId: ID!): PipelineRun!
+    deployPipelineRun(runId: ID!, environment: String!): PipelineDeployment!
+    rollbackDeployment(deploymentId: ID!): PipelineDeployment!
+    savePipelineSecret(repositoryId: ID!, name: String!, value: String!, scope: String): PipelineSecretMeta!
+    deletePipelineSecret(secretId: ID!): Boolean!
 }
 
 input ConnectRepositoryInput {
@@ -267,4 +282,140 @@ type RepositoryIndexResult {
     chunksCreated: Int!
     status: String!
     indexedAt: String!
+}
+
+input StageDefinitionInput {
+    name: String!
+    type: String!
+    command: String!
+    enabled: Boolean
+}
+
+input QualityGateInput {
+    maxCritical: Int
+    maxHigh: Int
+    minCoverage: Int
+    requireBuildPass: Boolean
+    requireSecurityPass: Boolean
+}
+
+input CreatePipelineInput {
+    repositoryId: ID!
+    name: String!
+    branch: String!
+    language: String!
+    buildTool: String!
+    testFramework: String!
+    environment: String!
+    deploymentTarget: String!
+    triggers: [String!]
+    stages: [StageDefinitionInput!]
+    qualityGate: QualityGateInput
+}
+
+type StageDefinition {
+    name: String!
+    type: String!
+    command: String!
+    enabled: Boolean!
+}
+
+type QualityGateConfig {
+    maxCritical: Int!
+    maxHigh: Int!
+    minCoverage: Int!
+    requireBuildPass: Boolean!
+    requireSecurityPass: Boolean!
+}
+
+type PipelineConfig {
+    id: ID!
+    repositoryId: ID!
+    name: String!
+    branch: String!
+    language: String!
+    buildTool: String!
+    testFramework: String!
+    environment: String!
+    deploymentTarget: String!
+    triggers: [String!]!
+    stages: [StageDefinition!]!
+    qualityGate: QualityGateConfig!
+    createdAt: String!
+    updatedAt: String!
+}
+
+type PipelineStageResult {
+    name: String!
+    type: String!
+    status: String!
+    durationMs: Int!
+    errorsCount: Int!
+    warningsCount: Int!
+    qualityScore: Int
+    artifacts: [String!]!
+    command: String
+}
+
+type PipelineLogEntry {
+    timestamp: String!
+    stage: String!
+    level: String!
+    command: String
+    message: String!
+}
+
+type PipelineRun {
+    id: ID!
+    pipelineConfigId: ID!
+    repositoryId: ID!
+    runNumber: Int!
+    pipelineName: String!
+    branch: String!
+    commitSha: String!
+    triggerType: String!
+    status: String!
+    qualityScore: Int
+    securityScore: Int
+    testCoverage: Int
+    qualityGatePassed: Boolean
+    qualityGateReason: String
+    durationMs: Int!
+    stages: [PipelineStageResult!]!
+    logs: [PipelineLogEntry!]!
+    startedAt: String!
+    completedAt: String
+}
+
+type PipelineDeployment {
+    id: ID!
+    pipelineRunId: ID!
+    repositoryId: ID!
+    environment: String!
+    version: String!
+    commitSha: String!
+    status: String!
+    deployedBy: String!
+    rolledBackFromId: ID
+    deployedAt: String!
+}
+
+type PipelineSecretMeta {
+    id: ID!
+    repositoryId: ID!
+    name: String!
+    maskedValue: String!
+    scope: String!
+    createdAt: String!
+}
+
+type PipelineMetrics {
+    totalPipelines: Int!
+    runningPipelines: Int!
+    successfulPipelines: Int!
+    failedPipelines: Int!
+    successRate: Int!
+    avgDurationMs: Int!
+    latestDeploymentStatus: String!
+    latestDeploymentEnv: String!
 }

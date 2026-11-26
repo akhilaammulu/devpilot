@@ -501,3 +501,211 @@ export const POST_PR_REVIEW_COMMENT = gql`
     }
   }
 `;
+
+export const GET_PIPELINE_METRICS = gql`
+  query GetPipelineMetrics($repositoryId: ID!) {
+    pipelineMetrics(repositoryId: $repositoryId) {
+      totalPipelines
+      runningPipelines
+      successfulPipelines
+      failedPipelines
+      successRate
+      avgDurationMs
+      latestDeploymentStatus
+      latestDeploymentEnv
+    }
+  }
+`;
+
+export const GET_PIPELINES = gql`
+  query GetPipelines($repositoryId: ID!) {
+    pipelines(repositoryId: $repositoryId) {
+      id
+      repositoryId
+      name
+      branch
+      language
+      buildTool
+      testFramework
+      environment
+      deploymentTarget
+      triggers
+      stages {
+        name
+        type
+        command
+        enabled
+      }
+      qualityGate {
+        maxCritical
+        maxHigh
+        minCoverage
+        requireBuildPass
+        requireSecurityPass
+      }
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+export const GET_PIPELINE_RUNS = gql`
+  query GetPipelineRuns($repositoryId: ID!, $pipelineConfigId: ID) {
+    pipelineRuns(repositoryId: $repositoryId, pipelineConfigId: $pipelineConfigId) {
+      id
+      pipelineConfigId
+      runNumber
+      pipelineName
+      branch
+      commitSha
+      triggerType
+      status
+      qualityScore
+      securityScore
+      testCoverage
+      qualityGatePassed
+      qualityGateReason
+      durationMs
+      stages {
+        name
+        type
+        status
+        durationMs
+        errorsCount
+        warningsCount
+        qualityScore
+        artifacts
+        command
+      }
+      logs {
+        timestamp
+        stage
+        level
+        command
+        message
+      }
+      startedAt
+      completedAt
+    }
+  }
+`;
+
+export const GET_PIPELINE_DEPLOYMENTS = gql`
+  query GetPipelineDeployments($repositoryId: ID!) {
+    pipelineDeployments(repositoryId: $repositoryId) {
+      id
+      pipelineRunId
+      environment
+      version
+      commitSha
+      status
+      deployedBy
+      rolledBackFromId
+      deployedAt
+    }
+  }
+`;
+
+export const GET_PIPELINE_SECRETS = gql`
+  query GetPipelineSecrets($repositoryId: ID!) {
+    pipelineSecrets(repositoryId: $repositoryId) {
+      id
+      name
+      maskedValue
+      scope
+      createdAt
+    }
+  }
+`;
+
+export const CREATE_PIPELINE = gql`
+  mutation CreatePipeline($input: CreatePipelineInput!) {
+    createPipeline(input: $input) {
+      id
+      name
+      branch
+      language
+    }
+  }
+`;
+
+export const UPDATE_PIPELINE_STAGES = gql`
+  mutation UpdatePipelineStages($pipelineId: ID!, $stages: [StageDefinitionInput!]!) {
+    updatePipelineStages(pipelineId: $pipelineId, stages: $stages) {
+      id
+      stages {
+        name
+        type
+        command
+        enabled
+      }
+    }
+  }
+`;
+
+export const RUN_PIPELINE = gql`
+  mutation RunPipeline($pipelineId: ID!, $triggerType: String, $commitSha: String) {
+    runPipeline(pipelineId: $pipelineId, triggerType: $triggerType, commitSha: $commitSha) {
+      id
+      runNumber
+      status
+    }
+  }
+`;
+
+export const RETRY_PIPELINE_STAGE = gql`
+  mutation RetryPipelineStage($runId: ID!, $stageName: String!) {
+    retryPipelineStage(runId: $runId, stageName: $stageName) {
+      id
+      status
+    }
+  }
+`;
+
+export const CANCEL_PIPELINE_RUN = gql`
+  mutation CancelPipelineRun($runId: ID!) {
+    cancelPipelineRun(runId: $runId) {
+      id
+      status
+    }
+  }
+`;
+
+export const DEPLOY_PIPELINE_RUN = gql`
+  mutation DeployPipelineRun($runId: ID!, $environment: String!) {
+    deployPipelineRun(runId: $runId, environment: $environment) {
+      id
+      environment
+      version
+      status
+    }
+  }
+`;
+
+export const ROLLBACK_DEPLOYMENT = gql`
+  mutation RollbackDeployment($deploymentId: ID!) {
+    rollbackDeployment(deploymentId: $deploymentId) {
+      id
+      environment
+      version
+      status
+    }
+  }
+`;
+
+export const SAVE_PIPELINE_SECRET = gql`
+  mutation SavePipelineSecret($repositoryId: ID!, $name: String!, $value: String!, $scope: String) {
+    savePipelineSecret(repositoryId: $repositoryId, name: $name, value: $value, scope: $scope) {
+      id
+      name
+      maskedValue
+      scope
+    }
+  }
+`;
+
+export const DELETE_PIPELINE_SECRET = gql`
+  mutation DeletePipelineSecret($secretId: ID!) {
+    deletePipelineSecret(secretId: $secretId)
+  }
+`;

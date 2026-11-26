@@ -17,6 +17,7 @@ import {
   FlaskConical,
   ArrowRight,
   Bot,
+  Workflow,
 } from "lucide-react";
 
 export function Sidebar() {
@@ -64,6 +65,18 @@ export function Sidebar() {
         >
           <GitPullRequest className={`w-4 h-4 ${pathname === "/pull-requests" ? "text-violet-400" : "text-slate-500"}`} />
           <span>Pull Requests</span>
+        </Link>
+
+        <Link
+          href="/pipelines"
+          className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+            pathname === "/pipelines"
+              ? "bg-[#171c28] text-white border border-violet-500/30 shadow-sm"
+              : "text-slate-400 hover:text-slate-100 hover:bg-[#131722]"
+          }`}
+        >
+          <Workflow className={`w-4 h-4 ${pathname === "/pipelines" ? "text-violet-400" : "text-slate-500"}`} />
+          <span>CI/CD Pipelines</span>
         </Link>
 
         {/* Scans & Reports Expandable Menu */}
