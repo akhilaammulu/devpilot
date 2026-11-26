@@ -50,6 +50,29 @@ class RagServiceTest {
         assertNotNull(answer.getSources());
         assertFalse(answer.getSources().isEmpty());
         assertEquals("src/main/java/com/devpilot/config/SecurityConfig.java", answer.getSources().get(0).getFilePath());
+        assertEquals("SecurityConfig", answer.getSources().get(0).getSymbolName());
         assertTrue(answer.getAnswer().contains("SecurityConfig.java"));
+        assertTrue(answer.getAnswer().contains("OAuth2") || answer.getAnswer().contains("filterChain"));
+    }
+
+    @Test
+    void testAskRepositoryDynamicallySynthesizesArbitraryCodebaseQuestion() {
+        CodeChunk calcChunk = new CodeChunk(
+                repoId,
+                "backend/src/main/java/com/devpilot/analysis/QualityScoreCalculator.java",
+                1, 35,
+                "@Component\npublic class QualityScoreCalculator {\n    public int calculateScore(List<Issue> issues) {\n        return Math.max(0, 100 - issues.size() * 2);\n    }\n}",
+                "Java",
+                "QualityScoreCalculator"
+        );
+        vectorStore.addChunks(repoId, List.of(calcChunk));
+
+        RagAnswer answer = ragService.askRepository(repoId, "How does QualityScoreCalculator calculateScore?");
+
+        assertNotNull(answer);
+        assertFalse(answer.getSources().isEmpty());
+        assertEquals("backend/src/main/java/com/devpilot/analysis/QualityScoreCalculator.java", answer.getSources().get(0).getFilePath());
+        assertTrue(answer.getAnswer().contains("QualityScoreCalculator.java"));
+        assertTrue(answer.getAnswer().contains("calculateScore"));
     }
 }

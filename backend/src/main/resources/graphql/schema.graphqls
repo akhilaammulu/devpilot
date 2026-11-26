@@ -212,6 +212,7 @@ type RagSourceCitation {
     endLine: Int!
     snippet: String!
     relevanceScore: Float!
+    symbolName: String
 }
 
 type RepositoryIndexResult {

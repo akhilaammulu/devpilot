@@ -135,8 +135,9 @@ public class GraphQLScanController {
 
     @QueryMapping
     public RepositoryIndexResult repositoryIndexStatus(@Argument UUID repositoryId) {
-        int count = repositoryIngestionService.getIndexedChunkCount(repositoryId);
-        return new RepositoryIndexResult(repositoryId, count > 0 ? count / 3 : 0, count, count > 0 ? "INDEXED" : "NOT_INDEXED");
+        int chunkCount = repositoryIngestionService.getIndexedChunkCount(repositoryId);
+        int fileCount = repositoryIngestionService.getIndexedFileCount(repositoryId);
+        return new RepositoryIndexResult(repositoryId, fileCount, chunkCount, chunkCount > 0 ? "INDEXED" : "NOT_INDEXED");
     }
 
     @MutationMapping

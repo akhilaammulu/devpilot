@@ -51,6 +51,60 @@ public class LlmClient {
         return apiKey != null && !apiKey.isBlank();
     }
 
+    /**
+     * Sends a context-aware RAG prompt (system instruction + retrieved repository code chunks + query)
+     * to the configured LLM endpoint. Returns null if no external LLM is configured or if invocation fails.
+     */
+    public String askWithContext(String query, String formattedContext) {
+        if (apiKey == null || apiKey.isBlank() || endpoint == null || endpoint.isBlank()) {
+            return null;
+        }
+        try {
+            String prompt = String.format("""
+                You are DevPilot, a repository-aware AI software engineering assistant.
+                Answer the developer's question using ONLY the provided repository code context below.
+                Always cite exact file paths and line ranges (e.g. `SecurityConfig.java` Lines 15-42) when explaining implementation details.
+                If the provided context does not contain the answer, state what is missing rather than guessing.
+
+                --- REPOSITORY CODE CONTEXT ---
+                %s
+                --- END CONTEXT ---
+
+                Developer Question: %s
+                """, formattedContext, query);
+
+            String requestBody = MAPPER.writeValueAsString(Map.of(
+                    "model", modelName,
+                    "prompt", prompt,
+                    "temperature", 0.2
+            ));
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(endpoint))
+                    .header("Content-Type", "application/json")
+                    .header("Authorization", "Bearer " + apiKey)
+                    .timeout(Duration.ofSeconds(15))
+                    .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                    .build();
+
+            HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() == 200) {
+                JsonNode root = MAPPER.readTree(response.body());
+                String text = root.path("response").asText("");
+                if (text.isBlank()) {
+                    // Support OpenAI chat/completions response shape too
+                    text = root.path("choices").path(0).path("message").path("content").asText("");
+                }
+                if (!text.isBlank()) {
+                    return text;
+                }
+            }
+        } catch (Exception e) {
+            log.warn("Remote RAG LLM invocation failed ({}); falling back to dynamic code synthesis", e.getMessage());
+        }
+        return null;
+    }
+
     public AiIssueAnalysis analyzeIssue(Issue issue, Path repoRoot) {
         // If an API key and endpoint are provided, attempt live LLM invocation
         if (apiKey != null && !apiKey.isBlank() && endpoint != null && !endpoint.isBlank()) {
