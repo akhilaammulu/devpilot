@@ -23,6 +23,16 @@ spring:
       printer:
         enabled: true
 
+  kafka:
+    bootstrap-servers: ${KAFKA_BOOTSTRAP_SERVERS:localhost:9092}
+    listener:
+      auto-startup: ${DEVPILOT_KAFKA_ENABLED:false}
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+
   security:
     oauth2:
       client:
@@ -34,6 +44,25 @@ spring:
               - read:user
               - user:email
               - repo
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+  health:
+    redis:
+      enabled: ${DEVPILOT_REDIS_ENABLED:false}
+  metrics:
+    tags:
+      application: devpilot-backend
+
+logging:
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level [corr=%X{correlationId:-system}] %logger{36} - %msg%n"
 
 server:
   port: 8080

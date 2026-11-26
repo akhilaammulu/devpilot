@@ -1,0 +1,32 @@
+{
+  "title": "DevPilot — Production Observability",
+  "uid": "devpilot-prod-metrics",
+  "schemaVersion": 39,
+  "version": 1,
+  "panels": [
+    {
+      "id": 1,
+      "type": "stat",
+      "title": "Scan Events Published",
+      "targets": [{ "expr": "sum(devpilot_events_published_total)" }]
+    },
+    {
+      "id": 2,
+      "type": "stat",
+      "title": "Dead-Letter Queue Events",
+      "targets": [{ "expr": "sum(devpilot_events_dlq_total)" }]
+    },
+    {
+      "id": 3,
+      "type": "timeseries",
+      "title": "HTTP Request Latency (p95)",
+      "targets": [{ "expr": "histogram_quantile(0.95, sum(rate(http_server_requests_seconds_bucket[5m])) by (le))" }]
+    },
+    {
+      "id": 4,
+      "type": "timeseries",
+      "title": "JVM Heap Memory Used",
+      "targets": [{ "expr": "jvm_memory_used_bytes{area=\"heap\"}" }]
+    }
+  ]
+}

@@ -19,11 +19,14 @@ type Query {
     pipelineDeployments(repositoryId: ID!): [PipelineDeployment!]!
     pipelineSecrets(repositoryId: ID!): [PipelineSecretMeta!]!
     pipelineMetrics(repositoryId: ID!): PipelineMetrics!
+    scanEvents(scanId: ID): [ScanEventRecord!]!
+    deadLetterEvents: [ScanEventRecord!]!
 }
 
 type Mutation {
     connectRepository(input: ConnectRepositoryInput!): Repository!
     startScan(input: StartScanInput!): RepositoryScan!
+    startAsyncScan(input: StartScanInput!): RepositoryScan!
     startSecurityScan(input: StartScanInput!): RepositoryScan!
     startAccessibilityScan(input: StartScanInput!): RepositoryScan!
     generateAiAnalysis(issueId: ID!): AiIssueAnalysis!
@@ -42,6 +45,7 @@ type Mutation {
     rollbackDeployment(deploymentId: ID!): PipelineDeployment!
     savePipelineSecret(repositoryId: ID!, name: String!, value: String!, scope: String): PipelineSecretMeta!
     deletePipelineSecret(secretId: ID!): Boolean!
+    retryDeadLetterEvent(eventId: ID!): ScanEventRecord!
 }
 
 input ConnectRepositoryInput {
@@ -418,4 +422,18 @@ type PipelineMetrics {
     avgDurationMs: Int!
     latestDeploymentStatus: String!
     latestDeploymentEnv: String!
+}
+
+type ScanEventRecord {
+    id: ID!
+    scanId: ID!
+    repositoryId: ID!
+    eventType: String!
+    correlationId: String!
+    payloadJson: String
+    status: String!
+    retryCount: Int!
+    errorMessage: String
+    createdAt: String!
+    processedAt: String
 }
