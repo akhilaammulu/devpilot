@@ -10,16 +10,18 @@ public class RagSourceCitation {
     private int endLine;
     private String snippet;
     private double relevanceScore;
+    private String symbolName;
 
     public RagSourceCitation() {
     }
 
-    public RagSourceCitation(String filePath, int startLine, int endLine, String snippet, double relevanceScore) {
+    public RagSourceCitation(String filePath, int startLine, int endLine, String snippet, double relevanceScore, String symbolName) {
         this.filePath = filePath;
         this.startLine = startLine;
         this.endLine = endLine;
         this.snippet = snippet;
         this.relevanceScore = relevanceScore;
+        this.symbolName = symbolName;
     }
 
     public String getFilePath() {
@@ -60,5 +62,13 @@ public class RagSourceCitation {
 
     public void setRelevanceScore(double relevanceScore) {
         this.relevanceScore = relevanceScore;
+    }
+
+    public String getSymbolName() {
+        return symbolName;
+    }
+
+    public void setSymbolName(String symbolName) {
+        this.symbolName = symbolName;
     }
 }

@@ -110,6 +110,13 @@ public class RepositoryIngestionService {
         return vectorStore.getChunkCount(repositoryId);
     }
 
+    public int getIndexedFileCount(UUID repositoryId) {
+        return (int) vectorStore.getAllChunks(repositoryId).stream()
+                .map(CodeChunk::getFilePath)
+                .distinct()
+                .count();
+    }
+
     private boolean isIndexable(String fileName) {
         String lower = fileName.toLowerCase();
         for (String ext : ALLOWED_EXTENSIONS) {

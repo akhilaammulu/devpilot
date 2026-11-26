@@ -378,6 +378,7 @@ export const ASK_REPOSITORY = gql`
         endLine
         snippet
         relevanceScore
+        symbolName
       }
     }
   }

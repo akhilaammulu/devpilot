@@ -10,16 +10,15 @@ import {
   Bot,
   User,
   FileCode,
-  CheckCircle2,
   Copy,
   Check,
   ChevronDown,
   ChevronRight,
   Database,
   RefreshCw,
-  Cpu,
   Layers,
-  Terminal,
+  AlertCircle,
+  Code2,
 } from "lucide-react";
 import { useQuery, useLazyQuery, useMutation } from "@apollo/client";
 import {
@@ -35,6 +34,7 @@ interface RagSource {
   endLine: number;
   snippet: string;
   relevanceScore: number;
+  symbolName?: string;
 }
 
 interface ChatMessage {
@@ -44,35 +44,88 @@ interface ChatMessage {
   confidenceScore?: number;
   modelUsed?: string;
   sources?: RagSource[];
+  isError?: boolean;
   timestamp: string;
 }
 
 const initialMessages: ChatMessage[] = [
   {
-    id: "msg-1",
+    id: "msg-welcome",
     sender: "ai",
-    text: "Hello Akhila! I am your DevPilot Repository-Aware RAG Assistant. I have indexed your full codebase into our vector index. Ask me anything about your architecture, authentication flows, static analysis scanners, error handling, or test suites.",
-    confidenceScore: 0.98,
-    modelUsed: "DevPilot-RAG-Engine (GPT-4o / Claude 3.5)",
-    sources: [
-      {
-        filePath: "backend/src/main/java/com/devpilot/config/SecurityConfig.java",
-        startLine: 1,
-        endLine: 40,
-        snippet: `@Configuration\n@EnableWebSecurity\npublic class SecurityConfig {\n    @Bean\n    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {\n        return http.csrf(csrf -> csrf.disable()).oauth2Login(Customizer.withDefaults()).build();\n    }\n}`,
-        relevanceScore: 0.96,
-      },
-      {
-        filePath: "backend/src/main/resources/graphql/schema.graphqls",
-        startLine: 1,
-        endLine: 35,
-        snippet: `type Query {\n    currentUser: User\n    repositories: [Repository!]!\n    askRepository(repositoryId: ID!, query: String!): RagAnswer!\n}`,
-        relevanceScore: 0.94,
-      },
-    ],
-    timestamp: "10:30 AM",
+    text: "Hello! I am your **DevPilot Repository-Aware RAG Assistant**. I retrieve real code chunks from your indexed repository vector store and ground every answer with exact file paths, line ranges, and symbols.\n\nTry asking about authentication, error handling, test coverage, or any class/service in your codebase.",
+    timestamp: "Ready",
   },
 ];
+
+function renderInlineMarkdown(text: string): React.ReactNode[] {
+  const parts = text.split(/(\*\*[^*]+\*\*|`[^`]+`)/g);
+  return parts.map((part, i) => {
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return (
+        <strong key={i} className="font-bold text-slate-900 dark:text-white">
+          {part.slice(2, -2)}
+        </strong>
+      );
+    }
+    if (part.startsWith("`") && part.endsWith("`")) {
+      return (
+        <code
+          key={i}
+          className="px-1.5 py-0.5 mx-0.5 rounded bg-purple-500/10 dark:bg-purple-500/20 text-purple-700 dark:text-purple-300 font-mono text-[11px]"
+        >
+          {part.slice(1, -1)}
+        </code>
+      );
+    }
+    return <React.Fragment key={i}>{part}</React.Fragment>;
+  });
+}
+
+function FormattedRagText({ text }: { text: string }) {
+  const lines = text.split("\n");
+  return (
+    <div className="space-y-1.5 leading-relaxed">
+      {lines.map((line, idx) => {
+        const trimmed = line.trim();
+        if (!trimmed) return <div key={idx} className="h-1" />;
+        if (trimmed.startsWith("#### ")) {
+          return (
+            <h4 key={idx} className="text-xs font-extrabold text-slate-900 dark:text-white pt-1.5">
+              {renderInlineMarkdown(trimmed.slice(5))}
+            </h4>
+          );
+        }
+        if (trimmed.startsWith("### ")) {
+          return (
+            <h3 key={idx} className="text-sm font-extrabold text-slate-900 dark:text-white pt-1">
+              {renderInlineMarkdown(trimmed.slice(4))}
+            </h3>
+          );
+        }
+        if (trimmed.startsWith("- ")) {
+          return (
+            <div key={idx} className="flex items-start gap-2 pl-3">
+              <span className="text-purple-500 font-bold mt-0.5">•</span>
+              <span>{renderInlineMarkdown(trimmed.slice(2))}</span>
+            </div>
+          );
+        }
+        if (/^\d+\.\s/.test(trimmed)) {
+          const match = trimmed.match(/^(\d+\.)\s(.*)$/);
+          if (match) {
+            return (
+              <div key={idx} className="flex items-start gap-2 pt-1 font-medium">
+                <span className="text-purple-600 dark:text-purple-400 font-bold shrink-0">{match[1]}</span>
+                <span>{renderInlineMarkdown(match[2])}</span>
+              </div>
+            );
+          }
+        }
+        return <p key={idx}>{renderInlineMarkdown(trimmed)}</p>;
+      })}
+    </div>
+  );
+}
 
 export default function AIInsightsPage() {
   const [messages, setMessages] = useState<ChatMessage[]>(initialMessages);
@@ -96,7 +149,7 @@ export default function AIInsightsPage() {
   const { data: indexStatusData, refetch: refetchIndexStatus } = useQuery(
     GET_REPOSITORY_INDEX_STATUS,
     {
-      variables: { repositoryId: selectedRepoId || "00000000-0000-0000-0000-000000000000" },
+      variables: { repositoryId: selectedRepoId },
       skip: !selectedRepoId,
       fetchPolicy: "network-only",
       errorPolicy: "ignore",
@@ -104,10 +157,10 @@ export default function AIInsightsPage() {
   );
 
   useEffect(() => {
-    if (repoData && repoData.repositories && repoData.repositories.length > 0) {
+    if (repoData?.repositories?.length > 0 && !selectedRepoId) {
       setSelectedRepoId(repoData.repositories[0].id);
     }
-  }, [repoData]);
+  }, [repoData, selectedRepoId]);
 
   const handleSendMessage = async (queryText?: string) => {
     const textToSend = (queryText || inputText).trim();
@@ -145,64 +198,31 @@ export default function AIInsightsPage() {
           timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
         };
         setMessages((prev) => [...prev, aiMsg]);
+        refetchIndexStatus();
       } else {
-        fallbackAiReply(textToSend);
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: `err-${Date.now()}`,
+            sender: "ai",
+            isError: true,
+            text: "Unable to retrieve repository context from the GraphQL backend. Please ensure the DevPilot backend server is running on port 8080.",
+            timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+          },
+        ]);
       }
     } catch {
-      fallbackAiReply(textToSend);
+      setMessages((prev) => [
+        ...prev,
+        {
+          id: `err-${Date.now()}`,
+          sender: "ai",
+          isError: true,
+          text: "Network error while querying the RAG endpoint. Please verify the backend service is active.",
+          timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+        },
+      ]);
     }
-  };
-
-  const fallbackAiReply = (query: string) => {
-    const lower = query.toLowerCase();
-    let reply = `Based on repository indexing of DevPilot: The query regarding "${query}" maps to the core platform architecture.`;
-    let sources: RagSource[] = [];
-
-    if (lower.includes("auth") || lower.includes("security")) {
-      reply = `### Authentication Architecture\n\nAuthentication is managed via Spring Security 6 in \`SecurityConfig.java\` with GitHub OAuth2 client integration. State-changing requests are validated against JWT security contexts.\n\n- Endpoints permitted: GraphQL queries, health check.\n- Secured: Mutations, scans, and user settings.`;
-      sources = [
-        {
-          filePath: "backend/src/main/java/com/devpilot/config/SecurityConfig.java",
-          startLine: 1,
-          endLine: 45,
-          snippet: `@Configuration\n@EnableWebSecurity\npublic class SecurityConfig {\n    @Bean\n    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {\n        return http.csrf(csrf -> csrf.disable()).oauth2Login(Customizer.withDefaults()).build();\n    }\n}`,
-          relevanceScore: 0.98,
-        },
-      ];
-    } else if (lower.includes("payment") || lower.includes("error")) {
-      reply = `### Error Handling Strategy\n\nDevPilot uses centralized exception resolvers in the Spring Boot backend, mapping runtime exceptions into structured GraphQL errors with error codes and remediation hints. Frontend Apollo Client handles partial degradations via client error policies.`;
-      sources = [
-        {
-          filePath: "backend/src/main/java/com/devpilot/controller/GraphQLScanController.java",
-          startLine: 20,
-          endLine: 50,
-          snippet: `@Controller\npublic class GraphQLScanController {\n    // Resolvers with input validation and typed GraphQL errors\n}`,
-          relevanceScore: 0.92,
-        },
-      ];
-    } else if (lower.includes("test")) {
-      reply = `### Test Suites\n\nAutomated tests are divided across JUnit 5 (unit tests for Checkstyle, PMD, SpotBugs, ESLint, security, accessibility, AI analysis, and RAG retrieval) and Playwright for end-to-end accessibility testing.`;
-      sources = [
-        {
-          filePath: "backend/src/test/java/com/devpilot/rag/RagServiceTest.java",
-          startLine: 1,
-          endLine: 45,
-          snippet: `@Test\nvoid testAskRepositoryReturnsGroundedAnswerWithSources() {\n    // Grounded retrieval verification\n}`,
-          relevanceScore: 0.95,
-        },
-      ];
-    }
-
-    const aiMsg: ChatMessage = {
-      id: `ai-${Date.now()}`,
-      sender: "ai",
-      text: reply,
-      confidenceScore: 0.94,
-      modelUsed: "DevPilot-RAG-Context-Engine",
-      sources,
-      timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
-    };
-    setMessages((prev) => [...prev, aiMsg]);
   };
 
   const handleIndexRepo = async () => {
@@ -230,6 +250,8 @@ export default function AIInsightsPage() {
     }));
   };
 
+  const indexStatus = indexStatusData?.repositoryIndexStatus;
+
   return (
     <div className="min-h-screen flex flex-col transition-colors bg-[#f4f6fb] dark:bg-[#080b14] text-slate-900 dark:text-slate-100">
       <Header currentPhase="Phase 6 - Repository-Aware RAG" />
@@ -237,7 +259,7 @@ export default function AIInsightsPage() {
       <div className="flex-1 flex">
         <Sidebar />
 
-        <main className="flex-1 p-6 lg:p-8 space-y-6 max-w-5xl mx-auto w-full flex flex-col h-[calc(100vh-4rem)]">
+        <main className="flex-1 p-6 lg:p-8 space-y-5 max-w-5xl mx-auto w-full flex flex-col h-[calc(100vh-4rem)]">
           {/* Breadcrumb & Phase Header */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div className="space-y-1">
@@ -256,17 +278,41 @@ export default function AIInsightsPage() {
               </h1>
             </div>
 
-            {/* Ingestion & Vector Index Status Pill */}
-            <div className="flex items-center gap-2.5">
+            {/* Repository Selector & Vector Index Status */}
+            <div className="flex flex-wrap items-center gap-2.5">
+              {repoData?.repositories?.length > 0 && (
+                <select
+                  value={selectedRepoId}
+                  onChange={(e) => setSelectedRepoId(e.target.value)}
+                  className="px-3 py-1.5 rounded-2xl bg-white dark:bg-[#0e1322] border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-200 outline-none focus:border-purple-500 shadow-sm"
+                >
+                  {repoData.repositories.map((r: { id: string; fullName: string }) => (
+                    <option key={r.id} value={r.id}>
+                      {r.fullName}
+                    </option>
+                  ))}
+                </select>
+              )}
+
               <div className="flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-white dark:bg-[#0e1322] border border-slate-200 dark:border-slate-800 text-xs shadow-sm">
-                <Database className="w-4 h-4 text-emerald-500" />
+                <Database
+                  className={`w-4 h-4 ${
+                    indexStatus?.chunksCreated > 0 ? "text-emerald-500" : "text-amber-500"
+                  }`}
+                />
                 <span className="font-semibold text-slate-700 dark:text-slate-300">
-                  Vector Store:
+                  Vector DB:
                 </span>
-                <span className="font-bold text-emerald-600 dark:text-emerald-400">
-                  {indexStatusData?.repositoryIndexStatus?.chunksCreated
-                    ? `${indexStatusData.repositoryIndexStatus.chunksCreated} Chunks Indexed`
-                    : "Ingested & Active"}
+                <span
+                  className={`font-bold ${
+                    indexStatus?.chunksCreated > 0
+                      ? "text-emerald-600 dark:text-emerald-400"
+                      : "text-amber-600 dark:text-amber-400"
+                  }`}
+                >
+                  {indexStatus?.chunksCreated > 0
+                    ? `${indexStatus.filesIndexed} Files · ${indexStatus.chunksCreated} Chunks`
+                    : "Auto-Indexes on Query"}
                 </span>
               </div>
 
@@ -287,14 +333,16 @@ export default function AIInsightsPage() {
             <span className="text-slate-400 font-semibold shrink-0">Try asking:</span>
             {[
               "How is authentication implemented?",
-              "Where are payment errors handled?",
+              "How are GraphQL errors handled?",
               "What tests cover this service?",
-              "How does the accessibility scanner discover pages?",
+              "How does the accessibility scanner work?",
+              "How does QualityScoreCalculator compute scores?",
             ].map((prompt) => (
               <button
                 key={prompt}
                 onClick={() => handleSendMessage(prompt)}
-                className="px-3 py-1.5 rounded-full bg-white dark:bg-[#0e1322] border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:border-purple-500 hover:text-purple-600 dark:hover:text-purple-400 shrink-0 shadow-sm transition-all"
+                disabled={isAsking}
+                className="px-3 py-1.5 rounded-full bg-white dark:bg-[#0e1322] border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:border-purple-500 hover:text-purple-600 dark:hover:text-purple-400 shrink-0 shadow-sm transition-all disabled:opacity-50"
               >
                 {prompt}
               </button>
@@ -314,22 +362,32 @@ export default function AIInsightsPage() {
                   className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
                     msg.sender === "user"
                       ? "bg-purple-600 text-white"
+                      : msg.isError
+                      ? "bg-rose-500 text-white"
                       : "bg-gradient-to-tr from-cyan-400 to-purple-600 text-white shadow-md shadow-purple-500/20"
                   }`}
                 >
-                  {msg.sender === "user" ? <User className="w-4 h-4" /> : <Bot className="w-4 h-4" />}
+                  {msg.sender === "user" ? (
+                    <User className="w-4 h-4" />
+                  ) : msg.isError ? (
+                    <AlertCircle className="w-4 h-4" />
+                  ) : (
+                    <Bot className="w-4 h-4" />
+                  )}
                 </div>
 
                 <div
                   className={`rounded-2xl p-4 text-xs space-y-3 ${
                     msg.sender === "user"
                       ? "bg-purple-600 text-white shadow-md"
+                      : msg.isError
+                      ? "bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900 text-rose-700 dark:text-rose-300"
                       : "bg-slate-50 dark:bg-[#121829] border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200"
                   }`}
                 >
                   {/* Model & Confidence Header for AI replies */}
                   {msg.sender === "ai" && (msg.confidenceScore || msg.modelUsed) && (
-                    <div className="flex items-center gap-2 pb-1 border-b border-slate-200/60 dark:border-slate-800 text-[11px]">
+                    <div className="flex items-center gap-2 pb-1.5 border-b border-slate-200/60 dark:border-slate-800 text-[11px]">
                       {msg.confidenceScore && (
                         <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-bold">
                           {Math.round(msg.confidenceScore * 100)}% Confidence
@@ -343,16 +401,18 @@ export default function AIInsightsPage() {
                     </div>
                   )}
 
-                  <div className="leading-relaxed whitespace-pre-line font-normal">
-                    {msg.text}
-                  </div>
+                  {msg.sender === "user" ? (
+                    <p className="leading-relaxed">{msg.text}</p>
+                  ) : (
+                    <FormattedRagText text={msg.text} />
+                  )}
 
                   {/* Grounded Source Citations */}
                   {msg.sources && msg.sources.length > 0 && (
                     <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800 space-y-2">
                       <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-600 dark:text-slate-400">
                         <Layers className="w-3.5 h-3.5 text-purple-500" />
-                        <span>Grounded Source Citations ({msg.sources.length} files)</span>
+                        <span>Grounded Source Citations ({msg.sources.length} chunks)</span>
                       </div>
 
                       <div className="space-y-1.5">
@@ -366,17 +426,23 @@ export default function AIInsightsPage() {
                             >
                               <div
                                 onClick={() => toggleSourceExpand(key)}
-                                className="p-2.5 flex items-center justify-between cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
+                                className="p-2.5 flex items-center justify-between gap-2 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors"
                               >
-                                <div className="flex items-center gap-2 font-mono text-[11px] text-purple-600 dark:text-purple-400 font-semibold">
+                                <div className="flex items-center gap-2 font-mono text-[11px] text-purple-600 dark:text-purple-400 font-semibold min-w-0">
                                   <FileCode className="w-3.5 h-3.5 text-purple-500 shrink-0" />
-                                  <span>{source.filePath}</span>
-                                  <span className="text-slate-400 text-[10px]">
-                                    : L{source.startLine}–L{source.endLine}
+                                  <span className="truncate">{source.filePath}</span>
+                                  <span className="text-slate-400 text-[10px] shrink-0">
+                                    L{source.startLine}–L{source.endLine}
                                   </span>
                                 </div>
 
-                                <div className="flex items-center gap-2">
+                                <div className="flex items-center gap-1.5 shrink-0">
+                                  {source.symbolName && source.symbolName !== "Module" && (
+                                    <span className="hidden sm:inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-mono bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">
+                                      <Code2 className="w-2.5 h-2.5" />
+                                      {source.symbolName}
+                                    </span>
+                                  )}
                                   <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 border border-purple-200 dark:border-purple-800">
                                     {Math.round(source.relevanceScore * 100)}% match
                                   </span>
@@ -423,7 +489,7 @@ export default function AIInsightsPage() {
                 </div>
                 <div className="p-3 rounded-2xl bg-slate-50 dark:bg-[#121829] border border-slate-200 dark:border-slate-800 flex items-center gap-2 text-purple-600 dark:text-purple-400 font-medium">
                   <RefreshCw className="w-3.5 h-3.5 animate-spin" />
-                  <span>Searching vector index & grounding repository context...</span>
+                  <span>Searching persistent vector index & grounding repository context...</span>
                 </div>
               </div>
             )}
