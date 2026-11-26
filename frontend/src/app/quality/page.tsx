@@ -1,7 +1,7 @@
 "use client";
 
-import HomePage from "../page";
+import CodeQualityPage from "../code-quality/page";
 
 export default function QualityPage() {
-  return <HomePage />;
+  return <CodeQualityPage />;
 }
