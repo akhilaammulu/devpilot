@@ -239,7 +239,7 @@ public class PrAnalysisService {
         boolean hasHigh = scopedIssues.stream().anyMatch(i -> i.getSeverity() == IssueSeverity.HIGH);
 
         String reviewStatus;
-        if (hasCritical || prScore < 70) {
+        if (hasCritical || prScore < 65) {
             reviewStatus = "FAILED";
         } else if (hasHigh || prScore < 85) {
             reviewStatus = "WARNINGS";
@@ -322,8 +322,13 @@ public class PrAnalysisService {
         long medium = scopedIssues.stream().filter(i -> i.getCategory() == category && i.getSeverity() == IssueSeverity.MEDIUM).count();
         long low = scopedIssues.stream().filter(i -> i.getCategory() == category && i.getSeverity() == IssueSeverity.LOW).count();
 
-        int penalty = (int) (critical * 20 + high * 10 + medium * 4 + low * 1);
-        return Math.max(0, 100 - penalty);
+        int criticalPenalty = (int) (critical * 15);
+        int highPenalty = (int) (high * 6);
+        int mediumPenalty = (int) Math.min(30, medium * 2);
+        // Cap LOW/style nitpick penalties (e.g. Checkstyle 2-space vs 4-space indentation) at 15 pts
+        int lowPenalty = (int) Math.min(15, Math.ceil(low * 0.25));
+
+        return Math.max(0, 100 - (criticalPenalty + highPenalty + mediumPenalty + lowPenalty));
     }
 
     private String buildMarkdownSummary(PullRequest pr,
