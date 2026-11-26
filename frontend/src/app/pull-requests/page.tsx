@@ -202,7 +202,7 @@ export default function PullRequestsPage() {
     "akhilaammulu/devpilot";
 
   return (
-    <div className="min-h-screen flex flex-col transition-colors bg-[#f4f6fb] dark:bg-[#080b14] text-slate-900 dark:text-slate-100">
+    <div className="min-h-screen flex flex-col transition-colors bg-[#f4f6fb] dark:bg-[#090b10] text-slate-900 dark:text-slate-100">
       <Header currentPhase="Phase 7 - GitHub Pull Request Analysis" />
 
       <div className="flex-1 flex">
@@ -232,7 +232,7 @@ export default function PullRequestsPage() {
                 <select
                   value={selectedRepoId}
                   onChange={(e) => setSelectedRepoId(e.target.value)}
-                  className="px-3 py-2 rounded-xl bg-white dark:bg-[#0e1322] border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-200 outline-none shadow-sm"
+                  className="px-3 py-2 rounded-xl bg-white dark:bg-[#11151e] border border-slate-200 dark:border-[#1e2433] text-xs font-semibold text-slate-700 dark:text-slate-200 outline-none shadow-sm"
                 >
                   {repoData.repositories.map((r: { id: string; fullName: string }) => (
                     <option key={r.id} value={r.id}>
@@ -253,7 +253,7 @@ export default function PullRequestsPage() {
           </div>
 
           {/* Webhook Endpoint Banner */}
-          <div className="p-4 rounded-2xl bg-white dark:bg-[#0e1322] border border-slate-200 dark:border-slate-800/80 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+          <div className="p-4 rounded-2xl bg-white dark:bg-[#11151e] border border-slate-200 dark:border-[#1e2433] shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0">
                 <Webhook className="w-4 h-4" />
@@ -287,12 +287,12 @@ export default function PullRequestsPage() {
 
           {/* PR List */}
           {prsLoading ? (
-            <div className="p-12 rounded-3xl bg-white dark:bg-[#0e1322] border border-slate-200 dark:border-slate-800 flex items-center justify-center gap-2 text-xs text-purple-600">
+            <div className="p-12 rounded-3xl bg-white dark:bg-[#11151e] border border-slate-200 dark:border-[#1e2433] flex items-center justify-center gap-2 text-xs text-purple-600">
               <RefreshCw className="w-4 h-4 animate-spin" />
               <span>Loading pull requests...</span>
             </div>
           ) : filteredPrs.length === 0 ? (
-            <div className="p-12 rounded-3xl bg-white dark:bg-[#0e1322] border border-slate-200 dark:border-slate-800 text-center space-y-3">
+            <div className="p-12 rounded-3xl bg-white dark:bg-[#11151e] border border-slate-200 dark:border-[#1e2433] text-center space-y-3">
               <GitPullRequest className="w-10 h-10 text-slate-300 dark:text-slate-600 mx-auto" />
               <div className="space-y-1">
                 <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200">
@@ -318,7 +318,7 @@ export default function PullRequestsPage() {
                 <div
                   key={pr.id}
                   onClick={() => setActivePr(pr)}
-                  className="p-5 rounded-3xl bg-white dark:bg-[#0e1322] border border-slate-200 dark:border-slate-800/80 shadow-sm hover:border-purple-400/60 transition-all cursor-pointer flex flex-col lg:flex-row lg:items-center justify-between gap-4"
+                  className="p-5 rounded-3xl bg-white dark:bg-[#11151e] border border-slate-200 dark:border-[#1e2433] shadow-sm hover:border-purple-400/60 transition-all cursor-pointer flex flex-col lg:flex-row lg:items-center justify-between gap-4"
                 >
                   <div className="space-y-2 min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
@@ -372,25 +372,25 @@ export default function PullRequestsPage() {
                     onClick={(e) => e.stopPropagation()}
                   >
                     <div className="flex items-center gap-2 text-xs">
-                      <div className="px-3 py-1.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-center">
+                      <div className="px-3 py-1.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-[#1e2433] text-center">
                         <div className="text-[10px] text-slate-400 font-semibold">PR Score</div>
                         <div className="font-extrabold text-slate-900 dark:text-white">
                           {pr.prScore ?? "--"}/100
                         </div>
                       </div>
-                      <div className="hidden sm:block px-2.5 py-1.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-center">
+                      <div className="hidden sm:block px-2.5 py-1.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-[#1e2433] text-center">
                         <div className="text-[10px] text-slate-400">Quality</div>
                         <div className="font-bold text-indigo-600 dark:text-indigo-400">
                           {pr.qualityScore ?? "--"}
                         </div>
                       </div>
-                      <div className="hidden sm:block px-2.5 py-1.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-center">
+                      <div className="hidden sm:block px-2.5 py-1.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-[#1e2433] text-center">
                         <div className="text-[10px] text-slate-400">Security</div>
                         <div className="font-bold text-rose-600 dark:text-rose-400">
                           {pr.securityScore ?? "--"}
                         </div>
                       </div>
-                      <div className="hidden sm:block px-2.5 py-1.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-center">
+                      <div className="hidden sm:block px-2.5 py-1.5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-[#1e2433] text-center">
                         <div className="text-[10px] text-slate-400">A11y</div>
                         <div className="font-bold text-emerald-600 dark:text-emerald-400">
                           {pr.accessibilityScore ?? "--"}
@@ -424,8 +424,8 @@ export default function PullRequestsPage() {
       {/* Simulate / Trigger PR Analysis Modal */}
       {showSimulateModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="w-full max-w-lg bg-white dark:bg-[#0e1322] border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl overflow-hidden">
-            <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+          <div className="w-full max-w-lg bg-white dark:bg-[#11151e] border border-slate-200 dark:border-[#1e2433] rounded-3xl shadow-2xl overflow-hidden">
+            <div className="p-5 border-b border-slate-100 dark:border-[#1e2433] flex items-center justify-between">
               <h3 className="text-base font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
                 <GitPullRequest className="w-5 h-5 text-purple-600" />
                 <span>Analyze Pull Request ({currentRepoName})</span>
@@ -550,8 +550,8 @@ export default function PullRequestsPage() {
       {activePr && (
         <div className="fixed inset-0 z-50 flex justify-end bg-black/60 backdrop-blur-sm">
           <div className="flex-1" onClick={() => setActivePr(null)} />
-          <div className="w-full max-w-2xl bg-white dark:bg-[#0e1322] border-l border-slate-200 dark:border-slate-800 h-full shadow-2xl flex flex-col overflow-hidden">
-            <div className="p-6 border-b border-slate-100 dark:border-slate-800 flex items-start justify-between gap-4">
+          <div className="w-full max-w-2xl bg-white dark:bg-[#11151e] border-l border-slate-200 dark:border-[#1e2433] h-full shadow-2xl flex flex-col overflow-hidden">
+            <div className="p-6 border-b border-slate-100 dark:border-[#1e2433] flex items-start justify-between gap-4">
               <div className="space-y-1.5">
                 <div className="flex items-center gap-2">
                   <span
@@ -592,7 +592,7 @@ export default function PullRequestsPage() {
                     {activePr.prScore ?? "--"}
                   </div>
                 </div>
-                <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-[#1e2433]">
                   <div className="text-[10px] font-bold text-slate-400 uppercase flex items-center justify-center gap-1">
                     <Code2 className="w-3 h-3" /> Quality
                   </div>
@@ -600,7 +600,7 @@ export default function PullRequestsPage() {
                     {activePr.qualityScore ?? "--"}
                   </div>
                 </div>
-                <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-[#1e2433]">
                   <div className="text-[10px] font-bold text-slate-400 uppercase flex items-center justify-center gap-1">
                     <ShieldCheck className="w-3 h-3" /> Security
                   </div>
@@ -608,7 +608,7 @@ export default function PullRequestsPage() {
                     {activePr.securityScore ?? "--"}
                   </div>
                 </div>
-                <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+                <div className="p-3 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-[#1e2433]">
                   <div className="text-[10px] font-bold text-slate-400 uppercase flex items-center justify-center gap-1">
                     <Eye className="w-3 h-3" /> A11y
                   </div>
@@ -660,7 +660,7 @@ export default function PullRequestsPage() {
                     {activePr.history.map((h) => (
                       <div
                         key={h.id}
-                        className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 flex items-center justify-between text-xs"
+                        className="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-[#1e2433] flex items-center justify-between text-xs"
                       >
                         <div className="flex items-center gap-2 font-mono">
                           <span className="text-purple-600 font-bold">{h.commitSha.slice(0, 7)}</span>
@@ -684,7 +684,7 @@ export default function PullRequestsPage() {
               )}
             </div>
 
-            <div className="p-5 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3">
+            <div className="p-5 border-t border-slate-100 dark:border-[#1e2433] flex items-center justify-between gap-3">
               <button
                 onClick={() => handlePostComment(activePr.id)}
                 disabled={isPostingComment}

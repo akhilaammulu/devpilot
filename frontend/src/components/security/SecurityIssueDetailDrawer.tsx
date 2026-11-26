@@ -69,11 +69,11 @@ export function SecurityIssueDetailDrawer({
   return (
     <div className="fixed inset-0 z-50 overflow-hidden bg-slate-900/50 backdrop-blur-sm flex justify-end animate-in fade-in duration-200">
       <div
-        className="w-full max-w-2xl bg-white dark:bg-[#0e1322] h-full shadow-2xl border-l border-slate-200 dark:border-slate-800 flex flex-col justify-between overflow-y-auto"
+        className="w-full max-w-2xl bg-white dark:bg-[#11151e] h-full shadow-2xl border-l border-slate-200 dark:border-[#1e2433] flex flex-col justify-between overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Drawer Header */}
-        <div className="p-6 border-b border-slate-200/80 dark:border-slate-800/80 flex items-start justify-between gap-4 sticky top-0 bg-white/95 dark:bg-[#0e1322]/95 backdrop-blur z-10">
+        <div className="p-6 border-b border-slate-200/80 dark:border-[#1e2433] flex items-start justify-between gap-4 sticky top-0 bg-white/95 dark:bg-[#11151e]/95 backdrop-blur z-10">
           <div className="space-y-2">
             <div className="flex flex-wrap items-center gap-2">
               <span
@@ -119,7 +119,7 @@ export function SecurityIssueDetailDrawer({
             <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
               Vulnerability Overview
             </h4>
-            <p className="text-sm font-medium text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-slate-900/60 p-3.5 rounded-2xl border border-slate-200/80 dark:border-slate-800">
+            <p className="text-sm font-medium text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-slate-900/60 p-3.5 rounded-2xl border border-slate-200/80 dark:border-[#1e2433]">
               {issue.message}
             </p>
           </div>
@@ -129,7 +129,7 @@ export function SecurityIssueDetailDrawer({
             <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">
               Affected Location
             </h4>
-            <div className="flex items-center gap-2 p-3 rounded-2xl border border-slate-200/80 dark:border-slate-800 text-xs font-mono bg-white dark:bg-[#121829] text-slate-700 dark:text-slate-300">
+            <div className="flex items-center gap-2 p-3 rounded-2xl border border-slate-200/80 dark:border-[#1e2433] text-xs font-mono bg-white dark:bg-[#161b26] text-slate-700 dark:text-slate-300">
               <FileCode className="w-4 h-4 text-purple-500 shrink-0" />
               <span className="font-semibold text-purple-600 dark:text-purple-400">
                 {issue.filePath}
@@ -206,7 +206,7 @@ export function SecurityIssueDetailDrawer({
         </div>
 
         {/* Drawer Footer Actions */}
-        <div className="p-6 border-t border-slate-200/80 dark:border-slate-800/80 bg-slate-50 dark:bg-[#0e1322] flex items-center justify-between gap-4 sticky bottom-0">
+        <div className="p-6 border-t border-slate-200/80 dark:border-[#1e2433] bg-slate-50 dark:bg-[#11151e] flex items-center justify-between gap-4 sticky bottom-0">
           <button
             onClick={() => onToggleResolve(issue.id)}
             className={`flex items-center gap-2 px-5 py-2.5 rounded-2xl text-xs font-bold transition-all shadow-md ${

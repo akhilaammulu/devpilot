@@ -116,11 +116,11 @@ export function AiRemediationModal({
       />
 
       <div
-        className="relative z-10 w-full max-w-4xl bg-white dark:bg-[#0e1322] border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden animate-scaleUp"
+        className="relative z-10 w-full max-w-4xl bg-white dark:bg-[#11151e] border border-slate-200 dark:border-[#1e2433] rounded-3xl shadow-2xl flex flex-col max-h-[90vh] overflow-hidden animate-scaleUp"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="p-6 border-b border-slate-100 dark:border-slate-800/80 bg-gradient-to-r from-purple-50/70 via-indigo-50/40 to-pink-50/30 dark:from-[#1b1433]/70 dark:via-[#141830]/40 dark:to-transparent flex items-start justify-between gap-4">
+        <div className="p-6 border-b border-slate-100 dark:border-[#1e2433] bg-gradient-to-r from-purple-50/70 via-indigo-50/40 to-pink-50/30 dark:from-[#1b1433]/70 dark:via-[#141830]/40 dark:to-transparent flex items-start justify-between gap-4">
           <div className="space-y-2">
             <div className="flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-extrabold bg-gradient-to-r from-purple-600 to-indigo-600 text-white shadow-md shadow-purple-500/20">
@@ -166,7 +166,7 @@ export function AiRemediationModal({
         </div>
 
         {/* Tab Navigation */}
-        <div className="px-6 border-b border-slate-100 dark:border-slate-800/80 bg-slate-50/50 dark:bg-slate-900/30 flex items-center gap-2">
+        <div className="px-6 border-b border-slate-100 dark:border-[#1e2433] bg-slate-50/50 dark:bg-slate-900/30 flex items-center gap-2">
           <button
             onClick={() => setActiveTab("why")}
             className={`flex items-center gap-2 px-4 py-3 text-xs font-bold border-b-2 transition-all ${
@@ -218,7 +218,7 @@ export function AiRemediationModal({
           {!isLoading && activeTab === "why" && (
             <div className="space-y-4 animate-fadeIn">
               {/* Finding Message Summary */}
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-slate-800 space-y-1">
+              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200/80 dark:border-[#1e2433] space-y-1">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
                   Detected Violation
                 </span>
@@ -350,7 +350,7 @@ export function AiRemediationModal({
         </div>
 
         {/* Footer Actions */}
-        <div className="p-5 border-t border-slate-100 dark:border-slate-800 bg-white/95 dark:bg-[#0e1322]/95 backdrop-blur-md flex items-center justify-between gap-3">
+        <div className="p-5 border-t border-slate-100 dark:border-[#1e2433] bg-white/95 dark:bg-[#11151e]/95 backdrop-blur-md flex items-center justify-between gap-3">
           <div className="flex items-center gap-2">
             <button
               onClick={() => {

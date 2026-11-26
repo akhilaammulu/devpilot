@@ -76,9 +76,9 @@ export function IssueDetailDrawer({
       <div className="flex-1" onClick={onClose}></div>
 
       {/* Drawer Container */}
-      <div className="w-full max-w-2xl bg-white dark:bg-[#0e1322] border-l border-slate-200 dark:border-slate-800 h-full shadow-2xl flex flex-col justify-between overflow-y-auto animate-slideInRight">
+      <div className="w-full max-w-2xl bg-white dark:bg-[#11151e] border-l border-slate-200 dark:border-[#1e2433] h-full shadow-2xl flex flex-col justify-between overflow-y-auto animate-slideInRight">
         {/* Drawer Header */}
-        <div className="p-6 border-b border-slate-100 dark:border-slate-800 sticky top-0 bg-white/90 dark:bg-[#0e1322]/90 backdrop-blur-md z-10 space-y-3">
+        <div className="p-6 border-b border-slate-100 dark:border-[#1e2433] sticky top-0 bg-white/90 dark:bg-[#11151e]/90 backdrop-blur-md z-10 space-y-3">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <span
@@ -127,7 +127,7 @@ export function IssueDetailDrawer({
         {/* Drawer Body Content */}
         <div className="p-6 space-y-6 flex-1">
           {/* Finding Message */}
-          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-[#121829] border border-slate-200 dark:border-slate-800 space-y-1.5">
+          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-[#161b26] border border-slate-200 dark:border-[#1e2433] space-y-1.5">
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
               Rule Violation Message
             </span>
@@ -207,7 +207,7 @@ export function IssueDetailDrawer({
         </div>
 
         {/* Drawer Bottom Actions */}
-        <div className="p-6 border-t border-slate-100 dark:border-slate-800 bg-white/90 dark:bg-[#0e1322]/90 backdrop-blur-md sticky bottom-0 flex items-center justify-between gap-3">
+        <div className="p-6 border-t border-slate-100 dark:border-[#1e2433] bg-white/90 dark:bg-[#11151e]/90 backdrop-blur-md sticky bottom-0 flex items-center justify-between gap-3">
           <button
             onClick={() => onToggleResolve(issue.id)}
             className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold transition-all ${

@@ -253,7 +253,7 @@ export default function AIInsightsPage() {
   const indexStatus = indexStatusData?.repositoryIndexStatus;
 
   return (
-    <div className="min-h-screen flex flex-col transition-colors bg-[#f4f6fb] dark:bg-[#080b14] text-slate-900 dark:text-slate-100">
+    <div className="min-h-screen flex flex-col transition-colors bg-[#f4f6fb] dark:bg-[#090b10] text-slate-900 dark:text-slate-100">
       <Header currentPhase="Phase 6 - Repository-Aware RAG" />
 
       <div className="flex-1 flex">
@@ -284,7 +284,7 @@ export default function AIInsightsPage() {
                 <select
                   value={selectedRepoId}
                   onChange={(e) => setSelectedRepoId(e.target.value)}
-                  className="px-3 py-1.5 rounded-2xl bg-white dark:bg-[#0e1322] border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-200 outline-none focus:border-purple-500 shadow-sm"
+                  className="px-3 py-1.5 rounded-2xl bg-white dark:bg-[#11151e] border border-slate-200 dark:border-[#1e2433] text-xs font-semibold text-slate-700 dark:text-slate-200 outline-none focus:border-purple-500 shadow-sm"
                 >
                   {repoData.repositories.map((r: { id: string; fullName: string }) => (
                     <option key={r.id} value={r.id}>
@@ -294,7 +294,7 @@ export default function AIInsightsPage() {
                 </select>
               )}
 
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-white dark:bg-[#0e1322] border border-slate-200 dark:border-slate-800 text-xs shadow-sm">
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-2xl bg-white dark:bg-[#11151e] border border-slate-200 dark:border-[#1e2433] text-xs shadow-sm">
                 <Database
                   className={`w-4 h-4 ${
                     indexStatus?.chunksCreated > 0 ? "text-emerald-500" : "text-amber-500"
@@ -342,7 +342,7 @@ export default function AIInsightsPage() {
                 key={prompt}
                 onClick={() => handleSendMessage(prompt)}
                 disabled={isAsking}
-                className="px-3 py-1.5 rounded-full bg-white dark:bg-[#0e1322] border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:border-purple-500 hover:text-purple-600 dark:hover:text-purple-400 shrink-0 shadow-sm transition-all disabled:opacity-50"
+                className="px-3 py-1.5 rounded-full bg-white dark:bg-[#11151e] border border-slate-200 dark:border-[#1e2433] text-slate-600 dark:text-slate-300 hover:border-purple-500 hover:text-purple-600 dark:hover:text-purple-400 shrink-0 shadow-sm transition-all disabled:opacity-50"
               >
                 {prompt}
               </button>
@@ -350,7 +350,7 @@ export default function AIInsightsPage() {
           </div>
 
           {/* Chat Window Container */}
-          <div className="flex-1 rounded-3xl border transition-all bg-white dark:bg-[#0e1322] border-slate-200 dark:border-slate-800/80 shadow-sm p-6 overflow-y-auto space-y-4 flex flex-col">
+          <div className="flex-1 rounded-3xl border transition-all bg-white dark:bg-[#11151e] border-slate-200 dark:border-[#1e2433] shadow-sm p-6 overflow-y-auto space-y-4 flex flex-col">
             {messages.map((msg) => (
               <div
                 key={msg.id}
@@ -382,12 +382,12 @@ export default function AIInsightsPage() {
                       ? "bg-purple-600 text-white shadow-md"
                       : msg.isError
                       ? "bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900 text-rose-700 dark:text-rose-300"
-                      : "bg-slate-50 dark:bg-[#121829] border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200"
+                      : "bg-slate-50 dark:bg-[#161b26] border border-slate-200 dark:border-[#1e2433] text-slate-800 dark:text-slate-200"
                   }`}
                 >
                   {/* Model & Confidence Header for AI replies */}
                   {msg.sender === "ai" && (msg.confidenceScore || msg.modelUsed) && (
-                    <div className="flex items-center gap-2 pb-1.5 border-b border-slate-200/60 dark:border-slate-800 text-[11px]">
+                    <div className="flex items-center gap-2 pb-1.5 border-b border-slate-200/60 dark:border-[#1e2433] text-[11px]">
                       {msg.confidenceScore && (
                         <span className="px-2 py-0.5 rounded-full bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 font-bold">
                           {Math.round(msg.confidenceScore * 100)}% Confidence
@@ -409,7 +409,7 @@ export default function AIInsightsPage() {
 
                   {/* Grounded Source Citations */}
                   {msg.sources && msg.sources.length > 0 && (
-                    <div className="pt-2 border-t border-slate-200/60 dark:border-slate-800 space-y-2">
+                    <div className="pt-2 border-t border-slate-200/60 dark:border-[#1e2433] space-y-2">
                       <div className="flex items-center gap-1.5 text-[11px] font-bold text-slate-600 dark:text-slate-400">
                         <Layers className="w-3.5 h-3.5 text-purple-500" />
                         <span>Grounded Source Citations ({msg.sources.length} chunks)</span>
@@ -422,7 +422,7 @@ export default function AIInsightsPage() {
                           return (
                             <div
                               key={key}
-                              className="rounded-xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-[#0e1322] overflow-hidden"
+                              className="rounded-xl border border-slate-200/80 dark:border-[#1e2433] bg-white dark:bg-[#11151e] overflow-hidden"
                             >
                               <div
                                 onClick={() => toggleSourceExpand(key)}
@@ -487,7 +487,7 @@ export default function AIInsightsPage() {
                 <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-cyan-400 to-purple-600 text-white flex items-center justify-center">
                   <Bot className="w-4 h-4" />
                 </div>
-                <div className="p-3 rounded-2xl bg-slate-50 dark:bg-[#121829] border border-slate-200 dark:border-slate-800 flex items-center gap-2 text-purple-600 dark:text-purple-400 font-medium">
+                <div className="p-3 rounded-2xl bg-slate-50 dark:bg-[#161b26] border border-slate-200 dark:border-[#1e2433] flex items-center gap-2 text-purple-600 dark:text-purple-400 font-medium">
                   <RefreshCw className="w-3.5 h-3.5 animate-spin" />
                   <span>Searching persistent vector index & grounding repository context...</span>
                 </div>
@@ -508,7 +508,7 @@ export default function AIInsightsPage() {
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               placeholder="Ask anything about your architecture, authentication, tests, or scanners..."
-              className="flex-1 px-4 py-3 rounded-2xl text-xs bg-white dark:bg-[#0e1322] border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white outline-none focus:border-purple-500 shadow-sm"
+              className="flex-1 px-4 py-3 rounded-2xl text-xs bg-white dark:bg-[#11151e] border border-slate-200 dark:border-[#1e2433] text-slate-900 dark:text-white outline-none focus:border-purple-500 shadow-sm"
             />
             <button
               type="submit"

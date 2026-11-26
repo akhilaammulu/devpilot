@@ -60,7 +60,7 @@ export default function ProfilePage() {
     : "D";
 
   return (
-    <div className="min-h-screen flex flex-col transition-colors bg-slate-50 dark:bg-[#080b14] text-slate-900 dark:text-slate-100">
+    <div className="min-h-screen flex flex-col transition-colors bg-slate-50 dark:bg-[#090b10] text-slate-900 dark:text-slate-100">
       <Header currentPhase="Phase 1 - Foundation" />
 
       <div className="flex-1 flex">
@@ -77,7 +77,7 @@ export default function ProfilePage() {
           </div>
 
           {/* Profile Header Banner */}
-          <div className="relative overflow-hidden rounded-3xl p-6 sm:p-8 border transition-all bg-white dark:bg-[#0e1322] border-slate-200 dark:border-slate-800 shadow-sm">
+          <div className="relative overflow-hidden rounded-3xl p-6 sm:p-8 border transition-all bg-white dark:bg-[#11151e] border-slate-200 dark:border-[#1e2433] shadow-sm">
             <div className="absolute top-0 right-0 w-80 h-80 bg-purple-500/10 dark:bg-purple-600/15 rounded-full blur-3xl pointer-events-none"></div>
 
             <div className="relative z-10 flex flex-col sm:flex-row sm:items-center justify-between gap-6">
@@ -118,7 +118,7 @@ export default function ProfilePage() {
                     href={`https://github.com/${username}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-semibold border transition-all bg-slate-50 dark:bg-[#121829] border-slate-200 dark:border-slate-700/80 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200"
+                    className="flex items-center gap-2 px-4 py-2 rounded-2xl text-xs font-semibold border transition-all bg-slate-50 dark:bg-[#161b26] border-slate-200 dark:border-slate-700/80 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-800 dark:text-slate-200"
                   >
                     <Github className="w-4 h-4" />
                     <span>GitHub Connected</span>
@@ -140,8 +140,8 @@ export default function ProfilePage() {
           {/* Profile Form & Settings Grid */}
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {/* Left 8 Cols: Edit Profile Form */}
-            <div className="lg:col-span-8 rounded-3xl p-6 border transition-all bg-white dark:bg-[#0e1322] border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
-              <div className="flex items-center justify-between border-b pb-4 border-slate-100 dark:border-slate-800">
+            <div className="lg:col-span-8 rounded-3xl p-6 border transition-all bg-white dark:bg-[#11151e] border-slate-200 dark:border-[#1e2433] shadow-sm space-y-6">
+              <div className="flex items-center justify-between border-b pb-4 border-slate-100 dark:border-[#1e2433]">
                 <div className="flex items-center gap-2">
                   <UserIcon className="w-4 h-4 text-purple-500" />
                   <h2 className="text-sm font-bold text-slate-900 dark:text-white">
@@ -226,7 +226,7 @@ export default function ProfilePage() {
             {/* Right 4 Cols: Appearance & Integration Preferences */}
             <div className="lg:col-span-4 space-y-6">
               {/* Theme Preference Box */}
-              <div className="rounded-3xl p-6 border transition-all bg-white dark:bg-[#0e1322] border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+              <div className="rounded-3xl p-6 border transition-all bg-white dark:bg-[#11151e] border-slate-200 dark:border-[#1e2433] shadow-sm space-y-4">
                 <div className="flex items-center gap-2">
                   <Sparkles className="w-4 h-4 text-purple-500" />
                   <h3 className="text-sm font-bold text-slate-900 dark:text-white">
@@ -264,7 +264,7 @@ export default function ProfilePage() {
               </div>
 
               {/* GitHub OAuth Details */}
-              <div className="rounded-3xl p-6 border transition-all bg-white dark:bg-[#0e1322] border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+              <div className="rounded-3xl p-6 border transition-all bg-white dark:bg-[#11151e] border-slate-200 dark:border-[#1e2433] shadow-sm space-y-4">
                 <div className="flex items-center gap-2">
                   <Github className="w-4 h-4 text-slate-800 dark:text-white" />
                   <h3 className="text-sm font-bold text-slate-900 dark:text-white">

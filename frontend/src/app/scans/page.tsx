@@ -217,7 +217,7 @@ export default function TestsAndScansPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col transition-colors bg-[#f4f6fb] dark:bg-[#080b14] text-slate-900 dark:text-slate-100">
+    <div className="min-h-screen flex flex-col transition-colors bg-[#f4f6fb] dark:bg-[#090b10] text-slate-900 dark:text-slate-100">
       <Header currentPhase="Phase 7 - GitHub Pull Request Analysis" />
 
       <div className="flex-1 flex">
@@ -246,7 +246,7 @@ export default function TestsAndScansPage() {
 
           {/* Summary Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="p-5 rounded-3xl bg-white dark:bg-[#0e1322] border border-slate-200/80 dark:border-slate-800/80 shadow-sm flex items-center justify-between">
+            <div className="p-5 rounded-3xl bg-white dark:bg-[#11151e] border border-slate-200/80 dark:border-[#1e2433] shadow-sm flex items-center justify-between">
               <div>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
                   JUnit 5 Test Cases
@@ -261,7 +261,7 @@ export default function TestsAndScansPage() {
               </div>
             </div>
 
-            <div className="p-5 rounded-3xl bg-white dark:bg-[#0e1322] border border-slate-200/80 dark:border-slate-800/80 shadow-sm flex items-center justify-between">
+            <div className="p-5 rounded-3xl bg-white dark:bg-[#11151e] border border-slate-200/80 dark:border-[#1e2433] shadow-sm flex items-center justify-between">
               <div>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
                   Test Suites
@@ -276,7 +276,7 @@ export default function TestsAndScansPage() {
               </div>
             </div>
 
-            <div className="p-5 rounded-3xl bg-white dark:bg-[#0e1322] border border-slate-200/80 dark:border-slate-800/80 shadow-sm flex items-center justify-between">
+            <div className="p-5 rounded-3xl bg-white dark:bg-[#11151e] border border-slate-200/80 dark:border-[#1e2433] shadow-sm flex items-center justify-between">
               <div>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
                   Recorded Repository Scans
@@ -302,7 +302,7 @@ export default function TestsAndScansPage() {
                   className={`px-3.5 py-1.5 rounded-full font-bold transition-all ${
                     selectedDomain === domain
                       ? "bg-purple-600 text-white shadow-sm"
-                      : "bg-white dark:bg-[#0e1322] border border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-300 hover:border-purple-400"
+                      : "bg-white dark:bg-[#11151e] border border-slate-200 dark:border-[#1e2433] text-slate-600 dark:text-slate-300 hover:border-purple-400"
                   }`}
                 >
                   {domain}
@@ -312,8 +312,8 @@ export default function TestsAndScansPage() {
           </div>
 
           {/* Test Suites Table */}
-          <div className="rounded-3xl bg-white dark:bg-[#0e1322] border border-slate-200/80 dark:border-slate-800/80 shadow-sm overflow-hidden">
-            <div className="p-5 border-b border-slate-100 dark:border-slate-800 flex items-center justify-between">
+          <div className="rounded-3xl bg-white dark:bg-[#11151e] border border-slate-200/80 dark:border-[#1e2433] shadow-sm overflow-hidden">
+            <div className="p-5 border-b border-slate-100 dark:border-[#1e2433] flex items-center justify-between">
               <h2 className="text-sm font-extrabold text-slate-900 dark:text-white">
                 Automated Test Suites ({filteredSuites.length})
               </h2>
@@ -358,8 +358,8 @@ export default function TestsAndScansPage() {
 
           {/* Scan Execution History */}
           {scans.length > 0 && (
-            <div className="rounded-3xl bg-white dark:bg-[#0e1322] border border-slate-200/80 dark:border-slate-800/80 shadow-sm overflow-hidden">
-              <div className="p-5 border-b border-slate-100 dark:border-slate-800">
+            <div className="rounded-3xl bg-white dark:bg-[#11151e] border border-slate-200/80 dark:border-[#1e2433] shadow-sm overflow-hidden">
+              <div className="p-5 border-b border-slate-100 dark:border-[#1e2433]">
                 <h2 className="text-sm font-extrabold text-slate-900 dark:text-white">
                   Recent Scan Executions ({scans.length})
                 </h2>

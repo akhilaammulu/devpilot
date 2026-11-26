@@ -110,7 +110,7 @@ export function CodeQualityDashboard() {
   return (
     <div className="space-y-6">
       {/* Top Banner: Quality Score & Metrics Breakdown */}
-      <div className="rounded-3xl p-6 sm:p-8 border transition-all bg-white dark:bg-[#0e1322] border-slate-200 dark:border-slate-800/80 shadow-sm relative overflow-hidden">
+      <div className="rounded-3xl p-6 sm:p-8 border transition-all bg-white dark:bg-[#11151e] border-slate-200 dark:border-[#1e2433] shadow-sm relative overflow-hidden">
         <div className="absolute top-0 right-0 w-80 h-80 bg-purple-500/10 dark:bg-purple-600/10 rounded-full blur-3xl pointer-events-none"></div>
 
         <div className="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
@@ -133,7 +133,7 @@ export function CodeQualityDashboard() {
 
           {/* Metrics summary widgets */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-[#121829] border border-slate-200 dark:border-slate-800 text-center">
+            <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-[#161b26] border border-slate-200 dark:border-[#1e2433] text-center">
               <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
                 Quality Grade
               </p>
@@ -143,7 +143,7 @@ export function CodeQualityDashboard() {
               <p className="text-[10px] text-slate-400">87/100 Index</p>
             </div>
 
-            <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-[#121829] border border-slate-200 dark:border-slate-800 text-center">
+            <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-[#161b26] border border-slate-200 dark:border-[#1e2433] text-center">
               <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
                 Maintainability
               </p>
@@ -153,7 +153,7 @@ export function CodeQualityDashboard() {
               <p className="text-[10px] text-slate-400">High rating</p>
             </div>
 
-            <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-[#121829] border border-slate-200 dark:border-slate-800 text-center">
+            <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-[#161b26] border border-slate-200 dark:border-[#1e2433] text-center">
               <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
                 Complexity
               </p>
@@ -163,7 +163,7 @@ export function CodeQualityDashboard() {
               <p className="text-[10px] text-slate-400">Cyclomatic avg</p>
             </div>
 
-            <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-[#121829] border border-slate-200 dark:border-slate-800 text-center">
+            <div className="p-3.5 rounded-2xl bg-slate-50 dark:bg-[#161b26] border border-slate-200 dark:border-[#1e2433] text-center">
               <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
                 Open Issues
               </p>
@@ -177,7 +177,7 @@ export function CodeQualityDashboard() {
       </div>
 
       {/* Filter Toolbar */}
-      <div className="rounded-3xl p-5 border transition-all bg-white dark:bg-[#0e1322] border-slate-200 dark:border-slate-800/80 shadow-sm space-y-4">
+      <div className="rounded-3xl p-5 border transition-all bg-white dark:bg-[#11151e] border-slate-200 dark:border-[#1e2433] shadow-sm space-y-4">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           {/* Severity Filters */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
@@ -194,7 +194,7 @@ export function CodeQualityDashboard() {
                 className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all shrink-0 ${
                   selectedSeverity === btn.id
                     ? "bg-purple-600 text-white shadow-md shadow-purple-600/20"
-                    : "bg-slate-100 dark:bg-[#121829] text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800"
+                    : "bg-slate-100 dark:bg-[#161b26] text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-[#1e2433]"
                 }`}
               >
                 {btn.label}
@@ -216,7 +216,7 @@ export function CodeQualityDashboard() {
         </div>
 
         {/* Secondary Filter: Analyzers / Tools & Status */}
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100 dark:border-slate-800 text-xs">
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-slate-100 dark:border-[#1e2433] text-xs">
           <div className="flex items-center gap-2">
             <span className="text-slate-400 font-semibold flex items-center gap-1 text-[11px]">
               <Filter className="w-3 h-3 text-purple-500" />
@@ -259,7 +259,7 @@ export function CodeQualityDashboard() {
       {/* Issues List Table */}
       <div className="space-y-3">
         {filteredIssues.length === 0 ? (
-          <div className="rounded-3xl border border-dashed border-slate-200 dark:border-slate-800 p-12 text-center space-y-3 bg-white/40 dark:bg-[#0e1322]/40">
+          <div className="rounded-3xl border border-dashed border-slate-200 dark:border-[#1e2433] p-12 text-center space-y-3 bg-white/40 dark:bg-[#11151e]/40">
             <CheckCircle2 className="w-10 h-10 mx-auto text-emerald-500" />
             <h4 className="text-sm font-bold text-slate-900 dark:text-white">
               No findings matching the current filters
@@ -276,7 +276,7 @@ export function CodeQualityDashboard() {
               className={`p-5 rounded-2xl border transition-all cursor-pointer group hover:-translate-y-0.5 hover:shadow-md ${
                 issue.status === "RESOLVED"
                   ? "bg-slate-50/50 dark:bg-[#0c101c]/50 border-slate-200 dark:border-slate-850 opacity-60"
-                  : "bg-white dark:bg-[#0e1322] border-slate-200 dark:border-slate-800/80 hover:border-purple-500/40"
+                  : "bg-white dark:bg-[#11151e] border-slate-200 dark:border-[#1e2433] hover:border-purple-500/40"
               }`}
             >
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">

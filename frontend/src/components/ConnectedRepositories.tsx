@@ -54,7 +54,7 @@ export function ConnectedRepositories({
 
       {/* Empty State */}
       {repositories.length === 0 ? (
-        <div className="rounded-2xl border border-dashed border-slate-200 dark:border-slate-800 p-8 text-center space-y-3 bg-white/40 dark:bg-[#0e1322]/40">
+        <div className="rounded-2xl border border-dashed border-slate-200 dark:border-[#1e2433] p-8 text-center space-y-3 bg-white/40 dark:bg-[#11151e]/40">
           <FolderGit2 className="w-8 h-8 mx-auto text-slate-400" />
           <p className="text-xs text-slate-500 dark:text-slate-400">
             No repositories connected yet.
@@ -79,7 +79,7 @@ export function ConnectedRepositories({
                 className={`group flex items-center justify-between p-4 rounded-2xl border transition-all cursor-pointer ${
                   isSelected
                     ? "bg-purple-500/[0.04] dark:bg-purple-950/20 border-purple-500/40 shadow-sm"
-                    : "bg-white dark:bg-[#0e1322] border-slate-200 dark:border-slate-800/80 hover:border-slate-300 dark:hover:border-slate-700"
+                    : "bg-white dark:bg-[#11151e] border-slate-200 dark:border-[#1e2433] hover:border-slate-300 dark:hover:border-slate-700"
                 }`}
               >
                 {/* Left Info */}

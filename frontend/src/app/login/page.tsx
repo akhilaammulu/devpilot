@@ -67,9 +67,9 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-between transition-colors bg-slate-50 dark:bg-[#080b14] text-slate-900 dark:text-slate-100">
+    <div className="min-h-screen flex flex-col justify-between transition-colors bg-slate-50 dark:bg-[#090b10] text-slate-900 dark:text-slate-100">
       {/* Top Navbar */}
-      <header className="px-6 py-4 flex items-center justify-between border-b transition-colors bg-white/70 dark:bg-[#0e1322]/70 backdrop-blur-md border-slate-200 dark:border-slate-800">
+      <header className="px-6 py-4 flex items-center justify-between border-b transition-colors bg-white/70 dark:bg-[#11151e]/70 backdrop-blur-md border-slate-200 dark:border-[#1e2433]">
         <Link href="/" className="flex items-center gap-3">
           <div className="w-9 h-9 rounded-2xl bg-gradient-to-tr from-purple-600 via-indigo-600 to-pink-500 p-0.5 shadow-md flex items-center justify-center">
             <div className="w-full h-full bg-[#0e1322] rounded-[14px] flex items-center justify-center">
@@ -106,7 +106,7 @@ export default function LoginPage() {
         <div className="absolute top-1/4 left-1/3 w-96 h-96 bg-purple-500/10 dark:bg-purple-600/10 rounded-full blur-3xl pointer-events-none"></div>
         <div className="absolute bottom-1/4 right-1/3 w-80 h-80 bg-pink-500/10 dark:bg-pink-600/10 rounded-full blur-3xl pointer-events-none"></div>
 
-        <div className="relative z-10 w-full max-w-md rounded-3xl p-8 border transition-all bg-white dark:bg-[#0e1322] border-slate-200 dark:border-slate-800 shadow-xl shadow-purple-500/5 space-y-6">
+        <div className="relative z-10 w-full max-w-md rounded-3xl p-8 border transition-all bg-white dark:bg-[#11151e] border-slate-200 dark:border-[#1e2433] shadow-xl shadow-purple-500/5 space-y-6">
           <div className="text-center space-y-2">
             <h1 className="text-2xl font-black text-slate-900 dark:text-white tracking-tight">
               Sign in to DevPilot
@@ -191,8 +191,8 @@ export default function LoginPage() {
           )}
 
           <div className="relative flex items-center justify-center">
-            <div className="w-full border-t border-slate-200 dark:border-slate-800"></div>
-            <span className="absolute px-3 text-[11px] uppercase tracking-wider font-semibold text-slate-400 bg-white dark:bg-[#0e1322]">
+            <div className="w-full border-t border-slate-200 dark:border-[#1e2433]"></div>
+            <span className="absolute px-3 text-[11px] uppercase tracking-wider font-semibold text-slate-400 bg-white dark:bg-[#11151e]">
               or with email
             </span>
           </div>
@@ -243,7 +243,7 @@ export default function LoginPage() {
           </form>
 
           {/* Footer Highlights */}
-          <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
+          <div className="pt-2 border-t border-slate-100 dark:border-[#1e2433] flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400">
             <span className="flex items-center gap-1">
               <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
               SOC2 & HIPAA Compliant
@@ -257,7 +257,7 @@ export default function LoginPage() {
       </main>
 
       {/* Footer */}
-      <footer className="py-4 text-center text-xs text-slate-400 dark:text-slate-600 border-t border-slate-200/60 dark:border-slate-800/60">
+      <footer className="py-4 text-center text-xs text-slate-400 dark:text-slate-600 border-t border-slate-200/60 dark:border-[#1e2433]/60">
         DevPilot &copy; 2026. AI-Powered Developer Platform.
       </footer>
     </div>

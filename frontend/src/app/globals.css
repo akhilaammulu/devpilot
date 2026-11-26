@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 :root {
-  --bg-primary: #f8fafc;
+  --bg-primary: #f4f6fb;
   --bg-secondary: #ffffff;
   --bg-card: #ffffff;
   --bg-card-hover: #f1f5f9;
@@ -14,12 +14,12 @@
 }
 
 .dark {
-  --bg-primary: #080b14;
-  --bg-secondary: #0e1322;
-  --bg-card: #121829;
-  --bg-card-hover: #192138;
-  --border-color: #1e293b;
-  --text-primary: #f8fafc;
+  --bg-primary: #090b10;
+  --bg-secondary: #0d1017;
+  --bg-card: #11151e;
+  --bg-card-hover: #171c28;
+  --border-color: #1e2433;
+  --text-primary: #f1f5f9;
   --text-secondary: #94a3b8;
   --text-muted: #64748b;
 }
@@ -32,7 +32,7 @@ body {
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-/* Custom scrollbar */
+/* Subtle developer-grade scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -41,9 +41,9 @@ body {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgba(148, 163, 184, 0.3);
+  background: rgba(100, 116, 139, 0.3);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(148, 163, 184, 0.5);
+  background: rgba(100, 116, 139, 0.55);
 }

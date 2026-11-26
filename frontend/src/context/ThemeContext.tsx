@@ -11,19 +11,17 @@ interface ThemeContextType {
 }
 
 const ThemeContext = createContext<ThemeContextType>({
-  theme: "light",
+  theme: "dark",
   toggleTheme: () => {},
   setTheme: () => {},
 });
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setThemeState] = useState<Theme>("light");
-  const [mounted, setMounted] = useState(false);
+  const [theme, setThemeState] = useState<Theme>("dark");
 
   useEffect(() => {
-    setMounted(true);
     const saved = localStorage.getItem("devpilot-theme") as Theme | null;
-    const initialTheme: Theme = saved === "dark" ? "dark" : "light";
+    const initialTheme: Theme = saved === "light" ? "light" : "dark";
     setThemeState(initialTheme);
     if (initialTheme === "dark") {
       document.documentElement.classList.add("dark");

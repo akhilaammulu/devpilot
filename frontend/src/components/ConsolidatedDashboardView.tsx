@@ -240,7 +240,7 @@ export function ConsolidatedDashboardView() {
   return (
     <div className="space-y-6">
       {/* Top Executive Header */}
-      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white dark:bg-[#0e1322] p-6 rounded-3xl border border-slate-200/80 dark:border-slate-800/80 shadow-sm">
+      <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-white dark:bg-[#11151e] p-6 rounded-3xl border border-slate-200/80 dark:border-[#1e2433] shadow-sm">
         <div className="space-y-1.5">
           <div className="flex items-center gap-2 text-xs text-slate-400 font-semibold">
             <LayoutDashboard className="w-3.5 h-3.5 text-purple-500" />
@@ -261,7 +261,7 @@ export function ConsolidatedDashboardView() {
             <select
               value={selectedRepoId}
               onChange={(e) => setSelectedRepoId(e.target.value)}
-              className="px-3.5 py-2 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-semibold text-slate-700 dark:text-slate-200 outline-none"
+              className="px-3.5 py-2 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-[#1e2433] text-xs font-semibold text-slate-700 dark:text-slate-200 outline-none"
             >
               {repoData.repositories.map((r: { id: string; fullName: string }) => (
                 <option key={r.id} value={r.id}>
@@ -272,7 +272,7 @@ export function ConsolidatedDashboardView() {
           )}
 
           {activeRepo && (
-            <span className="px-3 py-2 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs font-mono text-slate-600 dark:text-slate-300 flex items-center gap-1.5">
+            <span className="px-3 py-2 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-[#1e2433] text-xs font-mono text-slate-600 dark:text-slate-300 flex items-center gap-1.5">
               <GitBranch className="w-3.5 h-3.5 text-purple-500" />
               {activeRepo.defaultBranch || "main"}
             </span>
@@ -281,7 +281,7 @@ export function ConsolidatedDashboardView() {
           <button
             onClick={handleRunFullScan}
             disabled={isScanning || !activeRepo}
-            className="flex items-center gap-2 px-5 py-2.5 rounded-2xl text-xs font-bold text-white bg-gradient-to-r from-purple-600 via-indigo-600 to-pink-600 shadow-lg shadow-purple-500/25 hover:opacity-95 disabled:opacity-50 transition-all"
+            className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-xs font-semibold text-white bg-violet-600 hover:bg-violet-500 border border-violet-500/40 shadow-sm disabled:opacity-50 transition-all"
           >
             {isScanning ? (
               <>
@@ -301,7 +301,7 @@ export function ConsolidatedDashboardView() {
       {/* Row 1: 4 Executive Score Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         {/* Overall Health */}
-        <div className="p-5 rounded-3xl bg-white dark:bg-[#0e1322] border border-slate-200/80 dark:border-slate-800/80 shadow-sm flex items-center justify-between">
+        <div className="p-5 rounded-3xl bg-white dark:bg-[#11151e] border border-slate-200/80 dark:border-[#1e2433] shadow-sm flex items-center justify-between">
           <div className="space-y-1.5">
             <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400">
               Overall Health
@@ -316,15 +316,15 @@ export function ConsolidatedDashboardView() {
               Grade {computeGrade(overallScore)} · {totalOpen} open issues
             </span>
           </div>
-          <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-600 text-white flex items-center justify-center shadow-lg shadow-purple-500/25">
-            <Activity className="w-7 h-7" />
+          <div className="w-12 h-12 rounded-2xl bg-violet-500/10 border border-violet-500/20 text-violet-400 flex items-center justify-center">
+            <Activity className="w-6 h-6" />
           </div>
         </div>
 
         {/* Code Quality */}
         <Link
           href="/code-quality"
-          className="group p-5 rounded-3xl bg-white dark:bg-[#0e1322] border border-slate-200/80 dark:border-slate-800/80 shadow-sm hover:border-indigo-400/60 transition-all flex items-center justify-between"
+          className="group p-5 rounded-3xl bg-white dark:bg-[#11151e] border border-slate-200/80 dark:border-[#1e2433] shadow-sm hover:border-indigo-400/60 transition-all flex items-center justify-between"
         >
           <div className="space-y-1.5">
             <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
@@ -349,7 +349,7 @@ export function ConsolidatedDashboardView() {
         {/* Security */}
         <Link
           href="/security"
-          className="group p-5 rounded-3xl bg-white dark:bg-[#0e1322] border border-slate-200/80 dark:border-slate-800/80 shadow-sm hover:border-rose-400/60 transition-all flex items-center justify-between"
+          className="group p-5 rounded-3xl bg-white dark:bg-[#11151e] border border-slate-200/80 dark:border-[#1e2433] shadow-sm hover:border-rose-400/60 transition-all flex items-center justify-between"
         >
           <div className="space-y-1.5">
             <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
@@ -374,7 +374,7 @@ export function ConsolidatedDashboardView() {
         {/* Accessibility */}
         <Link
           href="/accessibility"
-          className="group p-5 rounded-3xl bg-white dark:bg-[#0e1322] border border-slate-200/80 dark:border-slate-800/80 shadow-sm hover:border-emerald-400/60 transition-all flex items-center justify-between"
+          className="group p-5 rounded-3xl bg-white dark:bg-[#11151e] border border-slate-200/80 dark:border-[#1e2433] shadow-sm hover:border-emerald-400/60 transition-all flex items-center justify-between"
         >
           <div className="space-y-1.5">
             <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1">
@@ -400,7 +400,7 @@ export function ConsolidatedDashboardView() {
       {/* Row 2: Score Trends Chart & Severity/Category Breakdown */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Multi-Domain Score Trend */}
-        <div className="lg:col-span-2 p-6 rounded-3xl bg-white dark:bg-[#0e1322] border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-4">
+        <div className="lg:col-span-2 p-6 rounded-3xl bg-white dark:bg-[#11151e] border border-slate-200/80 dark:border-[#1e2433] shadow-sm space-y-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <div>
               <h2 className="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
@@ -437,7 +437,7 @@ export function ConsolidatedDashboardView() {
                       x2="360"
                       y2={y}
                       stroke="currentColor"
-                      className="text-slate-100 dark:text-slate-800"
+                      className="text-slate-100 dark:text-[#1e2433]"
                       strokeDasharray="4 4"
                     />
                     <text
@@ -486,7 +486,7 @@ export function ConsolidatedDashboardView() {
         </div>
 
         {/* Consolidated Severity & Category Distribution */}
-        <div className="p-6 rounded-3xl bg-white dark:bg-[#0e1322] border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-5">
+        <div className="p-6 rounded-3xl bg-white dark:bg-[#11151e] border border-slate-200/80 dark:border-[#1e2433] shadow-sm space-y-5">
           <div>
             <h2 className="text-sm font-extrabold text-slate-900 dark:text-white">
               Issues by Severity & Domain
@@ -525,7 +525,7 @@ export function ConsolidatedDashboardView() {
           </div>
 
           {/* Domain Links */}
-          <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-slate-800 text-xs">
+          <div className="space-y-2 pt-2 border-t border-slate-100 dark:border-[#1e2433] text-xs">
             <Link
               href="/code-quality"
               className="flex items-center justify-between py-1 hover:text-indigo-600 transition-colors"
@@ -554,7 +554,7 @@ export function ConsolidatedDashboardView() {
       {/* Row 3: Analyzer Engine Telemetry & Pull Request / RAG Status */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Analyzer Engines */}
-        <div className="lg:col-span-2 p-6 rounded-3xl bg-white dark:bg-[#0e1322] border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-4">
+        <div className="lg:col-span-2 p-6 rounded-3xl bg-white dark:bg-[#11151e] border border-slate-200/80 dark:border-[#1e2433] shadow-sm space-y-4">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
@@ -584,7 +584,7 @@ export function ConsolidatedDashboardView() {
               {engineReports.map((rep, idx) => (
                 <div
                   key={`${rep.engine}-${idx}`}
-                  className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/70 border border-slate-200/70 dark:border-slate-800 space-y-1.5"
+                  className="p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-900/70 border border-slate-200/70 dark:border-[#1e2433] space-y-1.5"
                 >
                   <div className="flex items-center justify-between">
                     <span className="text-xs font-bold text-slate-800 dark:text-slate-200 truncate">
@@ -609,7 +609,7 @@ export function ConsolidatedDashboardView() {
         <div className="space-y-4">
           <Link
             href="/pull-requests"
-            className="block p-5 rounded-3xl bg-white dark:bg-[#0e1322] border border-slate-200/80 dark:border-slate-800/80 shadow-sm hover:border-purple-400/60 transition-all space-y-2"
+            className="block p-5 rounded-3xl bg-white dark:bg-[#11151e] border border-slate-200/80 dark:border-[#1e2433] shadow-sm hover:border-purple-400/60 transition-all space-y-2"
           >
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-slate-800 dark:text-slate-200 flex items-center gap-2">
@@ -642,7 +642,7 @@ export function ConsolidatedDashboardView() {
 
           <Link
             href="/ai-insights"
-            className="block p-5 rounded-3xl bg-gradient-to-br from-purple-600/10 via-indigo-600/5 to-transparent bg-white dark:bg-[#0e1322] border border-purple-500/20 shadow-sm hover:border-purple-500/50 transition-all space-y-2"
+            className="block p-5 rounded-3xl bg-gradient-to-br from-purple-600/10 via-indigo-600/5 to-transparent bg-white dark:bg-[#11151e] border border-purple-500/20 shadow-sm hover:border-purple-500/50 transition-all space-y-2"
           >
             <div className="flex items-center justify-between">
               <span className="text-xs font-bold text-purple-700 dark:text-purple-300 flex items-center gap-2">
@@ -663,7 +663,7 @@ export function ConsolidatedDashboardView() {
       </div>
 
       {/* Row 4: Top Priority Actionable Issues Across All Domains */}
-      <div className="p-6 rounded-3xl bg-white dark:bg-[#0e1322] border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-4">
+      <div className="p-6 rounded-3xl bg-white dark:bg-[#11151e] border border-slate-200/80 dark:border-[#1e2433] shadow-sm space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
             <h2 className="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2">

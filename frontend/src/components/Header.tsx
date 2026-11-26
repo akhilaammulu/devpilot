@@ -49,13 +49,13 @@ export function Header({ currentPhase = "Phase 7 - GitHub Pull Request Analysis"
   const displayUsername = "akhilaammulu";
 
   return (
-    <header className="h-16 px-6 border-b flex items-center justify-between sticky top-0 z-40 transition-colors backdrop-blur-md bg-white/95 dark:bg-[#0e1322]/90 border-slate-200/80 dark:border-slate-800/80">
+    <header className="h-16 px-6 border-b flex items-center justify-between sticky top-0 z-40 transition-colors backdrop-blur-md bg-white/95 dark:bg-[#0d1017]/95 border-slate-200/80 dark:border-[#1e2433]">
       {/* Left: Logo & Phase Badge */}
       <div className="flex items-center gap-5">
         <Link href="/" className="flex items-center gap-3 group">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-600 via-indigo-600 to-pink-500 p-0.5 shadow-lg shadow-purple-500/20 group-hover:scale-105 transition-transform flex items-center justify-center">
-            <div className="w-full h-full bg-[#0e1322] rounded-[14px] flex items-center justify-center">
-              <span className="font-mono text-transparent bg-clip-text bg-gradient-to-tr from-purple-400 to-pink-400 font-bold text-base">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-violet-600 to-indigo-500 p-[1px] shadow-sm group-hover:scale-105 transition-transform flex items-center justify-center">
+            <div className="w-full h-full bg-[#0d1017] rounded-[11px] flex items-center justify-center">
+              <span className="font-mono text-violet-400 font-bold text-sm">
                 &lt;/&gt;
               </span>
             </div>
@@ -84,8 +84,8 @@ export function Header({ currentPhase = "Phase 7 - GitHub Pull Request Analysis"
           </button>
 
           {showPhaseMenu && (
-            <div className="absolute left-0 mt-2 w-72 rounded-2xl p-2 shadow-2xl border transition-all z-50 bg-white dark:bg-[#121829] border-slate-200 dark:border-slate-800">
-              <div className="px-3 py-2 border-b border-slate-100 dark:border-slate-800/80">
+            <div className="absolute left-0 mt-2 w-72 rounded-2xl p-2 shadow-2xl border transition-all z-50 bg-white dark:bg-[#161b26] border-slate-200 dark:border-[#1e2433]">
+              <div className="px-3 py-2 border-b border-slate-100 dark:border-[#1e2433]">
                 <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
                   DevPilot Build Roadmap
                 </p>
@@ -119,7 +119,7 @@ export function Header({ currentPhase = "Phase 7 - GitHub Pull Request Analysis"
             value={searchQuery}
             onChange={handleSearch}
             placeholder="Search repositories, scans, issues..."
-            className="w-full pl-9 pr-14 py-2 rounded-full text-xs transition-all border outline-none bg-slate-50 dark:bg-[#121829]/90 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-200 placeholder-slate-400 focus:border-purple-500 dark:focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-500/20"
+            className="w-full pl-9 pr-14 py-2 rounded-full text-xs transition-all border outline-none bg-slate-50 dark:bg-[#161b26]/90 border-slate-200 dark:border-[#1e2433] text-slate-900 dark:text-slate-200 placeholder-slate-400 focus:border-purple-500 dark:focus:border-purple-500 focus:bg-white focus:ring-2 focus:ring-purple-500/20"
           />
           <div className="absolute right-2.5 top-1/2 -translate-y-1/2 flex items-center gap-1 text-[10px] font-medium text-slate-400 bg-white dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700/80 px-1.5 py-0.5 rounded-md shadow-sm">
             <span>⌘</span>
@@ -154,7 +154,7 @@ export function Header({ currentPhase = "Phase 7 - GitHub Pull Request Analysis"
         <div className="relative">
           <button
             onClick={() => setShowProfileMenu(!showProfileMenu)}
-            className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full border transition-all bg-white dark:bg-[#121829] border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 shadow-sm"
+            className="flex items-center gap-2 pl-1 pr-3 py-1 rounded-full border transition-all bg-white dark:bg-[#161b26] border-slate-200 dark:border-[#1e2433] hover:border-slate-300 dark:hover:border-slate-700 shadow-sm"
           >
             <div className="w-7 h-7 rounded-full bg-purple-600 flex items-center justify-center text-white text-xs font-bold shadow-sm">
               A
@@ -166,8 +166,8 @@ export function Header({ currentPhase = "Phase 7 - GitHub Pull Request Analysis"
           </button>
 
           {showProfileMenu && (
-            <div className="absolute right-0 mt-2 w-56 rounded-2xl p-2 shadow-2xl border transition-all z-50 bg-white dark:bg-[#121829] border-slate-200 dark:border-slate-800">
-              <div className="px-3 py-2.5 border-b border-slate-100 dark:border-slate-800/80">
+            <div className="absolute right-0 mt-2 w-56 rounded-2xl p-2 shadow-2xl border transition-all z-50 bg-white dark:bg-[#161b26] border-slate-200 dark:border-[#1e2433]">
+              <div className="px-3 py-2.5 border-b border-slate-100 dark:border-[#1e2433]">
                 <p className="text-xs font-semibold text-slate-900 dark:text-white truncate">
                   {displayName}
                 </p>
@@ -195,7 +195,7 @@ export function Header({ currentPhase = "Phase 7 - GitHub Pull Request Analysis"
                 </Link>
               </div>
 
-              <div className="pt-1 border-t border-slate-100 dark:border-slate-800/80">
+              <div className="pt-1 border-t border-slate-100 dark:border-[#1e2433]">
                 <button
                   onClick={() => {
                     logout();

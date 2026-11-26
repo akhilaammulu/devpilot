@@ -333,7 +333,7 @@ export function CodeQualityExplorerView() {
           {engineReports.map((report) => (
             <div
               key={report.engine}
-              className="p-3 rounded-2xl border bg-white dark:bg-[#0e1322] border-slate-200/80 dark:border-slate-800 shadow-sm flex items-center justify-between transition-all"
+              className="p-3 rounded-2xl border bg-white dark:bg-[#11151e] border-slate-200/80 dark:border-[#1e2433] shadow-sm flex items-center justify-between transition-all"
             >
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
@@ -357,7 +357,7 @@ export function CodeQualityExplorerView() {
       {/* 4 Metric Score Cards matching exact layout of screenshot */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Card 1: Quality Score & Grade */}
-        <div className="p-5 rounded-3xl border bg-white dark:bg-[#0e1322] border-slate-200/80 dark:border-slate-800/80 shadow-sm flex items-center justify-between">
+        <div className="p-5 rounded-3xl border bg-white dark:bg-[#11151e] border-slate-200/80 dark:border-[#1e2433] shadow-sm flex items-center justify-between">
           {/* Circular Gauge */}
           <div className="flex flex-col items-center">
             <div className="relative w-20 h-20 flex items-center justify-center">
@@ -417,7 +417,7 @@ export function CodeQualityExplorerView() {
         </div>
 
         {/* Card 2: Maintainability */}
-        <div className="p-5 rounded-3xl border bg-white dark:bg-[#0e1322] border-slate-200/80 dark:border-slate-800/80 shadow-sm flex flex-col justify-between">
+        <div className="p-5 rounded-3xl border bg-white dark:bg-[#11151e] border-slate-200/80 dark:border-[#1e2433] shadow-sm flex flex-col justify-between">
           <div className="w-10 h-10 rounded-2xl bg-emerald-50 dark:bg-emerald-950/40 text-emerald-600 dark:text-emerald-400 flex items-center justify-center">
             <Layers className="w-5 h-5" />
           </div>
@@ -435,7 +435,7 @@ export function CodeQualityExplorerView() {
         </div>
 
         {/* Card 3: Complexity */}
-        <div className="p-5 rounded-3xl border bg-white dark:bg-[#0e1322] border-slate-200/80 dark:border-slate-800/80 shadow-sm flex flex-col justify-between">
+        <div className="p-5 rounded-3xl border bg-white dark:bg-[#11151e] border-slate-200/80 dark:border-[#1e2433] shadow-sm flex flex-col justify-between">
           <div className="w-10 h-10 rounded-2xl bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 flex items-center justify-center">
             <Share2 className="w-5 h-5" />
           </div>
@@ -453,7 +453,7 @@ export function CodeQualityExplorerView() {
         </div>
 
         {/* Card 4: Open Issues */}
-        <div className="p-5 rounded-3xl border bg-white dark:bg-[#0e1322] border-slate-200/80 dark:border-slate-800/80 shadow-sm flex flex-col justify-between">
+        <div className="p-5 rounded-3xl border bg-white dark:bg-[#11151e] border-slate-200/80 dark:border-[#1e2433] shadow-sm flex flex-col justify-between">
           <div className="w-10 h-10 rounded-2xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center">
             <Bug className="w-5 h-5" />
           </div>
@@ -474,7 +474,7 @@ export function CodeQualityExplorerView() {
       {/* Two Charts: Issue Trend & Issues by Severity */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Issue Trend Line Chart (Left 7 Cols) */}
-        <div className="lg:col-span-7 p-6 rounded-3xl border bg-white dark:bg-[#0e1322] border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-4">
+        <div className="lg:col-span-7 p-6 rounded-3xl border bg-white dark:bg-[#11151e] border-slate-200/80 dark:border-[#1e2433] shadow-sm space-y-4">
           <div className="flex items-center gap-2">
             <BarChart2 className="w-4 h-4 text-purple-600" />
             <h3 className="text-sm font-bold text-slate-900 dark:text-white">
@@ -547,7 +547,7 @@ export function CodeQualityExplorerView() {
         </div>
 
         {/* Issues by Severity Donut Card (Right 5 Cols) */}
-        <div className="lg:col-span-5 p-6 rounded-3xl border bg-white dark:bg-[#0e1322] border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-4">
+        <div className="lg:col-span-5 p-6 rounded-3xl border bg-white dark:bg-[#11151e] border-slate-200/80 dark:border-[#1e2433] shadow-sm space-y-4">
           <div className="flex items-center gap-2">
             <ListFilter className="w-4 h-4 text-purple-600" />
             <h3 className="text-sm font-bold text-slate-900 dark:text-white">
@@ -640,7 +640,7 @@ export function CodeQualityExplorerView() {
             className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
               selectedSeverity === "ALL"
                 ? "bg-purple-600 text-white shadow-md shadow-purple-500/25"
-                : "bg-white dark:bg-[#0e1322] text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-800 hover:bg-slate-50"
+                : "bg-white dark:bg-[#11151e] text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-[#1e2433] hover:bg-slate-50"
             }`}
           >
             All ({counts.total})
@@ -699,13 +699,13 @@ export function CodeQualityExplorerView() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Filter by rule, message, or file..."
-            className="w-full pl-9 pr-4 py-1.5 rounded-full text-xs border outline-none bg-white dark:bg-[#0e1322] border-slate-200/80 dark:border-slate-800 text-slate-900 dark:text-slate-200 placeholder-slate-400 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/30 transition-all shadow-sm"
+            className="w-full pl-9 pr-4 py-1.5 rounded-full text-xs border outline-none bg-white dark:bg-[#11151e] border-slate-200/80 dark:border-[#1e2433] text-slate-900 dark:text-slate-200 placeholder-slate-400 focus:border-purple-500 focus:ring-1 focus:ring-purple-500/30 transition-all shadow-sm"
           />
         </div>
       </div>
 
       {/* Filter Row 2: Engine Selector & Status Selector */}
-      <div className="flex flex-wrap items-center justify-between gap-4 py-1 border-y border-slate-200/60 dark:border-slate-800/60 text-xs">
+      <div className="flex flex-wrap items-center justify-between gap-4 py-1 border-y border-slate-200/60 dark:border-[#1e2433]/60 text-xs">
         {/* Engine Pills */}
         <div className="flex items-center gap-2">
           <span className="font-bold text-slate-700 dark:text-slate-300">Engine:</span>
@@ -718,7 +718,7 @@ export function CodeQualityExplorerView() {
                 className={`px-3 py-1 rounded-full text-xs font-semibold transition-all ${
                   isSelected
                     ? "bg-purple-100 dark:bg-purple-950/60 text-purple-700 dark:text-purple-300 border border-purple-400 shadow-sm"
-                    : "bg-white dark:bg-[#0e1322] text-slate-600 dark:text-slate-400 border border-slate-200/80 dark:border-slate-800 hover:border-slate-300"
+                    : "bg-white dark:bg-[#11151e] text-slate-600 dark:text-slate-400 border border-slate-200/80 dark:border-[#1e2433] hover:border-slate-300"
                 }`}
               >
                 {tool === "ALL" ? "All" : tool}
@@ -754,7 +754,7 @@ export function CodeQualityExplorerView() {
       {/* Findings List matching exact cards in reference screenshot */}
       <div className="space-y-3 pt-1">
         {filteredIssues.length === 0 ? (
-          <div className="p-12 text-center rounded-3xl border border-dashed border-slate-300 dark:border-slate-700 bg-white/50 dark:bg-[#0e1322]/50 space-y-3">
+          <div className="p-12 text-center rounded-3xl border border-dashed border-slate-300 dark:border-slate-700 bg-white/50 dark:bg-[#11151e]/50 space-y-3">
             <CheckCircle className="w-10 h-10 text-emerald-500 mx-auto" />
             <h3 className="text-sm font-bold text-slate-800 dark:text-white">
               No matching issues found
@@ -787,7 +787,7 @@ export function CodeQualityExplorerView() {
               <div
                 key={issue.id}
                 onClick={() => setActiveIssue(issue)}
-                className={`p-4 rounded-2xl border transition-all cursor-pointer bg-white dark:bg-[#0e1322] border-slate-200/80 dark:border-slate-800/80 hover:shadow-md ${borderHighlight} ${
+                className={`p-4 rounded-2xl border transition-all cursor-pointer bg-white dark:bg-[#11151e] border-slate-200/80 dark:border-[#1e2433] hover:shadow-md ${borderHighlight} ${
                   issue.status === "RESOLVED" ? "opacity-60" : ""
                 }`}
               >

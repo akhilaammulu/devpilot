@@ -15,8 +15,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className="antialiased min-h-screen bg-[#f4f6fb] dark:bg-[#080b14] text-slate-900 dark:text-slate-100 transition-colors">
+    <html lang="en" className="dark" suppressHydrationWarning>
+      <body className="antialiased min-h-screen bg-[#f4f6fb] dark:bg-[#090b10] text-slate-900 dark:text-slate-100 transition-colors">
         <ThemeProvider>
           <AuthProvider>
             <ApolloWrapper>

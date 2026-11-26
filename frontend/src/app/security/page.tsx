@@ -7,7 +7,7 @@ import { SecurityExplorerView } from "@/components/security/SecurityExplorerView
 
 export default function SecurityPage() {
   return (
-    <div className="min-h-screen flex flex-col transition-colors bg-[#f4f6fb] dark:bg-[#080b14] text-slate-900 dark:text-slate-100">
+    <div className="min-h-screen flex flex-col transition-colors bg-[#f4f6fb] dark:bg-[#090b10] text-slate-900 dark:text-slate-100">
       {/* Top Header Bar */}
       <Header currentPhase="Phase 3 - Security Analysis" />
 

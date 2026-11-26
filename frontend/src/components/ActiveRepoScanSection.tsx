@@ -56,9 +56,9 @@ export function ActiveRepoScanSection({
   const latestScan = scans[0] || null;
 
   return (
-    <div className="rounded-3xl border transition-all overflow-hidden bg-white dark:bg-[#0e1322] border-slate-200 dark:border-slate-800/80 shadow-sm">
+    <div className="rounded-3xl border transition-all overflow-hidden bg-white dark:bg-[#11151e] border-slate-200 dark:border-[#1e2433] shadow-sm">
       {/* Top Banner Header */}
-      <div className="p-5 border-b border-slate-100 dark:border-slate-800/80 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="p-5 border-b border-slate-100 dark:border-[#1e2433] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         {/* Left: Repo Details */}
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center text-white shadow-md shadow-purple-500/20 font-mono text-sm font-bold">
@@ -115,7 +115,7 @@ export function ActiveRepoScanSection({
 
           {!latestScan ? (
             /* Empty State matching image exactly */
-            <div className="border border-dashed border-slate-200 dark:border-slate-800 rounded-3xl p-8 sm:p-12 text-center space-y-4">
+            <div className="border border-dashed border-slate-200 dark:border-[#1e2433] rounded-3xl p-8 sm:p-12 text-center space-y-4">
               <div className="w-12 h-12 mx-auto rounded-2xl bg-purple-500/10 text-purple-500 flex items-center justify-center">
                 <Search className="w-6 h-6" />
               </div>
@@ -165,7 +165,7 @@ export function ActiveRepoScanSection({
                 {latestScan.findings.map((finding) => (
                   <div
                     key={finding.id}
-                    className="p-4 rounded-2xl border transition-all space-y-2 bg-slate-50/70 dark:bg-[#121829] border-slate-200 dark:border-slate-800"
+                    className="p-4 rounded-2xl border transition-all space-y-2 bg-slate-50/70 dark:bg-[#161b26] border-slate-200 dark:border-[#1e2433]"
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-1.5">

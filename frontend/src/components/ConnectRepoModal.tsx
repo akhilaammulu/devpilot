@@ -29,7 +29,7 @@ export function ConnectRepoModal({ isOpen, onClose, onConnect }: ConnectRepoModa
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
-      <div className="w-full max-w-md rounded-3xl p-6 border shadow-2xl bg-white dark:bg-[#121829] border-slate-200 dark:border-slate-800 space-y-5">
+      <div className="w-full max-w-md rounded-3xl p-6 border shadow-2xl bg-white dark:bg-[#161b26] border-slate-200 dark:border-[#1e2433] space-y-5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <div className="w-8 h-8 rounded-xl bg-purple-500/10 text-purple-500 flex items-center justify-center">

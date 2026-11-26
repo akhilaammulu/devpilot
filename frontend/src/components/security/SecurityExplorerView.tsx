@@ -357,7 +357,7 @@ export function SecurityExplorerView() {
           {engineReports.map((report) => (
             <div
               key={report.engine}
-              className="p-3.5 rounded-2xl border bg-white dark:bg-[#0e1322] border-slate-200/80 dark:border-slate-800 shadow-sm flex items-center justify-between transition-all"
+              className="p-3.5 rounded-2xl border bg-white dark:bg-[#11151e] border-slate-200/80 dark:border-[#1e2433] shadow-sm flex items-center justify-between transition-all"
             >
               <div className="flex items-center gap-2.5">
                 <div className="w-2.5 h-2.5 rounded-full bg-rose-500 animate-pulse"></div>
@@ -381,7 +381,7 @@ export function SecurityExplorerView() {
       {/* 4 Metric Score Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Card 1: Security Score */}
-        <div className="p-5 rounded-3xl border bg-white dark:bg-[#0e1322] border-slate-200/80 dark:border-slate-800/80 shadow-sm flex items-center justify-between">
+        <div className="p-5 rounded-3xl border bg-white dark:bg-[#11151e] border-slate-200/80 dark:border-[#1e2433] shadow-sm flex items-center justify-between">
           <div className="flex flex-col items-center">
             <div className="relative w-20 h-20 flex items-center justify-center">
               <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
@@ -437,7 +437,7 @@ export function SecurityExplorerView() {
         </div>
 
         {/* Card 2: Dependency Vulnerabilities */}
-        <div className="p-5 rounded-3xl border bg-white dark:bg-[#0e1322] border-slate-200/80 dark:border-slate-800/80 shadow-sm flex flex-col justify-between">
+        <div className="p-5 rounded-3xl border bg-white dark:bg-[#11151e] border-slate-200/80 dark:border-[#1e2433] shadow-sm flex flex-col justify-between">
           <div className="w-10 h-10 rounded-2xl bg-purple-50 dark:bg-purple-950/40 text-purple-600 dark:text-purple-400 flex items-center justify-center">
             <Package className="w-5 h-5" />
           </div>
@@ -455,7 +455,7 @@ export function SecurityExplorerView() {
         </div>
 
         {/* Card 3: Secret Leaks Detected */}
-        <div className="p-5 rounded-3xl border bg-white dark:bg-[#0e1322] border-slate-200/80 dark:border-slate-800/80 shadow-sm flex flex-col justify-between">
+        <div className="p-5 rounded-3xl border bg-white dark:bg-[#11151e] border-slate-200/80 dark:border-[#1e2433] shadow-sm flex flex-col justify-between">
           <div className="w-10 h-10 rounded-2xl bg-rose-50 dark:bg-rose-950/40 text-rose-600 dark:text-rose-400 flex items-center justify-center">
             <Key className="w-5 h-5" />
           </div>
@@ -473,7 +473,7 @@ export function SecurityExplorerView() {
         </div>
 
         {/* Card 4: Insecure Configurations */}
-        <div className="p-5 rounded-3xl border bg-white dark:bg-[#0e1322] border-slate-200/80 dark:border-slate-800/80 shadow-sm flex flex-col justify-between">
+        <div className="p-5 rounded-3xl border bg-white dark:bg-[#11151e] border-slate-200/80 dark:border-[#1e2433] shadow-sm flex flex-col justify-between">
           <div className="w-10 h-10 rounded-2xl bg-amber-50 dark:bg-amber-950/40 text-amber-600 dark:text-amber-400 flex items-center justify-center">
             <Sliders className="w-5 h-5" />
           </div>
@@ -494,7 +494,7 @@ export function SecurityExplorerView() {
       {/* Two Charts: Security Trend & Vulnerabilities by Severity */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Trend Chart (7 cols) */}
-        <div className="lg:col-span-7 p-6 rounded-3xl border bg-white dark:bg-[#0e1322] border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-4">
+        <div className="lg:col-span-7 p-6 rounded-3xl border bg-white dark:bg-[#11151e] border-slate-200/80 dark:border-[#1e2433] shadow-sm space-y-4">
           <div className="flex items-center gap-2">
             <BarChart2 className="w-4 h-4 text-rose-600" />
             <h3 className="text-sm font-bold text-slate-900 dark:text-white">
@@ -558,7 +558,7 @@ export function SecurityExplorerView() {
         </div>
 
         {/* Severity Donut Chart (5 cols) */}
-        <div className="lg:col-span-5 p-6 rounded-3xl border bg-white dark:bg-[#0e1322] border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-4">
+        <div className="lg:col-span-5 p-6 rounded-3xl border bg-white dark:bg-[#11151e] border-slate-200/80 dark:border-[#1e2433] shadow-sm space-y-4">
           <div className="flex items-center gap-2">
             <ListFilter className="w-4 h-4 text-rose-600" />
             <h3 className="text-sm font-bold text-slate-900 dark:text-white">
@@ -641,7 +641,7 @@ export function SecurityExplorerView() {
             className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
               selectedSeverity === "ALL"
                 ? "bg-rose-600 text-white shadow-md shadow-rose-500/25"
-                : "bg-white dark:bg-[#0e1322] text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-slate-800 hover:bg-slate-50"
+                : "bg-white dark:bg-[#11151e] text-slate-600 dark:text-slate-300 border border-slate-200/80 dark:border-[#1e2433] hover:bg-slate-50"
             }`}
           >
             All ({counts.total})
@@ -699,13 +699,13 @@ export function SecurityExplorerView() {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Filter by CVE, rule, message, or file..."
-            className="w-full pl-9 pr-4 py-1.5 rounded-full text-xs border outline-none bg-white dark:bg-[#0e1322] border-slate-200/80 dark:border-slate-800 text-slate-900 dark:text-slate-200 placeholder-slate-400 focus:border-rose-500 focus:ring-1 focus:ring-rose-500/30 transition-all shadow-sm"
+            className="w-full pl-9 pr-4 py-1.5 rounded-full text-xs border outline-none bg-white dark:bg-[#11151e] border-slate-200/80 dark:border-[#1e2433] text-slate-900 dark:text-slate-200 placeholder-slate-400 focus:border-rose-500 focus:ring-1 focus:ring-rose-500/30 transition-all shadow-sm"
           />
         </div>
       </div>
 
       {/* Filter Row 2: Category / Engine + Status */}
-      <div className="flex flex-wrap items-center justify-between gap-4 py-1 border-y border-slate-200/60 dark:border-slate-800/60 text-xs">
+      <div className="flex flex-wrap items-center justify-between gap-4 py-1 border-y border-slate-200/60 dark:border-[#1e2433]/60 text-xs">
         <div className="flex items-center gap-2">
           <span className="font-bold text-slate-700 dark:text-slate-300">Engine:</span>
           {[
@@ -722,7 +722,7 @@ export function SecurityExplorerView() {
                 className={`px-3 py-1 rounded-full text-xs font-semibold transition-all ${
                   isSelected
                     ? "bg-rose-100 dark:bg-rose-950/60 text-rose-700 dark:text-rose-300 border border-rose-400 shadow-sm"
-                    : "bg-white dark:bg-[#0e1322] text-slate-600 dark:text-slate-400 border border-slate-200/80 dark:border-slate-800 hover:border-slate-300"
+                    : "bg-white dark:bg-[#11151e] text-slate-600 dark:text-slate-400 border border-slate-200/80 dark:border-[#1e2433] hover:border-slate-300"
                 }`}
               >
                 {cat.label}
@@ -757,7 +757,7 @@ export function SecurityExplorerView() {
       {/* Findings Cards List */}
       <div className="space-y-3 pt-1">
         {filteredIssues.length === 0 ? (
-          <div className="p-12 text-center rounded-3xl border border-dashed border-slate-300 dark:border-slate-700 bg-white/50 dark:bg-[#0e1322]/50 space-y-3">
+          <div className="p-12 text-center rounded-3xl border border-dashed border-slate-300 dark:border-slate-700 bg-white/50 dark:bg-[#11151e]/50 space-y-3">
             <CheckCircle className="w-10 h-10 text-emerald-500 mx-auto" />
             <h3 className="text-sm font-bold text-slate-800 dark:text-white">
               No matching security vulnerabilities found
@@ -790,7 +790,7 @@ export function SecurityExplorerView() {
               <div
                 key={issue.id}
                 onClick={() => setActiveIssue(issue)}
-                className={`p-4 rounded-2xl border transition-all cursor-pointer bg-white dark:bg-[#0e1322] border-slate-200/80 dark:border-slate-800/80 hover:shadow-md ${borderHighlight} ${
+                className={`p-4 rounded-2xl border transition-all cursor-pointer bg-white dark:bg-[#11151e] border-slate-200/80 dark:border-[#1e2433] hover:shadow-md ${borderHighlight} ${
                   issue.status === "RESOLVED" ? "opacity-60" : ""
                 }`}
               >

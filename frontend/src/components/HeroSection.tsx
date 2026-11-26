@@ -14,7 +14,7 @@ export function HeroSection({ onConnectClick, onImportClick }: HeroSectionProps)
   const firstName = user?.name ? user.name.split(" ")[0] : (user?.username || "Developer");
 
   return (
-    <div className="relative overflow-hidden rounded-3xl p-6 sm:p-8 border transition-all bg-white/70 dark:bg-[#0e1322]/70 backdrop-blur-xl border-slate-200/80 dark:border-slate-800/80 shadow-sm dark:shadow-2xl">
+    <div className="relative overflow-hidden rounded-3xl p-6 sm:p-8 border transition-all bg-white/70 dark:bg-[#11151e]/70 backdrop-blur-xl border-slate-200/80 dark:border-[#1e2433] shadow-sm dark:shadow-2xl">
       {/* Background radial glows */}
       <div className="absolute top-0 right-1/4 w-96 h-96 bg-purple-500/10 dark:bg-purple-600/10 rounded-full blur-3xl pointer-events-none -z-0"></div>
       <div className="absolute -bottom-10 right-10 w-72 h-72 bg-pink-500/10 dark:bg-pink-600/10 rounded-full blur-3xl pointer-events-none -z-0"></div>
@@ -49,7 +49,7 @@ export function HeroSection({ onConnectClick, onImportClick }: HeroSectionProps)
 
             <button
               onClick={onImportClick}
-              className="flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-semibold border transition-all text-slate-700 dark:text-slate-200 bg-white/80 dark:bg-[#121829] border-slate-200 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/60 shadow-sm"
+              className="flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-semibold border transition-all text-slate-700 dark:text-slate-200 bg-white/80 dark:bg-[#161b26] border-slate-200 dark:border-[#1e2433] hover:bg-slate-50 dark:hover:bg-slate-800/60 shadow-sm"
             >
               <Github className="w-4 h-4 text-slate-800 dark:text-white" />
               <span>Import from GitHub</span>

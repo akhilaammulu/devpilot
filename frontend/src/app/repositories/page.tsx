@@ -112,7 +112,7 @@ export default function RepositoriesPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col transition-colors bg-[#f4f6fb] dark:bg-[#080b14] text-slate-900 dark:text-slate-100">
+    <div className="min-h-screen flex flex-col transition-colors bg-[#f4f6fb] dark:bg-[#090b10] text-slate-900 dark:text-slate-100">
       <Header currentPhase="Phase 2 - Prototype (Static Analysis)" />
 
       <div className="flex-1 flex">
@@ -150,7 +150,7 @@ export default function RepositoriesPage() {
           </div>
 
           {/* Search Toolbar */}
-          <div className="rounded-2xl p-4 bg-white dark:bg-[#0e1322] border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between gap-4">
+          <div className="rounded-2xl p-4 bg-white dark:bg-[#11151e] border border-slate-200 dark:border-[#1e2433] shadow-sm flex items-center justify-between gap-4">
             <div className="relative flex-1 max-w-md">
               <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
               <input
@@ -168,7 +168,7 @@ export default function RepositoriesPage() {
             {filteredRepos.map((repo) => (
               <div
                 key={repo.id}
-                className="rounded-3xl p-5 border transition-all bg-white dark:bg-[#0e1322] border-slate-200 dark:border-slate-800/80 shadow-sm hover:border-purple-500/40 hover:shadow-md space-y-4 flex flex-col justify-between"
+                className="rounded-3xl p-5 border transition-all bg-white dark:bg-[#11151e] border-slate-200 dark:border-[#1e2433] shadow-sm hover:border-purple-500/40 hover:shadow-md space-y-4 flex flex-col justify-between"
               >
                 <div className="space-y-3">
                   <div className="flex items-start justify-between">
@@ -215,7 +215,7 @@ export default function RepositoriesPage() {
                   </div>
                 </div>
 
-                <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between gap-3">
+                <div className="pt-3 border-t border-slate-100 dark:border-[#1e2433] flex items-center justify-between gap-3">
                   <div className="text-xs">
                     <span className="text-slate-400 text-[10px] block">Quality Score</span>
                     <span className="font-extrabold text-purple-600 dark:text-purple-400 text-base">

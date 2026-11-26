@@ -7,7 +7,7 @@ import { ConsolidatedDashboardView } from "@/components/ConsolidatedDashboardVie
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen flex flex-col transition-colors bg-[#f4f6fb] dark:bg-[#080b14] text-slate-900 dark:text-slate-100">
+    <div className="min-h-screen flex flex-col transition-colors bg-[#f4f6fb] dark:bg-[#090b10] text-slate-900 dark:text-slate-100">
       <Header currentPhase="Phase 7 - GitHub Pull Request Analysis" />
 
       <div className="flex-1 flex">
