@@ -22,13 +22,8 @@ export function Sidebar() {
   const pathname = usePathname();
   const [scansOpen, setScansOpen] = useState(true);
 
-  // In this static analysis explorer view, "Code Quality" is the primary active route
-  const isCodeQualityActive =
-    pathname === "/" ||
-    pathname === "/scans" ||
-    pathname === "/quality" ||
-    pathname === "/code-quality" ||
-    pathname === "/dashboard";
+  const isDashboardActive = pathname === "/" || pathname === "/dashboard" || pathname === "/overview";
+  const isCodeQualityActive = pathname === "/code-quality" || pathname === "/quality";
 
   return (
     <aside className="w-64 shrink-0 flex flex-col justify-between p-4 transition-colors min-h-[calc(100vh-4rem)] bg-gradient-to-b from-[#160d2e] via-[#1d123d] to-[#120a24] text-white border-r border-purple-950/40 select-none">
@@ -37,12 +32,12 @@ export function Sidebar() {
         <Link
           href="/"
           className={`flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-semibold transition-all ${
-            pathname === "/overview"
-              ? "bg-white/15 text-white shadow-sm border border-white/10"
+            isDashboardActive
+              ? "bg-gradient-to-r from-purple-600 via-indigo-600 to-pink-600/80 text-white border border-purple-400/40 shadow-lg shadow-purple-600/30"
               : "text-slate-300 hover:text-white hover:bg-white/5"
           }`}
         >
-          <LayoutDashboard className="w-4 h-4 text-purple-400" />
+          <LayoutDashboard className="w-4 h-4 text-purple-300" />
           <span>Dashboard</span>
         </Link>
 
@@ -91,7 +86,7 @@ export function Sidebar() {
             <div className="pl-3 space-y-1">
               {/* Active Code Quality Pill with purple gradient and glow matching screenshot */}
               <Link
-                href="/"
+                href="/code-quality"
                 className={`flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
                   isCodeQualityActive
                     ? "bg-gradient-to-r from-purple-600 via-indigo-600 to-pink-600/80 text-white border border-purple-400/40 shadow-lg shadow-purple-600/30"
