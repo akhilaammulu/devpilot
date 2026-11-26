@@ -40,6 +40,45 @@ public class PullRequest {
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt = Instant.now();
 
+    @Column(length = 128)
+    private String author = "akhilaammulu";
+
+    @Column(name = "pr_score")
+    private Integer prScore;
+
+    @Column(name = "quality_score")
+    private Integer qualityScore;
+
+    @Column(name = "security_score")
+    private Integer securityScore;
+
+    @Column(name = "accessibility_score")
+    private Integer accessibilityScore;
+
+    @Column(name = "review_status", length = 32)
+    private String reviewStatus = "PENDING";
+
+    @Column(name = "review_summary", columnDefinition = "TEXT")
+    private String reviewSummary;
+
+    @Column(name = "changed_files_count")
+    private Integer changedFilesCount = 0;
+
+    @Column(name = "changed_files_json", columnDefinition = "TEXT")
+    private String changedFilesJson;
+
+    @Column(name = "findings_count")
+    private Integer findingsCount = 0;
+
+    @Column(name = "github_comment_posted")
+    private Boolean githubCommentPosted = false;
+
+    @Column(name = "github_comment_url", length = 512)
+    private String githubCommentUrl;
+
+    @Column(name = "last_analyzed_at")
+    private Instant lastAnalyzedAt;
+
     public PullRequest() {
     }
 
@@ -132,5 +171,109 @@ public class PullRequest {
 
     public void setUpdatedAt(Instant updatedAt) {
         this.updatedAt = updatedAt;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(String author) {
+        this.author = author;
+    }
+
+    public Integer getPrScore() {
+        return prScore;
+    }
+
+    public void setPrScore(Integer prScore) {
+        this.prScore = prScore;
+    }
+
+    public Integer getQualityScore() {
+        return qualityScore;
+    }
+
+    public void setQualityScore(Integer qualityScore) {
+        this.qualityScore = qualityScore;
+    }
+
+    public Integer getSecurityScore() {
+        return securityScore;
+    }
+
+    public void setSecurityScore(Integer securityScore) {
+        this.securityScore = securityScore;
+    }
+
+    public Integer getAccessibilityScore() {
+        return accessibilityScore;
+    }
+
+    public void setAccessibilityScore(Integer accessibilityScore) {
+        this.accessibilityScore = accessibilityScore;
+    }
+
+    public String getReviewStatus() {
+        return reviewStatus;
+    }
+
+    public void setReviewStatus(String reviewStatus) {
+        this.reviewStatus = reviewStatus;
+    }
+
+    public String getReviewSummary() {
+        return reviewSummary;
+    }
+
+    public void setReviewSummary(String reviewSummary) {
+        this.reviewSummary = reviewSummary;
+    }
+
+    public Integer getChangedFilesCount() {
+        return changedFilesCount;
+    }
+
+    public void setChangedFilesCount(Integer changedFilesCount) {
+        this.changedFilesCount = changedFilesCount;
+    }
+
+    public String getChangedFilesJson() {
+        return changedFilesJson;
+    }
+
+    public void setChangedFilesJson(String changedFilesJson) {
+        this.changedFilesJson = changedFilesJson;
+    }
+
+    public Integer getFindingsCount() {
+        return findingsCount;
+    }
+
+    public void setFindingsCount(Integer findingsCount) {
+        this.findingsCount = findingsCount;
+    }
+
+    public Boolean getGithubCommentPosted() {
+        return githubCommentPosted;
+    }
+
+    public void setGithubCommentPosted(Boolean githubCommentPosted) {
+        this.githubCommentPosted = githubCommentPosted;
+    }
+
+    public String getGithubCommentUrl() {
+        return githubCommentUrl;
+    }
+
+    public void setGithubCommentUrl(String githubCommentUrl) {
+        this.githubCommentUrl = githubCommentUrl;
+    }
+
+    public Instant getLastAnalyzedAt() {
+        return lastAnalyzedAt;
+    }
+
+    public void setLastAnalyzedAt(Instant lastAnalyzedAt) {
+        this.lastAnalyzedAt = lastAnalyzedAt;
     }
 }
